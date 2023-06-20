@@ -13,5 +13,5 @@ src's src: [https://henke96.github.io/BaSim/](https://henke96.github.io/BaSim/)
 ### solar updates
 - log pickup
 - healer toggle
-- specify which tick healers can spawn on
+- specify which tick healers and runners can spawn on
    - Example: 11,21 OR 11-21
