@@ -14,4 +14,4 @@ src's src: [https://henke96.github.io/BaSim/](https://henke96.github.io/BaSim/)
 - log pickup
 - healer toggle
 - specify which tick healers and runners can spawn on
-   - Example: 11,21 OR 11-21
+   - Example: 5,15 OR 5-15
