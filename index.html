@@ -2,42 +2,48 @@
 <title>Ba simulator</title>
 <script src="js/basim.js"></script>
 <style>
-table, th, td {
-border: 1px solid black;
-border-collapse: collapse;
-}
-th, td {
-padding: 2px 4px;
-}
-th:last-child {
-width: 8em;
-}
-td {
-text-align: center;
-}
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 2px 4px;
+    }
+
+    th:last-child {
+        width: 8em;
+    }
+
+    td {
+        text-align: center;
+    }
 </style>
 Lure distance: <select id="deflevelselect">
-<option value="4">4 tiles (Level 1)</option>
-<option value="5" selected>5 tiles (Level 2-5)</option>
-<option value="6">6 tiles</option>
-<option value="7">7 tiles</option>
-<option value="8">8 tiles</option>
+    <option value="4">4 tiles (Level 1)</option>
+    <option value="5" selected>5 tiles (Level 2-5)</option>
+    <option value="6">6 tiles</option>
+    <option value="7">7 tiles</option>
+    <option value="8">8 tiles</option>
 </select><br>
 Wave: <select id="waveselect">
-<option value="1">Wave 1</option>
-<option value="2">Wave 2</option>
-<option value="3">Wave 3</option>
-<option value="4">Wave 4</option>
-<option value="5">Wave 5</option>
-<option value="6">Wave 6</option>
-<option value="7">Wave 7</option>
-<option value="8">Wave 8</option>
-<option value="9">Wave 9</option>
-<option value="10">Wave 10</option>
+    <option value="1">Wave 1</option>
+    <option value="2">Wave 2</option>
+    <option value="3">Wave 3</option>
+    <option value="4">Wave 4</option>
+    <option value="5">Wave 5</option>
+    <option value="6">Wave 6</option>
+    <option value="7">Wave 7</option>
+    <option value="8">Wave 8</option>
+    <option value="9">Wave 9</option>
+    <option value="10">Wave 10</option>
 </select><br>
-Runner movements: <input id="runnermovements" type="text"/><br>
-Runner spawns: <input id="runnerspawns" type="text"/><br>
-Healer spawns: <input id="healerspawns" type="text"/><br>
+Runner movements: <input id="runnermovements" type="text" /><br>
+Runner spawns: <input id="runnerspawns" type="text" /><br>
+Healer spawns: <input id="healerspawns" type="text" /><br>
 <input type="checkbox" id="enablehealers">Enable healers</input><br>
 
 <button id="wavestart"></button>
@@ -63,15 +69,17 @@ Tick count: <span id="tickcount"></span><br>
         <tr>
             <th>Healer</th>
             <th>On Player?</th>
-	    <th>On Collector?</th>
-	    <th>On Runner?</th>
-	    <th>Last Target</th>
-	    <th>Spray Timer</th>
+            <th>On Collector?</th>
+            <th>On Runner?</th>
+            <th>Last Target</th>
+            <th>Spray Timer</th>
             <th>Position</th>
             <th>Destination</th>
         </tr>
     </thead>
 </table>
+<button id="savestate">Save State</button>
+<button id="loadstate">Load State</button><br>
 <b>space</b> starts or stops the wave.<br>
 <b>left-click</b> moves the player.<br>
 <b>right-click</b> places a collector.<br>
