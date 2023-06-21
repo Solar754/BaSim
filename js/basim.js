@@ -17,6 +17,8 @@ const HTML_HEALER_TABLE = "healertable";
 
 const HTML_ENABLE_HEALERS = "enablehealers"
 
+var state = {};
+
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
 const baWEST_TRAP_Y = 25;
@@ -222,6 +224,7 @@ function simReset() {
 	}
 	simSetRunning(false);
 	sim.CurrentFoodId = 0;
+	state = {};
 	baInit(0, 0, "");
 	plInit(-1, 0);
 	simDraw();
@@ -232,10 +235,14 @@ function simSetRunning(running) {
 		sim.IsRunning = true;
 		sim.StartStopButton.innerHTML = "Stop Wave";
 		sim.PauseResumeButton.style = "display: inline-block";
+		sim.SaveState.style = "display: inline-block";
+		sim.LoadState.style = "display: inline-block";
 	} else {
 		sim.IsRunning = false;
 		sim.StartStopButton.innerHTML = "Start Wave";
 		sim.PauseResumeButton.style = "display: none";
+		sim.SaveState.style = "display: none";
+		sim.LoadState.style = "display: none";
 	}
 	simSetPause(false);
 	simUpdateRunnerTable();
@@ -489,6 +496,7 @@ var sim = {
 	TickCountSpan: undefined,
 	IsRunning: undefined,
 	IsPaused: undefined,
+	ruSniffDistance: undefined,
 	RunnerTable: undefined,
 	RunnerTableBody: undefined, // unused
 	HealerTable: undefined,
@@ -1110,7 +1118,7 @@ function findTargetTile(x1, y1, x2, y2) { // (x1,y1) for healer, (x2,y2) for tar
 //}
 //{ Runner - ru
 function ruInit(sniffDistance) {
-	ruSniffDistance = sniffDistance;
+	sim.ruSniffDistance = sniffDistance;
 }
 function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // TODO: healers re-aggro if runner dies
 	this.x = x;
@@ -1235,7 +1243,7 @@ ruRunner.prototype.tryTargetFood = function () {
 				if (firstFoodFound === null) {
 					firstFoodFound = food;
 				}
-				if (Math.max(Math.abs(this.x - food.x), Math.abs(this.y - food.y)) <= ruSniffDistance) {
+				if (Math.max(Math.abs(this.x - food.x), Math.abs(this.y - food.y)) <= sim.ruSniffDistance) {
 					this.foodTarget = firstFoodFound;
 					this.destinationX = firstFoodFound.x;
 					this.destinationY = firstFoodFound.y;
@@ -1405,7 +1413,6 @@ ruRunner.prototype.print = function (string) {
 	console.log(ba.TickCounter + ": Runner " + this.id + ": " + string);
 	this.chat = string;
 }
-var ruSniffDistance;
 //}
 //{ BaArena - ba
 function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, runnerMovements, runnerSpawns, healerSpawns) {
@@ -2076,7 +2083,6 @@ Object.prototype.update = function (obj) {
 	return this;
 }
 
-var state = {};
 function simSaveStateOnClick() {
 	console.log("Saving state...")
 	if (!sim.IsPaused)
@@ -2096,27 +2102,20 @@ function simSaveStateOnClick() {
 			state["sim"][obj] = structuredClone(sim[obj]);
 		}
 	});
-	console.log(ba)
-
-	/*
-	state = {};
-	state["render"] = rr;
-
-	console.log(state);
-	*/
 }
 /*
 // clear queue, init dummy instances
 // then copy the values from saved
 */
 function simLoadStateOnClick() {
+	if (Object.keys(state).length === 0)
+		return;
 	console.log("Loading state...");
 	if (!sim.IsPaused)
 		sim.PauseResumeButton.click();
 
 	ba = structuredClone(state["ba"]);
 	pl = structuredClone(state["pl"]);
-	//m = structuredClone(state["m"]); TODO what why
 	sim.update(state["sim"]);
 
 	// "hardcoded" in the sense that these instances
@@ -2128,7 +2127,7 @@ function simLoadStateOnClick() {
 		ba.Healers.push(tmpH);
 	});
 
-	// FIXME -- foodtarget is passing on null when it shouldnt?
+	// FIXME -- mysterious foodtarget null bug
 	ba.Runners = []
 	state["ba"].Runners.forEach(runner => {
 		let tmpR = new ruRunner();
@@ -2137,13 +2136,11 @@ function simLoadStateOnClick() {
 
 		tmpR.update(runner);
 		tmpRNG.update(runner.runnerRNG);
-		if (runner.foodTarget != null) {
+
+		if (runner.foodTarget != null)
 			tmpFood.update(runner.foodTarget);
-			console.log(runner.foodTarget)
-		} else {
+		else
 			tmpFood = null;
-			console.log("!")
-		}
 
 		tmpR.runnerRNG = tmpRNG;
 		tmpR.foodTarget = tmpFood;
@@ -2165,11 +2162,25 @@ function simLoadStateOnClick() {
 		});
 	});
 
-	console.log(ba);
-	sim.TickCountSpan.innerHTML = ba.TickCounter;
-	simDraw();
+	// for javascripty reasons runners must re-look for foodTarget
+	for (let i = 0; i < ba.Runners.length; i++) {
+		let thisRunner = ba.Runners[i];
+		if (thisRunner.foodTarget !== null) {
+			let thisRunnerFoodID = thisRunner.foodTarget.id;
+			for (let j = 0; j < m.mItemZones.length; j++) {
+				let itemZone = m.mItemZones[j];
+				for (let k = 0; k < itemZone.length; k++) {
+					let thisFood = itemZone[k];
+					if (thisFood.id === thisRunnerFoodID) {
+						thisRunner.foodTarget = thisFood;
+					}
+				}
+			}
+		}
+	}
 
-	//simTick();
-	//simSetRunning(true);
-	//sim.PauseResumeButton.click();
+	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	simUpdateRunnerTable();
+	simUpdateHealerTable();
+	simDraw();
 }
