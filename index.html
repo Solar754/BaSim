@@ -21,6 +21,23 @@
     td {
         text-align: center;
     }
+
+    .container {
+        width: 100%;
+        height: 200px;
+        margin: auto;
+        padding: 10px;
+    }
+
+    .one {
+        height: 200px;
+        float: left;
+    }
+
+    .two {
+        margin-left: 20%;
+        height: 200px;
+    }
 </style>
 Lure distance: <select id="deflevelselect">
     <option value="4">4 tiles (Level 1)</option>
@@ -45,45 +62,51 @@ Runner movements: <input id="runnermovements" type="text" /><br>
 Runner spawns: <input id="runnerspawns" type="text" /><br>
 Healer spawns: <input id="healerspawns" type="text" /><br>
 <input type="checkbox" id="enablehealers">Enable healers</input><br>
-
 <button id="wavestart"></button>
 <button id="wavepause" style="display: none;"></button>
 <button id="wavestep" style="display: none;">Step</button>
 Tick count: <span id="tickcount"></span><br>
 <canvas id="basimcanvas"></canvas><br>
-<button id="savestate" style="display: none;">Save State</button>
-<button id="loadstate" style="display: none;">Load State</button><br><br>
-<table id="runnertable" style="display: none;">
-    <thead>
-        <tr>
-            <th>Runner</th>
-            <th>Tick</th>
-            <th>State</th>
-            <th>Position</th>
-            <th>Destination</th>
-            <th>Target</th>
-            <th>Chat</th>
-        </tr>
-    </thead>
-</table><br>
-<table id="healertable" style="display: none;">
-    <thead>
-        <tr>
-            <th>Healer</th>
-            <th>On Player?</th>
-            <th>On Collector?</th>
-            <th>On Runner?</th>
-            <th>Last Target</th>
-            <th>Spray Timer</th>
-            <th>Position</th>
-            <th>Destination</th>
-        </tr>
-    </thead>
-</table>
-<b>space</b> starts or stops the wave.<br>
-<b>left-click</b> moves the player.<br>
-<b>right-click</b> places a collector.<br>
-<b>r</b> drops a right food.<br>
-<b>w</b> drops a wrong food.<br>
-<b>e</b> picks up a food or log.<br>
-<b>t</b> repairs trap.
+<section class="container">
+    <div class="one">
+        <button id="savestate" style="display: none;">Save State</button>
+        <button id="loadstate" style="display: none;">Load State</button><br>
+        <b>space</b> starts or stops the wave.<br>
+        <b>left-click</b> moves the player.<br>
+        <b>right-click</b> places a collector.<br>
+        <b>r</b> drops a right food.<br>
+        <b>w</b> drops a wrong food.<br>
+        <b>e</b> picks up a food or log.<br>
+        <b>t</b> repairs trap.
+    </div>
+    <div class="two">
+        <table id="runnertable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Runner</th>
+                    <th>Tick</th>
+                    <th>State</th>
+                    <th>Position</th>
+                    <th>Destination</th>
+                    <th>Target</th>
+                    <th>Chat</th>
+                </tr>
+            </thead>
+        </table><br>
+        <table id="healertable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Healer</th>
+                    <th>On Player?</th>
+                    <th>On Collector?</th>
+                    <th>On Runner?</th>
+                    <th>Last Target</th>
+                    <th>Spray Timer</th>
+                    <th>Position</th>
+                    <th>Destination</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+<br>
