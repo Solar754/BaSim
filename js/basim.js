@@ -580,13 +580,29 @@ function plTick() {
 	ba.CollectorX = ba.CollectorTargetX;
 	ba.CollectorY = ba.CollectorTargetY;
 }
+var renderDistance = 15
 function plDrawPlayer() {
 	if (pl.X >= 0) {
 		if (pl.RepairCountdown === 0) rSetDrawColor(240, 240, 240, 200);
 		else rSetDrawColor(180, 180, 180, 200);
 		rrFill(pl.X, pl.Y);
+		plDrawRender(pl);
 	}
 }
+function plDrawRender(player) {
+	rSetDrawColor(0, 0, 0, 25);
+	let startX = player.X - renderDistance;
+	let startY = player.Y - renderDistance;
+	let endX = player.X + renderDistance;
+	let endY = player.Y + renderDistance;
+	for (let x = startX; x <= endX; ++x) {
+		if (x < 0 || x > 64) continue;
+		for (let y = startY; y <= endY; ++y) {
+			rrFill(x, y);
+		}
+	}
+}
+
 function plPathfind(destX, destY) {
 	for (let i = 0; i < m.mWidthTiles * m.mHeightTiles; ++i) {
 		pl.ShortestDistances[i] = 99999999;
@@ -1627,6 +1643,7 @@ function baDrawEntities() {
 	if (ba.CollectorX !== -1) { // draw coll
 		rSetDrawColor(240, 240, 10, 200);
 		rrFill(ba.CollectorX, ba.CollectorY);
+		plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
 	}
 }
 function baIsNearWestTrap(x, y) {
