@@ -95,7 +95,17 @@ function simInit() {
 		}
 	};
 	sim.RunnerSpawns = document.getElementById(HTML_RUNNER_SPAWNS);
+	sim.RunnerSpawns.onkeypress = function (e) {
+		if (e.key === " ") {
+			e.preventDefault();
+		}
+	};
 	sim.HealerSpawns = document.getElementById(HTML_HEALER_SPAWNS);
+	sim.HealerSpawns.onkeypress = function (e) {
+		if (e.key === " ") {
+			e.preventDefault();
+		}
+	};
 	sim.StartStopButton = document.getElementById(HTML_START_BUTTON);
 	sim.StartStopButton.onclick = simStartStopButtonOnClick;
 	sim.PauseResumeButton = document.getElementById(HTML_PAUSE_BUTTON);
@@ -423,8 +433,8 @@ function simWindowOnKeyDown(e) { // food_drop
 			}
 		}
 	}
-	if (e.key === " ") {
-		sim.StartStopButtonOnClick();
+	if (e.key === " " || e.key === "Space") {
+		simStartStopButtonOnClick();
 		e.preventDefault();
 	}
 }
