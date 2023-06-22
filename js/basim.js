@@ -432,6 +432,12 @@ function simWindowOnKeyDown(e) { // food_drop
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
 			}
 		}
+		else if (e.key === "s") {
+			simSaveStateOnClick();
+		}
+		else if (e.key === "l") {
+			simLoadStateOnClick();
+		}
 	}
 	if (e.key === " " || e.key === "Space") {
 		simStartStopButtonOnClick();
