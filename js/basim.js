@@ -4,6 +4,8 @@ const HTML_CANVAS = "basimcanvas";
 const HTML_RUNNER_MOVEMENTS = "runnermovements";
 const HTML_RUNNER_SPAWNS = "runnerspawns";
 const HTML_HEALER_SPAWNS = "healerspawns";
+const HTML_ENABLE_HEALERS = "enablehealers";
+const HTML_ENABLE_RENDER = "enablerender";
 const HTML_SAVE_BUTTON = "savestate";
 const HTML_LOAD_BUTTON = "loadstate";
 const HTML_START_BUTTON = "wavestart";
@@ -14,8 +16,6 @@ const HTML_TICK_COUNT = "tickcount";
 const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
-
-const HTML_ENABLE_HEALERS = "enablehealers"
 
 var state = {};
 
@@ -122,6 +122,8 @@ function simInit() {
 
 	sim.ToggleHealers = document.getElementById(HTML_ENABLE_HEALERS);
 	sim.ToggleHealers.onchange = simEnableHealersOnChange;
+	sim.ToggleRender = document.getElementById(HTML_ENABLE_RENDER);
+	sim.ToggleRender.onchange = simEnableRenderOnChange;
 
 	sim.SaveState = document.getElementById(HTML_SAVE_BUTTON);
 	sim.SaveState.onclick = simSaveStateOnClick;
@@ -477,7 +479,11 @@ function simDefLevelSelectOnChange(e) {
 function simEnableHealersOnChange(e) {
 	mResetMap();
 	simReset();
-	sim.EnableHealers = sim.ToggleHealers.checked
+	sim.EnableHealers = sim.ToggleHealers.checked;
+}
+function simEnableRenderOnChange(e) {
+	sim.EnableRender = sim.ToggleRender.checked;
+	simDraw();
 }
 function simTick() {
 	baTick();
@@ -518,7 +524,9 @@ var sim = {
 	HealerTableBody: undefined, // unused
 	CurrentFoodId: undefined,
 	ToggleHealers: undefined,
-	EnableHealers: undefined
+	EnableHealers: undefined,
+	ToggleRender: undefined,
+	EnableRender: undefined
 }
 
 //}
@@ -587,13 +595,15 @@ function plDrawPlayer() {
 		rrFill(pl.X, pl.Y);
 	}
 
-	pl.RenderArea = []
-	plDrawRender(pl);
-	plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
+	if (sim.EnableRender) {
+		pl.RenderArea = []
+		plDrawRender(pl);
+		plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
+	}
 }
 function plDrawRender(player) {
 	if (player.X >= 0) {
-		rSetDrawColor(0, 0, 0, 25);
+		rSetDrawColor(0, 0, 0, 20);
 		let startX = player.X - pl.RenderDistance;
 		let startY = player.Y - pl.RenderDistance;
 		let endX = player.X + pl.RenderDistance;
@@ -1175,6 +1185,15 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 	this.id = id;
 	this.chat = "";
 }
+ruRunner.prototype.checkRender = function () {
+	for (let i = 0; i < pl.RenderArea.length; ++i) {
+		let renderCoordinate = pl.RenderArea[i];
+		if (renderCoordinate[0] == this.x && renderCoordinate[1] == this.y) {
+			return true;
+		}
+	}
+	return false || !sim.EnableRender;
+}
 ruRunner.prototype.tick = function () {
 	this.chat = "";
 	if (++this.cycleTick > 10) {
@@ -1263,6 +1282,12 @@ ruRunner.prototype.doMovement = function () { // TODO: Doesn't consider diagonal
 	}
 }
 ruRunner.prototype.tryTargetFood = function () {
+	let isRendered = this.checkRender();
+	if (isRendered == false &&
+		this.cycleTick >= 2 && this.cycleTick <= 6) {
+		++this.targetState;
+		return;
+	}
 	let xZone = this.x >> 3;
 	let yZone = this.y >> 3;
 	let firstFoodFound = null;
@@ -2220,7 +2245,9 @@ function simLoadStateOnClick() {
 		}
 	}
 
+	// html
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	simEnableRenderOnChange();
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
 	simDraw();

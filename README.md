@@ -13,6 +13,7 @@ src's src: [https://henke96.github.io/BaSim/](https://henke96.github.io/BaSim/)
 ### solar updates
 - log pickup
 - save states (thanks to mclovin for taking some of the hits for me)
+- render toggle (thanks b5 and capeshit for the lessons)
 - healer toggle
 - specify which tick healers and runners can spawn on
    - Example: 5,15 OR 5-15
