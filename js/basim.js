@@ -184,16 +184,17 @@ function simUpdateHealerTable() { // TODO: Save sim state every tick
 		td.innerHTML = healer.id;
 		tableRow.appendChild(td);
 		td = document.createElement("td");
-		td.innerHTML = healer.isTargetingPlayer;
+		if (healer.isTargetingPlayer)
+			td.innerHTML = "player";
+		else if (healer.isTargetingCollector)
+			td.innerHTML = "collector";
+		else if (healer.isTargetingRunner)
+			td.innerHTML = "runner";
+		else
+			td.innerHTML = "";
 		tableRow.appendChild(td);
 		td = document.createElement("td");
-		td.innerHTML = healer.isTargetingCollector;
-		tableRow.appendChild(td);
-		td = document.createElement("td");
-		td.innerHTML = healer.isTargetingRunner;
-		tableRow.appendChild(td);
-		td = document.createElement("td");
-		td.innerHTML = healer.lastTarget;
+		td.innerHTML = healer.lastTarget || "";
 		tableRow.appendChild(td);
 		td = document.createElement("td");
 		td.innerHTML = healer.sprayTimer;
@@ -235,15 +236,13 @@ function simSetRunning(running) {
 		sim.IsRunning = true;
 		sim.StartStopButton.innerHTML = "Stop Wave";
 		sim.PauseResumeButton.style = "display: inline-block";
-		sim.SaveState.style = "display: inline-block";
-		sim.LoadState.style = "display: inline-block";
 	} else {
 		sim.IsRunning = false;
 		sim.StartStopButton.innerHTML = "Start Wave";
 		sim.PauseResumeButton.style = "display: none";
-		sim.SaveState.style = "display: none";
-		sim.LoadState.style = "display: none";
 	}
+	sim.SaveState.disabled = !sim.IsRunning;
+	sim.LoadState.disabled = !sim.IsRunning;
 	simSetPause(false);
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
