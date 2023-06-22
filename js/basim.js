@@ -580,29 +580,33 @@ function plTick() {
 	ba.CollectorX = ba.CollectorTargetX;
 	ba.CollectorY = ba.CollectorTargetY;
 }
-var renderDistance = 15
 function plDrawPlayer() {
 	if (pl.X >= 0) {
 		if (pl.RepairCountdown === 0) rSetDrawColor(240, 240, 240, 200);
 		else rSetDrawColor(180, 180, 180, 200);
 		rrFill(pl.X, pl.Y);
-		plDrawRender(pl);
 	}
+
+	pl.RenderArea = []
+	plDrawRender(pl);
+	plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
 }
 function plDrawRender(player) {
-	rSetDrawColor(0, 0, 0, 25);
-	let startX = player.X - renderDistance;
-	let startY = player.Y - renderDistance;
-	let endX = player.X + renderDistance;
-	let endY = player.Y + renderDistance;
-	for (let x = startX; x <= endX; ++x) {
-		if (x < 0 || x > 64) continue;
-		for (let y = startY; y <= endY; ++y) {
-			rrFill(x, y);
+	if (player.X >= 0) {
+		rSetDrawColor(0, 0, 0, 25);
+		let startX = player.X - pl.RenderDistance;
+		let startY = player.Y - pl.RenderDistance;
+		let endX = player.X + pl.RenderDistance;
+		let endY = player.Y + pl.RenderDistance;
+		for (let x = startX; x <= endX; ++x) {
+			if (x < 0 || x > 64) continue;
+			for (let y = startY; y <= endY; ++y) {
+				rrFill(x, y);
+				pl.RenderArea.push([x, y]);
+			}
 		}
 	}
 }
-
 function plPathfind(destX, destY) {
 	for (let i = 0; i < m.mWidthTiles * m.mHeightTiles; ++i) {
 		pl.ShortestDistances[i] = 99999999;
@@ -749,7 +753,9 @@ var pl = {
 	Y: undefined,
 	ShouldPickupFood: undefined,
 	StandStillCounter: undefined,
-	RepairCountdown: undefined
+	RepairCountdown: undefined,
+	RenderDistance: undefined,
+	RenderArea: undefined
 }
 
 //}
@@ -1476,6 +1482,10 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
 	ba.CurrentHealerId = 1;
 	ba.EastTrapCharges = 2;
 	ba.WestTrapCharges = 2;
+
+	pl.RenderDistance = 15;
+	pl.RenderArea = [];
+
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
 }
 function baTick() {
@@ -1643,7 +1653,6 @@ function baDrawEntities() {
 	if (ba.CollectorX !== -1) { // draw coll
 		rSetDrawColor(240, 240, 10, 200);
 		rrFill(ba.CollectorX, ba.CollectorY);
-		plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
 	}
 }
 function baIsNearWestTrap(x, y) {
