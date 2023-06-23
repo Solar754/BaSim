@@ -596,7 +596,7 @@ function plDrawPlayer() {
 	}
 
 	if (sim.EnableRender) {
-		pl.RenderArea = []
+		pl.RenderArea = [];
 		plDrawRender(pl);
 		plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
 	}
@@ -1186,13 +1186,16 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 	this.chat = "";
 }
 ruRunner.prototype.checkRender = function () {
+	if (sim.EnableRender == false) {
+		return true;
+	}
 	for (let i = 0; i < pl.RenderArea.length; ++i) {
 		let renderCoordinate = pl.RenderArea[i];
 		if (renderCoordinate[0] == this.x && renderCoordinate[1] == this.y) {
 			return true;
 		}
 	}
-	return false || !sim.EnableRender;
+	return false;
 }
 ruRunner.prototype.tick = function () {
 	this.chat = "";
