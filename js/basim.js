@@ -1186,7 +1186,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 	this.chat = "";
 }
 ruRunner.prototype.checkRender = function () {
-	if (sim.EnableRender == false) {
+	if (sim.EnableRender == false || sim.EnableRender == undefined) {
 		return true;
 	}
 	for (let i = 0; i < pl.RenderArea.length; ++i) {
