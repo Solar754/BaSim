@@ -1322,7 +1322,7 @@ ruRunner.prototype.tryTargetFood = function () {
 ruRunner.prototype.tryEatAndCheckTarget = function () {
 	if (this.foodTarget !== null) {
 		let itemZone = mGetItemZone(this.foodTarget.x >>> 3, this.foodTarget.y >>> 3);
-		let foodIndex = itemZone.indexOf(this.foodTarget);
+		let foodIndex = itemZone.map(food => food.id).indexOf(this.foodTarget.id);
 		if (foodIndex === -1) {
 			this.foodTarget = null;
 			this.targetState = 0;
@@ -2196,7 +2196,6 @@ function simLoadStateOnClick() {
 		ba.Healers.push(tmpH);
 	});
 
-	// FIXME -- mysterious foodtarget null bug
 	ba.Runners = []
 	state["ba"].Runners.forEach(runner => {
 		let tmpR = new ruRunner();
@@ -2230,23 +2229,6 @@ function simLoadStateOnClick() {
 			}
 		});
 	});
-
-	// for javascripty reasons runners must re-look for foodTarget
-	for (let i = 0; i < ba.Runners.length; i++) {
-		let thisRunner = ba.Runners[i];
-		if (thisRunner.foodTarget !== null) {
-			let thisRunnerFoodID = thisRunner.foodTarget.id;
-			for (let j = 0; j < m.mItemZones.length; j++) {
-				let itemZone = m.mItemZones[j];
-				for (let k = 0; k < itemZone.length; k++) {
-					let thisFood = itemZone[k];
-					if (thisFood.id === thisRunnerFoodID) {
-						thisRunner.foodTarget = thisFood;
-					}
-				}
-			}
-		}
-	}
 
 	// html
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
