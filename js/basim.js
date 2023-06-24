@@ -237,7 +237,6 @@ function simReset() {
 	}
 	simSetRunning(false);
 	sim.CurrentFoodId = 0;
-	state = {};
 	baInit(0, 0, "");
 	plInit(-1, 0);
 	simDraw();
@@ -254,7 +253,6 @@ function simSetRunning(running) {
 		sim.PauseResumeButton.style = "display: none";
 	}
 	sim.SaveState.disabled = !sim.IsRunning;
-	sim.LoadState.disabled = !sim.IsRunning;
 	simSetPause(false);
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
@@ -434,14 +432,14 @@ function simWindowOnKeyDown(e) { // food_drop
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
 			}
 		}
-		else if (e.key === "s") {
-			simSaveStateOnClick();
-		}
-		else if (e.key === "l") {
-			simLoadStateOnClick();
-		}
 	}
-	if (e.key === " " || e.key === "Space") {
+	if (sim.IsRunning && e.key === "s") {
+		simSaveStateOnClick();
+	}
+	else if (e.key === "l") {
+		simLoadStateOnClick();
+	}
+	else if (e.key === " " || e.key === "Space") {
 		simStartStopButtonOnClick();
 		e.preventDefault();
 	}
@@ -2151,7 +2149,6 @@ Object.prototype.update = function (obj) {
 	});
 	return this;
 }
-
 function simSaveStateOnClick() {
 	console.log("Saving state...")
 	if (!sim.IsPaused)
@@ -2171,13 +2168,19 @@ function simSaveStateOnClick() {
 			state["sim"][obj] = structuredClone(sim[obj]);
 		}
 	});
+	state["sim"]["WaveVal"] = sim.WaveSelect.value;
+	state["sim"]["LevelVal"] = sim.DefLevelSelect.value;
 }
 function simLoadStateOnClick() {
-	if (Object.keys(state).length === 0)
+	if (Object.keys(state).length === 0) {
 		return;
+	}
 	console.log("Loading state...");
-	if (!sim.IsPaused)
-		sim.PauseResumeButton.click();
+
+	sim.DefLevelSelect.value = state["sim"].LevelVal;
+	simDefLevelSelectOnChange();
+	sim.WaveSelect.value = state["sim"].WaveVal;
+	simWaveSelectOnChange();
 
 	ba = structuredClone(state["ba"]);
 	pl = structuredClone(state["pl"]);
@@ -2204,8 +2207,9 @@ function simLoadStateOnClick() {
 
 	// html
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	sim.ToggleHealers.checked = sim.EnableHealers;
+	simSetRunning(true);
+	simSetPause(true);
 	simEnableRenderOnChange();
-	simUpdateRunnerTable();
-	simUpdateHealerTable();
 	simDraw();
 }
