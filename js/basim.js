@@ -1299,7 +1299,7 @@ ruRunner.prototype.tryTargetFood = function () {
 	for (let x = Math.min(xZone + 1, m.mItemZonesWidth - 1); x >= endXZone; --x) {
 		for (let y = Math.min(yZone + 1, m.mItemZonesHeight - 1); y >= endYZone; --y) {
 			let itemZone = mGetItemZone(x, y);
-			itemZone = itemZone.filter(item => item.constructor.name !== "lLog");
+			itemZone = itemZone.filter(item => item.isGood !== undefined);
 			for (let foodIndex = itemZone.length - 1; foodIndex >= 0; --foodIndex) {
 				let food = itemZone[foodIndex];
 				if (!mHasLineOfSight(this.x, this.y, food.x, food.y)) {
@@ -1819,7 +1819,7 @@ function mDrawItems() {
 }
 function drawLogs() {
 	let logZone = mGetItemZone(28 >>> 3, 39 >>> 3);
-	logZone = logZone.filter(item => item.constructor.name === "lLog");
+	logZone = logZone.filter(item => item.logType !== undefined);
 
 	if (!logZone.some(item => item.logType === "North")) {
 		if (m.mCurrentMap === mWAVE_1_TO_9)
@@ -2172,10 +2172,6 @@ function simSaveStateOnClick() {
 		}
 	});
 }
-/*
-// clear queue, init dummy instances
-// then copy the values from saved
-*/
 function simLoadStateOnClick() {
 	if (Object.keys(state).length === 0)
 		return;
@@ -2185,10 +2181,9 @@ function simLoadStateOnClick() {
 
 	ba = structuredClone(state["ba"]);
 	pl = structuredClone(state["pl"]);
+	m.mItemZones = structuredClone(state["m"].mItemZones);
 	sim.update(state["sim"]);
 
-	// "hardcoded" in the sense that these instances
-	// are expected despite being overwritten initially
 	ba.Healers = []
 	state["ba"].Healers.forEach(healer => {
 		let tmpH = new heHealer();
@@ -2200,34 +2195,11 @@ function simLoadStateOnClick() {
 	state["ba"].Runners.forEach(runner => {
 		let tmpR = new ruRunner();
 		let tmpRNG = new rngRunnerRNG();
-		let tmpFood = new fFood();
-
 		tmpR.update(runner);
 		tmpRNG.update(runner.runnerRNG);
-
-		if (runner.foodTarget != null)
-			tmpFood.update(runner.foodTarget);
-		else
-			tmpFood = null;
-
 		tmpR.runnerRNG = tmpRNG;
-		tmpR.foodTarget = tmpFood;
+		tmpR.foodTarget = structuredClone(runner.foodTarget);
 		ba.Runners.push(tmpR);
-	});
-
-	state["m"].mItemZones.forEach((zone, idx) => {
-		m.mItemZones[idx] = [];
-		zone.forEach(zoneItem => {
-			if (zoneItem.logType) {
-				let tmpLog = new lLog();
-				tmpLog.update(zoneItem);
-				m.mItemZones[idx].push(tmpLog);
-			} else {
-				let tmpFood = new fFood();
-				tmpFood.update(zoneItem);
-				m.mItemZones[idx].push(tmpFood);
-			}
-		});
 	});
 
 	// html
