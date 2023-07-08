@@ -89,9 +89,13 @@ window.onload = simInit;
 function simInit() {
 	let canvas = document.getElementById(HTML_CANVAS);
 	sim.MovementsInput = document.getElementById(HTML_RUNNER_MOVEMENTS);
+	sim.MovementsInput.onchange = (e) => simMovementsInputWatcher();
 	sim.MovementsInput.onkeypress = function (e) {
 		if (e.key === " ") {
 			e.preventDefault();
+		}
+		else if (e.key === "l") {
+			return false;
 		}
 	};
 	sim.RunnerSpawns = document.getElementById(HTML_RUNNER_SPAWNS);
@@ -383,6 +387,14 @@ function simStartStopButtonOnClick() {
 		sim.TickTimerId = setInterval(simTick, 600);
 	}
 }
+function simMovementsInputWatcher() {
+	ba.runnerMovements = simParseMovementsInput();
+	ba.Runners.forEach(function (runner, i) {
+		if (i < ba.runnerMovements.length) {
+			runner.runnerRNG.forcedMovements = ba.runnerMovements[i];
+		}
+	});
+}
 function simParseMovementsInput() {
 	let movements = sim.MovementsInput.value.split("-");
 	for (let i = 0; i < movements.length; ++i) {
@@ -433,7 +445,7 @@ function simWindowOnKeyDown(e) { // food_drop
 			}
 		}
 	}
-	if (sim.IsRunning && e.key === "s") {
+	if (sim.IsRunning && e.key === "s" && document.activeElement.id !== HTML_RUNNER_MOVEMENTS) {
 		simSaveStateOnClick();
 	}
 	else if (e.key === "l") {
@@ -2187,7 +2199,7 @@ function simLoadStateOnClick() {
 	m.mItemZones = structuredClone(state["m"].mItemZones);
 	sim.update(state["sim"]);
 
-	ba.Healers = []
+	ba.Healers = [];
 	state["ba"].Healers.forEach(healer => {
 		let tmpH = new heHealer();
 		tmpH.update(healer);
@@ -2204,6 +2216,7 @@ function simLoadStateOnClick() {
 		tmpR.foodTarget = structuredClone(runner.foodTarget);
 		ba.Runners.push(tmpR);
 	});
+	simMovementsInputWatcher()
 
 	// html
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
