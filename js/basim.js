@@ -389,9 +389,10 @@ function simStartStopButtonOnClick() {
 }
 function simMovementsInputWatcher() {
 	ba.runnerMovements = simParseMovementsInput();
-	ba.Runners.forEach(function (runner, i) {
-		if (i < ba.runnerMovements.length) {
-			runner.runnerRNG.forcedMovements = ba.runnerMovements[i];
+	ba.Runners.forEach(runner => {
+		let movementIndex = runner.id - 1;
+		if (movementIndex < ba.runnerMovements.length) {
+			runner.runnerRNG.forcedMovements = ba.runnerMovements[movementIndex];
 		}
 	});
 }
