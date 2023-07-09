@@ -1601,6 +1601,7 @@ function baTick() {
 		drawLogs();
 	}
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	simMovementsInputWatcher()
 }
 function baDrawOverlays() {
 	if (m.mCurrentMap !== mWAVE_1_TO_9 && m.mCurrentMap !== mWAVE10) {
