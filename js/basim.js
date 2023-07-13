@@ -6,6 +6,8 @@ const HTML_RUNNER_SPAWNS = "runnerspawns";
 const HTML_HEALER_SPAWNS = "healerspawns";
 const HTML_ENABLE_HEALERS = "enablehealers";
 const HTML_ENABLE_RENDER = "enablerender";
+const HTML_ENABLE_MARKER = "enablemarker";
+const HTML_CLEAR_MARKERS = "clearmarkers";
 const HTML_SAVE_BUTTON = "savestate";
 const HTML_LOAD_BUTTON = "loadstate";
 const HTML_START_BUTTON = "wavestart";
@@ -18,6 +20,7 @@ const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 
 var state = {};
+var markedTiles = [];
 
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
@@ -128,6 +131,15 @@ function simInit() {
 	sim.ToggleHealers.onchange = simEnableHealersOnChange;
 	sim.ToggleRender = document.getElementById(HTML_ENABLE_RENDER);
 	sim.ToggleRender.onchange = simEnableRenderOnChange;
+
+	let MarkerEvent = document.getElementById(HTML_ENABLE_MARKER);
+	MarkerEvent.onchange = (e) => { sim.MarkerMode = MarkerEvent.checked; }
+	sim.ClearMarkers = document.getElementById(HTML_CLEAR_MARKERS);
+	sim.ClearMarkers.onclick = simClearMarkersOnClick;
+
+	markedTiles = localStorage.getItem("baTiles");
+	if (markedTiles == null) markedTiles = [];
+	else markedTiles = JSON.parse(markedTiles);
 
 	sim.SaveState = document.getElementById(HTML_SAVE_BUTTON);
 	sim.SaveState.onclick = simSaveStateOnClick;
@@ -461,7 +473,19 @@ function simCanvasOnMouseDown(e) {
 	var canvasRect = rr.Canvas.getBoundingClientRect();
 	let xTile = Math.trunc((e.clientX - canvasRect.left) / rrTileSize);
 	let yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
-	if (e.button === 0 && pl.RepairCountdown === 0) {
+	if (sim.MarkerMode) {
+		if (e.button === 0) {
+			let strTileTuple = JSON.stringify([xTile, yTile]);
+			if (markedTiles.includes(strTileTuple)) {
+				markedTiles = markedTiles.filter(e => e !== strTileTuple);
+			} else {
+				markedTiles.push(strTileTuple);
+			}
+			localStorage.setItem("baTiles", JSON.stringify(markedTiles));
+			simDraw();
+		}
+	}
+	else if (e.button === 0 && pl.RepairCountdown === 0) {
 		pl.ShouldPickupFood = false;
 		plPathfind(xTile, yTile);
 	} else if (e.button === 2) {
@@ -496,6 +520,11 @@ function simEnableRenderOnChange(e) {
 	sim.EnableRender = sim.ToggleRender.checked;
 	simDraw();
 }
+function simClearMarkersOnClick(e) {
+	markedTiles = [];
+	localStorage.removeItem("baTiles");
+	simDraw();
+}
 function simTick() {
 	baTick();
 	plTick();
@@ -511,6 +540,7 @@ function simDraw() {
 	plDrawPlayer();
 	mDrawGrid();
 	baDrawOverlays();
+	baDrawMarkedTiles();
 	rPresent();
 }
 var sim = {
@@ -537,7 +567,9 @@ var sim = {
 	ToggleHealers: undefined,
 	EnableHealers: undefined,
 	ToggleRender: undefined,
-	EnableRender: undefined
+	EnableRender: undefined,
+	MarkerMode: false,
+	ClearMarkers: undefined
 }
 
 //}
@@ -605,7 +637,6 @@ function plDrawPlayer() {
 		else rSetDrawColor(180, 180, 180, 200);
 		rrFill(pl.X, pl.Y);
 	}
-
 	if (sim.EnableRender) {
 		pl.RenderArea = [];
 		plDrawRender(pl);
@@ -1693,6 +1724,15 @@ function baDrawEntities() {
 	if (ba.CollectorX !== -1) { // draw coll
 		rSetDrawColor(240, 240, 10, 200);
 		rrFill(ba.CollectorX, ba.CollectorY);
+	}
+}
+function baDrawMarkedTiles() {
+	let markedTilesArr = [...markedTiles].map(JSON.parse);
+	rSetDrawColor(0, 0, 0, 255);
+	for (let i of markedTilesArr) {
+		let xTile = i[0].toString();
+		let yTile = i[1].toString();
+		rrOutline(xTile, yTile);
 	}
 }
 function baIsNearWestTrap(x, y) {
