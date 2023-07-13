@@ -2267,4 +2267,6 @@ function simLoadStateOnClick() {
 	simSetPause(true);
 	simEnableRenderOnChange();
 	simDraw();
+
+	sim.MarkerMode = document.getElementById(HTML_ENABLE_MARKER).checked;
 }
