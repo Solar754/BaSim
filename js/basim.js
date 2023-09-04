@@ -13,6 +13,7 @@ const HTML_LOAD_BUTTON = "loadstate";
 const HTML_START_BUTTON = "wavestart";
 const HTML_PAUSE_BUTTON = "wavepause";
 const HTML_STEP_BUTTON = "wavestep";
+const HTML_STEP_BACKWARD_BUTTON = "wavestepback";
 const HTML_WAVE_SELECT = "waveselect";
 const HTML_TICK_COUNT = "tickcount";
 const HTML_DEF_LEVEL_SELECT = "deflevelselect";
@@ -124,6 +125,8 @@ function simInit() {
 	sim.PauseResumeButton.onclick = simPauseResumeButtonOnClick;
 	sim.StepButton = document.getElementById(HTML_STEP_BUTTON);
 	sim.StepButton.onclick = simStepButtonOnClick;
+	sim.StepBackwardButton = document.getElementById(HTML_STEP_BACKWARD_BUTTON);
+	sim.StepBackwardButton.onclick = simStepBackwardButtonOnClick;
 	sim.WaveSelect = document.getElementById(HTML_WAVE_SELECT);
 	sim.WaveSelect.onchange = simWaveSelectOnChange;
 	sim.DefLevelSelect = document.getElementById(HTML_DEF_LEVEL_SELECT);
@@ -283,10 +286,12 @@ function simSetPause(pause) {
 		sim.IsPaused = true;
 		sim.PauseResumeButton.innerHTML = "Resume";
 		sim.StepButton.style = "display: inline-block";
+		sim.StepBackwardButton.style = "display: inline-block";
 	} else {
 		sim.IsPaused = false;
 		sim.PauseResumeButton.innerHTML = "Pause";
 		sim.StepButton.style = "display: none";
+		sim.StepBackwardButton.style = "display: none";
 	}
 }
 function simPauseResumeButtonOnClick() {
@@ -305,6 +310,16 @@ function simStepButtonOnClick() {
 		simTick();
 	}
 }
+function simStepBackwardButtonOnClick() {
+	if (stateHistory.index <= 0) {
+		return;
+	}
+	--stateHistory.index;
+	loadSaveState(stateHistory.states[stateHistory.index]);
+	console.log(`state history index: ${stateHistory.index}`);
+	console.log('step backward!');
+}
+
 function simStartStopButtonOnClick() {
 	if (sim.IsRunning) {
 		mResetMap();
@@ -543,6 +558,7 @@ function simTick() {
 		stateHistory.states.shift();
 		--stateHistory.index;
 	}
+	console.log(`state history index: ${stateHistory.index}`);
 }
 
 function simDraw() {
@@ -2254,7 +2270,8 @@ function simSaveStateOnClick() {
 		sim.PauseResumeButton.click();
 	window.state = buildSaveState();
 }
-function simLoadStateOnClick() {
+
+function loadSaveState(state) {
 	if (Object.keys(state).length === 0) {
 		return;
 	}
@@ -2298,4 +2315,8 @@ function simLoadStateOnClick() {
 	simDraw();
 
 	sim.MarkerMode = document.getElementById(HTML_ENABLE_MARKER).checked;
+}
+
+function simLoadStateOnClick() {
+	loadSaveState(window.state);
 }
