@@ -22,6 +22,11 @@ const HTML_HEALER_TABLE = "healertable";
 var state = {};
 var markedTiles = [];
 
+var stateHistory = {
+	states: [],
+	index: -1
+}
+
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
 const baWEST_TRAP_Y = 25;
@@ -531,7 +536,15 @@ function simTick() {
 	simDraw();
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
+
+	const stateLimit = 1000;
+	stateHistory.states.splice(++stateHistory.index, Infinity, buildSaveState());
+	if (stateHistory.states.length > stateLimit) {
+		stateHistory.states.shift();
+		--stateHistory.index;
+	}
 }
+
 function simDraw() {
 	mDrawMap();
 	baDrawDetails();
@@ -2203,27 +2216,43 @@ Object.prototype.update = function (obj) {
 	});
 	return this;
 }
-function simSaveStateOnClick() {
-	console.log("Saving state...")
-	if (!sim.IsPaused)
-		sim.PauseResumeButton.click();
 
-	state["ba"] = structuredClone(ba);
-	state["pl"] = structuredClone(pl);
-	state["m"] = structuredClone(m);
+function buildSaveState() {
+	const state = {};
 
-	// ignore DOM elements
-	state["sim"] = {}
-	Object.keys(sim).forEach(obj => {
-		if (sim[obj] instanceof HTMLElement) {
-			state["sim"][obj] = sim[obj];
-		}
-		else {
-			state["sim"][obj] = structuredClone(sim[obj]);
+	// npc stuff
+	state.ba = structuredClone(ba);
+
+	// player stuff
+	state.pl = structuredClone(pl);
+
+	// map stuff
+	// TODO: Probably don't need to clone `m.mCurrentMap` and instead just track
+	// whether it's the 1-9 or 10 map. Can save a lot of memory not cloning the map
+	// image if memory usage/performance becomes an issue.
+	state.m = structuredClone(m);
+
+	// all the other things
+	state.sim = {};
+	Object.keys(sim).forEach(key => {
+		let simObj = sim[key];
+		if (simObj instanceof HTMLElement) {
+			state.sim[key] = simObj;
+		} else {
+			state.sim[key] = structuredClone(simObj);
 		}
 	});
-	state["sim"]["WaveVal"] = sim.WaveSelect.value;
-	state["sim"]["LevelVal"] = sim.DefLevelSelect.value;
+	state.sim.WaveVal = sim.WaveSelect.value;
+	state.sim.LevelVal = sim.DefLevelSelect.value;
+
+	return state;
+}
+
+function simSaveStateOnClick() {
+	console.log("Saving state...");
+	if (!sim.IsPaused)
+		sim.PauseResumeButton.click();
+	window.state = buildSaveState();
 }
 function simLoadStateOnClick() {
 	if (Object.keys(state).length === 0) {
