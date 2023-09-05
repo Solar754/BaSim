@@ -2271,10 +2271,14 @@ function buildSaveState() {
 	state.pl = structuredClone(pl);
 
 	// map stuff
-	// TODO: Probably don't need to clone `m.mCurrentMap` and instead just track
-	// whether it's the 1-9 or 10 map. Can save a lot of memory not cloning the map
-	// image if memory usage/performance becomes an issue.
-	state.m = structuredClone(m);
+	// Save a bit of memory not deep-copying the map image since it's set to
+	// constant values (either the 1-9 map ref or the 10 map ref)
+	state.m = {
+		...structuredClone(Object.assign({}, m, {
+			mCurrentMap: undefined
+		})),
+		mCurrentMap: m.mCurrentMap
+	};
 
 	// all the other things
 	state.sim = {};
