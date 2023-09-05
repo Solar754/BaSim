@@ -27,11 +27,13 @@ var stateHistory = new function() {
 	const STATE_LIMIT = 1000;
 	this.states = [];
 	this.index = -1;
-	this.pushState = function (state) {
-		this.states.splice(++this.index, Infinity, state);
+	this.pushState = function (...states) {
+		this.states.splice(this.index + 1, Infinity, ...states);
+		this.index += states.length;
 		if (this.states.length > STATE_LIMIT) {
-			this.states.shift();
-			--this.index;
+			const deleteCount = this.states.length - STATE_LIMIT;
+			this.states.splice(0, deleteCount);
+			this.index -= deleteCount;
 		}
 	};
 	this.current = function() {
@@ -52,12 +54,20 @@ var stateHistory = new function() {
 		return this.states[index];
 	};
 	this.backward = function() {
+		if (this.states.length <= 0) {
+			this.index = -1;
+			return undefined;
+		}
 		let index = this.index - 1;
 		if (index < 0) {
-			index = -1;
+			index = 0;
 		}
 		this.index = index;
 		return this.states[index];
+	};
+	this.clear = function() {
+		this.states.length = 0;
+		this.index = -1;
 	};
 };
 
@@ -361,6 +371,7 @@ function simStartStopButtonOnClick() {
 	if (sim.IsRunning) {
 		mResetMap();
 		simReset();
+		stateHistory.clear();
 	} else {
 		let movements = simParseMovementsInput();
 		let runnerSpawns = simParseSpawnsInput(sim.RunnerSpawns);
@@ -2303,7 +2314,10 @@ function simSaveStateOnClick() {
 	console.log("Saving state...");
 	if (!sim.IsPaused)
 		sim.PauseResumeButton.click();
-	window.state = buildSaveState();
+	window.state = {
+		current: stateHistory.latest(),
+		history: [...stateHistory.states]
+	};
 }
 
 function loadSaveState(state) {
@@ -2342,10 +2356,10 @@ function loadSaveState(state) {
 	simMovementsInputWatcher()
 
 	// html
-	if (state == stateHistory.latest()) {
+	if (state == stateHistory.latest() || !stateHistory.latest()) {
 		sim.TickCountSpan.innerHTML = ba.TickCounter;
 	} else {
-		sim.TickCountSpan.innerHTML = `${ba.TickCounter}/${stateHistory.latest().ba.TickCounter}`;
+		sim.TickCountSpan.innerHTML = `${ba.TickCounter} / ${stateHistory.latest().ba.TickCounter}`;
 	}
 	sim.ToggleHealers.checked = sim.EnableHealers;
 	simSetRunning(true);
@@ -2357,5 +2371,11 @@ function loadSaveState(state) {
 }
 
 function simLoadStateOnClick() {
-	loadSaveState(window.state);
+	if (!window.state?.current) {
+		return;
+	}
+
+	stateHistory.clear();
+	stateHistory.pushState(...window.state.history)
+	loadSaveState(window.state.current);
 }
