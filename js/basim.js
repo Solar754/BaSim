@@ -36,10 +36,13 @@ var stateHistory = new function() {
 	};
 	this.current = function() {
 		return this.states[this.index];
-	}
+	};
 	this.peek = function() {
 		return this.states[this.index + 1];
-	}
+	};
+	this.latest = function() {
+		return this.states[this.states.length - 1];
+	};
 	this.forward = function() {
 		let index = this.index + 1;
 		if (index >= this.states.length) {
@@ -2339,7 +2342,11 @@ function loadSaveState(state) {
 	simMovementsInputWatcher()
 
 	// html
-	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	if (state == stateHistory.latest()) {
+		sim.TickCountSpan.innerHTML = ba.TickCounter;
+	} else {
+		sim.TickCountSpan.innerHTML = `${ba.TickCounter}/${stateHistory.latest().ba.TickCounter}`;
+	}
 	sim.ToggleHealers.checked = sim.EnableHealers;
 	simSetRunning(true);
 	simSetPause(true);
