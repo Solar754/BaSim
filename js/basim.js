@@ -23,7 +23,7 @@ const HTML_HEALER_TABLE = "healertable";
 var state = {};
 var markedTiles = [];
 
-var stateHistory = new (function() {
+var stateHistory = new function() {
 	const STATE_LIMIT = 1000;
 	this.states = [];
 	this.index = -1;
@@ -56,7 +56,7 @@ var stateHistory = new (function() {
 		this.index = index;
 		return this.states[index];
 	};
-})();
+};
 
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
