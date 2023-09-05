@@ -23,10 +23,37 @@ const HTML_HEALER_TABLE = "healertable";
 var state = {};
 var markedTiles = [];
 
-var stateHistory = {
-	states: [],
-	index: -1
-}
+var stateHistory = new (function() {
+	const STATE_LIMIT = 1000;
+	this.states = [];
+	this.index = -1;
+	this.pushState = function (state) {
+		this.states.splice(++this.index, Infinity, state);
+		if (this.states.length > STATE_LIMIT) {
+			this.states.shift();
+			--this.index;
+		}
+	};
+	this.current = function() {
+		return this.states[this.index];
+	}
+	this.forward = function() {
+		let index = this.index + 1;
+		if (index >= this.states.length) {
+			index = this.states.length - 1;
+		}
+		this.index = index;
+		return this.states[index];
+	};
+	this.backward = function() {
+		let index = this.index - 1;
+		if (index < 0) {
+			index = -1;
+		}
+		this.index = index;
+		return this.states[index];
+	};
+})();
 
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
@@ -311,13 +338,11 @@ function simStepButtonOnClick() {
 	}
 }
 function simStepBackwardButtonOnClick() {
-	if (stateHistory.index <= 0) {
+	const state = stateHistory.backward();
+	if (!state) {
 		return;
 	}
-	--stateHistory.index;
-	loadSaveState(stateHistory.states[stateHistory.index]);
-	console.log(`state history index: ${stateHistory.index}`);
-	console.log('step backward!');
+	loadSaveState(state);
 }
 
 function simStartStopButtonOnClick() {
@@ -552,13 +577,7 @@ function simTick() {
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
 
-	const stateLimit = 1000;
-	stateHistory.states.splice(++stateHistory.index, Infinity, buildSaveState());
-	if (stateHistory.states.length > stateLimit) {
-		stateHistory.states.shift();
-		--stateHistory.index;
-	}
-	console.log(`state history index: ${stateHistory.index}`);
+	stateHistory.pushState(buildSaveState());
 }
 
 function simDraw() {
