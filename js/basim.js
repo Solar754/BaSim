@@ -37,6 +37,9 @@ var stateHistory = new (function() {
 	this.current = function() {
 		return this.states[this.index];
 	}
+	this.peek = function() {
+		return this.states[this.index + 1];
+	}
 	this.forward = function() {
 		let index = this.index + 1;
 		if (index >= this.states.length) {
@@ -333,7 +336,13 @@ function simPauseResumeButtonOnClick() {
 	}
 }
 function simStepButtonOnClick() {
-	if (sim.IsRunning && sim.IsPaused) {
+	if (!(sim.IsRunning && sim.IsPaused)) {
+		return;
+	}
+
+	if (stateHistory.peek()) {
+		loadSaveState(stateHistory.forward());
+	} else {
 		simTick();
 	}
 }
