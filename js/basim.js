@@ -298,7 +298,7 @@ function simUpdateHealerTable() { // TODO: Save sim state every tick
 	sim.HealerTable.appendChild(tableBody);
 	sim.HealerTable.style.display = "table";
 }
-function simReset() {
+function simReset(clearHistory) {
 	if (sim.IsRunning) {
 		clearInterval(sim.TickTimerId);
 	}
@@ -308,6 +308,9 @@ function simReset() {
 	plInit(-1, 0);
 	simDraw();
 	drawLogs();
+	if (clearHistory) {
+		stateHistory.clear();
+	}
 }
 function simSetRunning(running) {
 	if (running) {
@@ -370,8 +373,7 @@ function simStepBackwardButtonOnClick() {
 function simStartStopButtonOnClick() {
 	if (sim.IsRunning) {
 		mResetMap();
-		simReset();
-		stateHistory.clear();
+		simReset(true);
 	} else {
 		let movements = simParseMovementsInput();
 		let runnerSpawns = simParseSpawnsInput(sim.RunnerSpawns);
@@ -572,16 +574,16 @@ function simWaveSelectOnChange(e) {
 	} else {
 		mInit(mWAVE_1_TO_9, 64, 48);
 	}
-	simReset();
+	simReset(e);
 }
 function simDefLevelSelectOnChange(e) {
 	mResetMap();
-	simReset();
+	simReset(e);
 	ruInit(Number(sim.DefLevelSelect.value));
 }
 function simEnableHealersOnChange(e) {
 	mResetMap();
-	simReset();
+	simReset(e);
 	sim.EnableHealers = sim.ToggleHealers.checked;
 }
 function simEnableRenderOnChange(e) {
