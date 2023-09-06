@@ -15,6 +15,7 @@ src's src: [https://henke96.github.io/BaSim/](https://henke96.github.io/BaSim/)
 - log pickup
 - on the fly movement input updates
 - save states (thanks to mclovin for taking some of the hits for me)
+- step back (fosters)
 - render toggle (thanks b5 and capeshit for the lessons)
 - healer toggle
 - specify which tick healers and runners can spawn on
