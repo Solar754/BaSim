@@ -13,6 +13,7 @@ const HTML_LOAD_BUTTON = "loadstate";
 const HTML_START_BUTTON = "wavestart";
 const HTML_PAUSE_BUTTON = "wavepause";
 const HTML_STEP_BUTTON = "wavestep";
+const HTML_STEP_BACKWARD_BUTTON = "wavestepback";
 const HTML_WAVE_SELECT = "waveselect";
 const HTML_TICK_COUNT = "tickcount";
 const HTML_DEF_LEVEL_SELECT = "deflevelselect";
@@ -21,6 +22,54 @@ const HTML_HEALER_TABLE = "healertable";
 
 var state = {};
 var markedTiles = [];
+
+var stateHistory = new function() {
+	const STATE_LIMIT = 1000;
+	this.states = [];
+	this.index = -1;
+	this.pushState = function (...states) {
+		this.states.splice(this.index + 1, Infinity, ...states);
+		this.index += states.length;
+		if (this.states.length > STATE_LIMIT) {
+			const deleteCount = this.states.length - STATE_LIMIT;
+			this.states.splice(0, deleteCount);
+			this.index -= deleteCount;
+		}
+	};
+	this.current = function() {
+		return this.states[this.index];
+	};
+	this.peek = function() {
+		return this.states[this.index + 1];
+	};
+	this.latest = function() {
+		return this.states[this.states.length - 1];
+	};
+	this.forward = function() {
+		let index = this.index + 1;
+		if (index >= this.states.length) {
+			index = this.states.length - 1;
+		}
+		this.index = index;
+		return this.states[index];
+	};
+	this.backward = function() {
+		if (this.states.length <= 0) {
+			this.index = -1;
+			return undefined;
+		}
+		let index = this.index - 1;
+		if (index < 0) {
+			index = 0;
+		}
+		this.index = index;
+		return this.states[index];
+	};
+	this.clear = function() {
+		this.states.length = 0;
+		this.index = -1;
+	};
+};
 
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
@@ -119,6 +168,8 @@ function simInit() {
 	sim.PauseResumeButton.onclick = simPauseResumeButtonOnClick;
 	sim.StepButton = document.getElementById(HTML_STEP_BUTTON);
 	sim.StepButton.onclick = simStepButtonOnClick;
+	sim.StepBackwardButton = document.getElementById(HTML_STEP_BACKWARD_BUTTON);
+	sim.StepBackwardButton.onclick = simStepBackwardButtonOnClick;
 	sim.WaveSelect = document.getElementById(HTML_WAVE_SELECT);
 	sim.WaveSelect.onchange = simWaveSelectOnChange;
 	sim.DefLevelSelect = document.getElementById(HTML_DEF_LEVEL_SELECT);
@@ -247,7 +298,7 @@ function simUpdateHealerTable() { // TODO: Save sim state every tick
 	sim.HealerTable.appendChild(tableBody);
 	sim.HealerTable.style.display = "table";
 }
-function simReset() {
+function simReset(clearHistory) {
 	if (sim.IsRunning) {
 		clearInterval(sim.TickTimerId);
 	}
@@ -257,6 +308,9 @@ function simReset() {
 	plInit(-1, 0);
 	simDraw();
 	drawLogs();
+	if (clearHistory) {
+		stateHistory.clear();
+	}
 }
 function simSetRunning(running) {
 	if (running) {
@@ -278,10 +332,12 @@ function simSetPause(pause) {
 		sim.IsPaused = true;
 		sim.PauseResumeButton.innerHTML = "Resume";
 		sim.StepButton.style = "display: inline-block";
+		sim.StepBackwardButton.style = "display: inline-block";
 	} else {
 		sim.IsPaused = false;
 		sim.PauseResumeButton.innerHTML = "Pause";
 		sim.StepButton.style = "display: none";
+		sim.StepBackwardButton.style = "display: none";
 	}
 }
 function simPauseResumeButtonOnClick() {
@@ -296,14 +352,28 @@ function simPauseResumeButtonOnClick() {
 	}
 }
 function simStepButtonOnClick() {
-	if (sim.IsRunning && sim.IsPaused) {
+	if (!(sim.IsRunning && sim.IsPaused)) {
+		return;
+	}
+
+	if (stateHistory.peek()) {
+		loadSaveState(stateHistory.forward());
+	} else {
 		simTick();
 	}
 }
+function simStepBackwardButtonOnClick() {
+	const state = stateHistory.backward();
+	if (!state) {
+		return;
+	}
+	loadSaveState(state);
+}
+
 function simStartStopButtonOnClick() {
 	if (sim.IsRunning) {
 		mResetMap();
-		simReset();
+		simReset(true);
 	} else {
 		let movements = simParseMovementsInput();
 		let runnerSpawns = simParseSpawnsInput(sim.RunnerSpawns);
@@ -504,16 +574,16 @@ function simWaveSelectOnChange(e) {
 	} else {
 		mInit(mWAVE_1_TO_9, 64, 48);
 	}
-	simReset();
+	simReset(e);
 }
 function simDefLevelSelectOnChange(e) {
 	mResetMap();
-	simReset();
+	simReset(e);
 	ruInit(Number(sim.DefLevelSelect.value));
 }
 function simEnableHealersOnChange(e) {
 	mResetMap();
-	simReset();
+	simReset(e);
 	sim.EnableHealers = sim.ToggleHealers.checked;
 }
 function simEnableRenderOnChange(e) {
@@ -531,7 +601,10 @@ function simTick() {
 	simDraw();
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
+
+	stateHistory.pushState(buildSaveState());
 }
+
 function simDraw() {
 	mDrawMap();
 	baDrawDetails();
@@ -2203,29 +2276,54 @@ Object.prototype.update = function (obj) {
 	});
 	return this;
 }
-function simSaveStateOnClick() {
-	console.log("Saving state...")
-	if (!sim.IsPaused)
-		sim.PauseResumeButton.click();
 
-	state["ba"] = structuredClone(ba);
-	state["pl"] = structuredClone(pl);
-	state["m"] = structuredClone(m);
+function buildSaveState() {
+	const state = {};
 
-	// ignore DOM elements
-	state["sim"] = {}
-	Object.keys(sim).forEach(obj => {
-		if (sim[obj] instanceof HTMLElement) {
-			state["sim"][obj] = sim[obj];
-		}
-		else {
-			state["sim"][obj] = structuredClone(sim[obj]);
+	// npc stuff
+	state.ba = structuredClone(ba);
+
+	// player stuff
+	state.pl = structuredClone(pl);
+
+	// map stuff
+	// Save a bit of memory not deep-copying the map image since it's set to
+	// constant values (either the 1-9 map ref or the 10 map ref)
+	state.m = {
+		...structuredClone(Object.assign({}, m, {
+			mCurrentMap: undefined
+		})),
+		mCurrentMap: m.mCurrentMap
+	};
+
+	// all the other things
+	state.sim = {};
+	Object.keys(sim).forEach(key => {
+		let simObj = sim[key];
+		if (simObj instanceof HTMLElement) {
+			state.sim[key] = simObj;
+		} else {
+			state.sim[key] = structuredClone(simObj);
 		}
 	});
-	state["sim"]["WaveVal"] = sim.WaveSelect.value;
-	state["sim"]["LevelVal"] = sim.DefLevelSelect.value;
+	state.sim.WaveVal = sim.WaveSelect.value;
+	state.sim.LevelVal = sim.DefLevelSelect.value;
+
+	return state;
 }
-function simLoadStateOnClick() {
+
+function simSaveStateOnClick() {
+	console.log("Saving state...");
+	if (!sim.IsPaused)
+		sim.PauseResumeButton.click();
+	window.state = {
+		current: stateHistory.current(),
+		history: [...stateHistory.states],
+		historyIndex: stateHistory.index
+	};
+}
+
+function loadSaveState(state) {
 	if (Object.keys(state).length === 0) {
 		return;
 	}
@@ -2261,7 +2359,11 @@ function simLoadStateOnClick() {
 	simMovementsInputWatcher()
 
 	// html
-	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	if (state == stateHistory.latest() || !stateHistory.latest()) {
+		sim.TickCountSpan.innerHTML = ba.TickCounter;
+	} else {
+		sim.TickCountSpan.innerHTML = `${ba.TickCounter} / ${stateHistory.latest().ba.TickCounter}`;
+	}
 	sim.ToggleHealers.checked = sim.EnableHealers;
 	simSetRunning(true);
 	simSetPause(true);
@@ -2269,4 +2371,14 @@ function simLoadStateOnClick() {
 	simDraw();
 
 	sim.MarkerMode = document.getElementById(HTML_ENABLE_MARKER).checked;
+}
+
+function simLoadStateOnClick() {
+	if (!window.state?.current) {
+		return;
+	}
+	stateHistory.clear();
+	stateHistory.pushState(...window.state.history)
+	stateHistory.index = window.state.historyIndex;
+	loadSaveState(window.state.current);
 }
