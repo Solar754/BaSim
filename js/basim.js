@@ -2315,8 +2315,9 @@ function simSaveStateOnClick() {
 	if (!sim.IsPaused)
 		sim.PauseResumeButton.click();
 	window.state = {
-		current: stateHistory.latest(),
-		history: [...stateHistory.states]
+		current: stateHistory.current(),
+		history: [...stateHistory.states],
+		historyIndex: stateHistory.index
 	};
 }
 
@@ -2374,8 +2375,8 @@ function simLoadStateOnClick() {
 	if (!window.state?.current) {
 		return;
 	}
-
 	stateHistory.clear();
 	stateHistory.pushState(...window.state.history)
+	stateHistory.index = window.state.historyIndex;
 	loadSaveState(window.state.current);
 }
