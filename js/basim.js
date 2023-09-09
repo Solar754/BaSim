@@ -23,7 +23,7 @@ const HTML_HEALER_TABLE = "healertable";
 var state = {};
 var markedTiles = [];
 
-var stateHistory = new function() {
+var stateHistory = new function () {
 	const STATE_LIMIT = 1000;
 	this.states = [];
 	this.index = -1;
@@ -36,16 +36,16 @@ var stateHistory = new function() {
 			this.index -= deleteCount;
 		}
 	};
-	this.current = function() {
+	this.current = function () {
 		return this.states[this.index];
 	};
-	this.peek = function() {
+	this.peek = function () {
 		return this.states[this.index + 1];
 	};
-	this.latest = function() {
+	this.latest = function () {
 		return this.states[this.states.length - 1];
 	};
-	this.forward = function() {
+	this.forward = function () {
 		let index = this.index + 1;
 		if (index >= this.states.length) {
 			index = this.states.length - 1;
@@ -53,7 +53,7 @@ var stateHistory = new function() {
 		this.index = index;
 		return this.states[index];
 	};
-	this.backward = function() {
+	this.backward = function () {
 		if (this.states.length <= 0) {
 			this.index = -1;
 			return undefined;
@@ -65,7 +65,7 @@ var stateHistory = new function() {
 		this.index = index;
 		return this.states[index];
 	};
-	this.clear = function() {
+	this.clear = function () {
 		this.states.length = 0;
 		this.index = -1;
 	};
@@ -1300,7 +1300,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 	this.id = id;
 	this.chat = "";
 }
-ruRunner.prototype.checkRender = function () {
+ruRunner.prototype.isRendered = function () {
 	if (sim.EnableRender == false || sim.EnableRender == undefined) {
 		return true;
 	}
@@ -1400,10 +1400,7 @@ ruRunner.prototype.doMovement = function () { // TODO: Doesn't consider diagonal
 	}
 }
 ruRunner.prototype.tryTargetFood = function () {
-	let isRendered = this.checkRender();
-	if (isRendered == false &&
-		this.cycleTick >= 2 && this.cycleTick <= 6) {
-		++this.targetState;
+	if (!this.isRendered()) {
 		return;
 	}
 	let xZone = this.x >> 3;
@@ -1546,18 +1543,29 @@ ruRunner.prototype.doTick1 = function () {
 	}
 }
 ruRunner.prototype.doTick2Or5 = function () {
+	if (this.cycleTick == 5) {
+		if (!this.isRendered() && this.targetState !== 0) {
+			++this.targetState;
+		}
+	}
 	if (this.targetState === 2) {
 		this.tryTargetFood();
 	}
 	this.doTick7To10();
 }
 ruRunner.prototype.doTick3 = function () {
+	if (!this.isRendered() && this.targetState !== 0) {
+		++this.targetState;
+	}
 	if (this.targetState === 3) {
 		this.tryTargetFood();
 	}
 	this.doTick7To10();
 }
 ruRunner.prototype.doTick4 = function () {
+	if (!this.isRendered() && this.targetState !== 0) {
+		++this.targetState;
+	}
 	if (this.targetState === 1) {
 		this.tryTargetFood();
 	}
