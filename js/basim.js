@@ -1312,6 +1312,17 @@ ruRunner.prototype.isRendered = function () {
 	}
 	return false;
 }
+ruRunner.prototype.renderUpdateTargetState = function () {
+	if (this.targetState === 0) {
+		return;
+	}
+	if (this.cycleTick >= 3 && this.cycleTick <= 5) {
+		++this.targetState;
+		if (this.targetState > 3) {
+			this.targetState = 1;
+		}
+	}
+}
 ruRunner.prototype.tick = function () {
 	this.chat = "";
 	if (++this.cycleTick > 10) {
@@ -1334,6 +1345,9 @@ ruRunner.prototype.tick = function () {
 		}
 	} else {
 		if (!this.isDying) {
+			if (!this.isRendered()) {
+				this.renderUpdateTargetState();
+			}
 			switch (this.cycleTick) {
 				case 1:
 					this.doTick1();
@@ -1543,29 +1557,18 @@ ruRunner.prototype.doTick1 = function () {
 	}
 }
 ruRunner.prototype.doTick2Or5 = function () {
-	if (this.cycleTick == 5) {
-		if (!this.isRendered() && this.targetState !== 0) {
-			++this.targetState;
-		}
-	}
 	if (this.targetState === 2) {
 		this.tryTargetFood();
 	}
 	this.doTick7To10();
 }
 ruRunner.prototype.doTick3 = function () {
-	if (!this.isRendered() && this.targetState !== 0) {
-		++this.targetState;
-	}
 	if (this.targetState === 3) {
 		this.tryTargetFood();
 	}
 	this.doTick7To10();
 }
 ruRunner.prototype.doTick4 = function () {
-	if (!this.isRendered() && this.targetState !== 0) {
-		++this.targetState;
-	}
 	if (this.targetState === 1) {
 		this.tryTargetFood();
 	}
