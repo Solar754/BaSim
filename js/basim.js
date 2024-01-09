@@ -25,8 +25,11 @@ var state = {};
 var markedTiles = [];
 
 function TickToSecond(tick) {
-	tick = (tick - 1) < 0 ? 0 : tick - 1;
-	return Math.round(tick * 0.6 * 10) / 10;
+	tick = Math.max(tick - 1, 0);
+	let seconds = Math.round(tick * 0.6 * 10) / 10;
+	if (Number.isInteger(seconds))
+		return seconds + ".0";
+	return seconds;
 }
 
 var stateHistory = new function () {
