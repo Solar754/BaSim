@@ -16,12 +16,18 @@ const HTML_STEP_BUTTON = "wavestep";
 const HTML_STEP_BACKWARD_BUTTON = "wavestepback";
 const HTML_WAVE_SELECT = "waveselect";
 const HTML_TICK_COUNT = "tickcount";
+const HTML_SECONDS_COUNT = "secondscount";
 const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 
 var state = {};
 var markedTiles = [];
+
+function TickToSecond(tick) {
+	tick = (tick - 1) < 0 ? 0 : tick - 1;
+	return Math.round(tick * 0.6 * 10) / 10;
+}
 
 var stateHistory = new function () {
 	const STATE_LIMIT = 1000;
@@ -175,6 +181,7 @@ function simInit() {
 	sim.DefLevelSelect = document.getElementById(HTML_DEF_LEVEL_SELECT);
 	sim.DefLevelSelect.onchange = simDefLevelSelectOnChange;
 	sim.TickCountSpan = document.getElementById(HTML_TICK_COUNT);
+	sim.SecondsCountSpan = document.getElementById(HTML_SECONDS_COUNT);
 	sim.RunnerTable = document.getElementById(HTML_RUNNER_TABLE);
 	sim.HealerTable = document.getElementById(HTML_HEALER_TABLE);
 
@@ -629,6 +636,7 @@ var sim = {
 	WaveSelect: undefined,
 	DefLevelSelect: undefined,
 	TickCountSpan: undefined,
+	SecondsCountSpan: undefined,
 	IsRunning: undefined,
 	IsPaused: undefined,
 	ruSniffDistance: undefined,
@@ -1641,6 +1649,7 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
 	pl.RenderArea = [];
 
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
 }
 function baTick() {
 	++ba.TickCounter;
@@ -1717,6 +1726,7 @@ function baTick() {
 		drawLogs();
 	}
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
+	sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
 	simMovementsInputWatcher()
 }
 function baDrawOverlays() {
@@ -2375,6 +2385,7 @@ function loadSaveState(state) {
 	} else {
 		sim.TickCountSpan.innerHTML = `${ba.TickCounter} / ${stateHistory.latest().ba.TickCounter}`;
 	}
+	sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
 	sim.ToggleHealers.checked = sim.EnableHealers;
 	simSetRunning(true);
 	simSetPause(true);
