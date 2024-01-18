@@ -4,9 +4,9 @@ const HTML_CANVAS = "basimcanvas";
 const HTML_RUNNER_MOVEMENTS = "runnermovements";
 const HTML_RUNNER_SPAWNS = "runnerspawns";
 const HTML_HEALER_SPAWNS = "healerspawns";
-const HTML_ENABLE_HEALERS = "enablehealers";
-const HTML_ENABLE_RENDER = "enablerender";
-const HTML_ENABLE_MARKER = "enablemarker";
+const HTML_TOGGLE_HEALERS = "togglehealers";
+const HTML_TOGGLE_RENDER = "togglerender";
+const HTML_TOGGLE_MARKER = "togglemarker";
 const HTML_CLEAR_MARKERS = "clearmarkers";
 const HTML_SAVE_BUTTON = "savestate";
 const HTML_LOAD_BUTTON = "loadstate";
@@ -180,17 +180,17 @@ function simInit() {
 	sim.WaveSelect.onchange = simWaveSelectOnChange;
 	sim.DefLevelSelect = document.getElementById(HTML_DEF_LEVEL_SELECT);
 	sim.DefLevelSelect.onchange = simDefLevelSelectOnChange;
+	sim.ToggleHealers = document.getElementById(HTML_TOGGLE_HEALERS);
+	sim.ToggleHealers.onchange = simToggleHealersOnChange;
+	sim.ToggleRender = document.getElementById(HTML_TOGGLE_RENDER);
+	sim.ToggleRender.onchange = simToggleRenderOnChange;
+
 	sim.TickCountSpan = document.getElementById(HTML_TICK_COUNT);
 	sim.SecondsCountSpan = document.getElementById(HTML_SECONDS_COUNT);
 	sim.RunnerTable = document.getElementById(HTML_RUNNER_TABLE);
 	sim.HealerTable = document.getElementById(HTML_HEALER_TABLE);
 
-	sim.ToggleHealers = document.getElementById(HTML_ENABLE_HEALERS);
-	sim.ToggleHealers.onchange = simEnableHealersOnChange;
-	sim.ToggleRender = document.getElementById(HTML_ENABLE_RENDER);
-	sim.ToggleRender.onchange = simEnableRenderOnChange;
-
-	let MarkerEvent = document.getElementById(HTML_ENABLE_MARKER);
+	let MarkerEvent = document.getElementById(HTML_TOGGLE_MARKER);
 	MarkerEvent.onchange = (e) => { sim.MarkerMode = MarkerEvent.checked; }
 	sim.ClearMarkers = document.getElementById(HTML_CLEAR_MARKERS);
 	sim.ClearMarkers.onclick = simClearMarkersOnClick;
@@ -588,13 +588,11 @@ function simDefLevelSelectOnChange(e) {
 	simReset(e);
 	ruInit(Number(sim.DefLevelSelect.value));
 }
-function simEnableHealersOnChange(e) {
+function simToggleHealersOnChange(e) {
 	mResetMap();
 	simReset(e);
-	sim.EnableHealers = sim.ToggleHealers.checked;
 }
-function simEnableRenderOnChange(e) {
-	sim.EnableRender = sim.ToggleRender.checked;
+function simToggleRenderOnChange(e) {
 	simDraw();
 }
 function simClearMarkersOnClick(e) {
@@ -646,9 +644,7 @@ var sim = {
 	HealerTableBody: undefined, // unused
 	CurrentFoodId: undefined,
 	ToggleHealers: undefined,
-	EnableHealers: undefined,
 	ToggleRender: undefined,
-	EnableRender: undefined,
 	MarkerMode: false,
 	ClearMarkers: undefined
 }
@@ -718,7 +714,7 @@ function plDrawPlayer() {
 		else rSetDrawColor(180, 180, 180, 200);
 		rrFill(pl.X, pl.Y);
 	}
-	if (sim.EnableRender) {
+	if (sim.ToggleRender.checked) {
 		pl.RenderArea = [];
 		plDrawRender(pl);
 		plDrawRender({ X: ba.CollectorX, Y: ba.CollectorY });
@@ -1309,7 +1305,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 	this.chat = "";
 }
 ruRunner.prototype.isRendered = function () {
-	if (sim.EnableRender == false || sim.EnableRender == undefined) {
+	if (!sim.ToggleRender.checked) {
 		return true;
 	}
 	for (let i = 0; i < pl.RenderArea.length; ++i) {
@@ -1680,7 +1676,7 @@ function baTick() {
 			}
 			++ba.RunnersAlive;
 		}
-		if (sim.EnableHealers && ba.Healerspawns.length === 0) {
+		if (sim.ToggleHealers.checked && ba.Healerspawns.length === 0) {
 			if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
 				if (m.mCurrentMap === mWAVE_1_TO_9) {
 					ba.Healers.push(new heHealer(baWAVE1_NPC_HEALER_SPAWN_X, baWAVE1_NPC_HEALER_SPAWN_Y, ba.CurrentHealerId++));
@@ -1709,7 +1705,7 @@ function baTick() {
 			++ba.RunnerspawnsIndex;
 		}
 	}
-	if (sim.EnableHealers && ba.Healerspawns.length > 0) {
+	if (sim.ToggleHealers.checked && ba.Healerspawns.length > 0) {
 		if (ba.Healerspawns[ba.HealerspawnsIndex] === ba.TickCounter) {
 			if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
 				if (m.mCurrentMap === mWAVE_1_TO_9) {
@@ -2289,7 +2285,7 @@ var rr = {
 }
 //}
 
-/* save, load code*/
+/*save, load code*/
 // populate dummy instance with saved values
 Object.prototype.update = function (obj) {
 	Object.keys(obj).forEach((key) => {
@@ -2329,7 +2325,7 @@ function buildSaveState() {
 	});
 	state.sim.WaveVal = sim.WaveSelect.value;
 	state.sim.LevelVal = sim.DefLevelSelect.value;
-
+	state.sim.HealerToggle = sim.ToggleHealers.checked;
 	return state;
 }
 
@@ -2354,6 +2350,7 @@ function loadSaveState(state) {
 	simDefLevelSelectOnChange();
 	sim.WaveSelect.value = state["sim"].WaveVal;
 	simWaveSelectOnChange();
+	sim.ToggleHealers.checked = state["sim"].HealerToggle;
 
 	ba = structuredClone(state["ba"]);
 	pl = structuredClone(state["pl"]);
@@ -2386,13 +2383,12 @@ function loadSaveState(state) {
 		sim.TickCountSpan.innerHTML = `${ba.TickCounter} / ${stateHistory.latest().ba.TickCounter}`;
 	}
 	sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
-	sim.ToggleHealers.checked = sim.EnableHealers;
 	simSetRunning(true);
 	simSetPause(true);
-	simEnableRenderOnChange();
+	simToggleRenderOnChange();
 	simDraw();
 
-	sim.MarkerMode = document.getElementById(HTML_ENABLE_MARKER).checked;
+	sim.MarkerMode = document.getElementById(HTML_TOGGLE_MARKER).checked;
 }
 
 function simLoadStateOnClick() {
