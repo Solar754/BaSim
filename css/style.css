@@ -1,0 +1,55 @@
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 2px 4px;
+}
+
+th:last-child {
+    width: 8em;
+}
+
+td {
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    height: 200px;
+    margin: auto;
+}
+
+.one {
+    height: 200px;
+    float: left;
+    padding-right: 1rem;
+}
+
+.one>ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.two {
+    height: 200px;
+}
+
+.ripple {
+    width: 12px;
+    height: 12px;
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+    animation: "ripple-effect";
+    animation-delay: 0s;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+}
+
+@keyframes ripple-effect {}

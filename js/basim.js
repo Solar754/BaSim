@@ -574,6 +574,7 @@ function simCanvasOnMouseDown(e) {
 			ba.CollectorTargetY = yTile;
 		}
 	}
+	rDrawYellowClick(e);
 }
 function simWaveSelectOnChange(e) {
 	if (sim.WaveSelect.value === "10") {
@@ -2267,6 +2268,29 @@ function rDrawCone(x, y, width) { // Not optimised to use i yet
 }
 function rXYToI(x, y) {
 	return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;
+}
+function rDrawYellowClick(e) {
+	const DURATION = 500; // ms
+	function clearGif(gif) {
+		gif.src = "";
+		document.body.removeChild(gif);
+	}
+	let collection = document.getElementsByClassName("ripple");
+	for (let ele of collection) {
+		clearGif(ele);
+	}
+	let yellowClick = document.createElement("img");
+	yellowClick.className = "ripple";
+	yellowClick.src = "css/yellow_click.gif";
+	document.body.appendChild(yellowClick);
+	yellowClick.style.left = `${e.clientX - 6}px`;
+	yellowClick.style.top = `${e.clientY - 6}px`;
+	yellowClick.style.animationDuration = `${DURATION}ms`;
+	setTimeout(() => {
+		try {
+			clearGif(yellowClick);
+		} catch (err) { }
+	}, DURATION)
 }
 var rr = {
 	Canvas: undefined,
