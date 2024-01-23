@@ -2270,7 +2270,7 @@ function rXYToI(x, y) {
 	return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;
 }
 function rDrawYellowClick(e) {
-	const DURATION = 500; // ms
+	const DURATION = 540; // ms
 	function clearGif(gif) {
 		gif.src = "";
 		document.body.removeChild(gif);
