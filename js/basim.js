@@ -314,7 +314,7 @@ function simReset(clearHistory) {
 	baInit(0, 0, "");
 	plInit(-1, 0);
 	simDraw();
-	drawLogs();
+	mDrawLogs();
 	if (clearHistory) {
 		stateHistory.clear();
 	}
@@ -574,7 +574,29 @@ function simCanvasOnMouseDown(e) {
 			ba.CollectorTargetY = yTile;
 		}
 	}
-	rDrawYellowClick(e);
+	simDrawYellowClick(e);
+}
+function simDrawYellowClick(e) {
+	const DURATION = 540; // ms
+	function clearGif(gif) {
+		gif.src = "";
+		document.body.removeChild(gif);
+	}
+	let collection = document.getElementsByClassName("ripple");
+	for (let ele of collection) {
+		clearGif(ele);
+	}
+	let yellowClick = document.createElement("img");
+	yellowClick.className = "ripple";
+	yellowClick.src = "css/yellow_click.gif";
+	document.body.appendChild(yellowClick);
+	yellowClick.style.left = `${e.clientX - 6}px`;
+	yellowClick.style.top = `${e.clientY - 6}px`;
+	setTimeout(() => {
+		try {
+			clearGif(yellowClick);
+		} catch (err) { }
+	}, DURATION)
 }
 function simWaveSelectOnChange(e) {
 	if (sim.WaveSelect.value === "10") {
@@ -1720,7 +1742,7 @@ function baTick() {
 		}
 	}
 	if (ba.TickCounter > 1 && ba.TickCounter % 10 === 1) {
-		drawLogs();
+		mDrawLogs();
 	}
 	sim.TickCountSpan.innerHTML = ba.TickCounter;
 	sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
@@ -1960,7 +1982,7 @@ function mDrawItems() {
 		}
 	}
 }
-function drawLogs() {
+function mDrawLogs() {
 	let logZone = mGetItemZone(28 >>> 3, 39 >>> 3);
 	logZone = logZone.filter(item => item.logType !== undefined);
 
@@ -2269,28 +2291,15 @@ function rDrawCone(x, y, width) { // Not optimised to use i yet
 function rXYToI(x, y) {
 	return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;
 }
-function rDrawYellowClick(e) {
-	const DURATION = 540; // ms
-	function clearGif(gif) {
-		gif.src = "";
-		document.body.removeChild(gif);
-	}
-	let collection = document.getElementsByClassName("ripple");
-	for (let ele of collection) {
-		clearGif(ele);
-	}
-	let yellowClick = document.createElement("img");
-	yellowClick.className = "ripple";
-	yellowClick.src = "css/yellow_click.gif";
-	document.body.appendChild(yellowClick);
-	yellowClick.style.left = `${e.clientX - 6}px`;
-	yellowClick.style.top = `${e.clientY - 6}px`;
-	yellowClick.style.animationDuration = `${DURATION}ms`;
-	setTimeout(() => {
-		try {
-			clearGif(yellowClick);
-		} catch (err) { }
-	}, DURATION)
+function rXtoPx(xTile) { // top left
+	var canvasRect = rr.Canvas.getBoundingClientRect();
+	let xPixel = (xTile * rrTileSize) + canvasRect.left;
+	return xPixel;
+}
+function rYtoPx(yTile) { // bottom right
+	var canvasRect = rr.Canvas.getBoundingClientRect();
+	let yPixel = canvasRect.bottom - 1 - (yTile * rrTileSize);
+	return yPixel;
 }
 var rr = {
 	Canvas: undefined,
