@@ -54,7 +54,7 @@ function oDrawYellowClick(e) {
         try {
             clearGif(yellowClick);
         } catch (err) { }
-    }, DURATION)
+    }, DURATION);
 }
 
 function oXTiletoPx(xTile) { // top left

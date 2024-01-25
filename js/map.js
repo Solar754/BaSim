@@ -107,7 +107,6 @@ function mDrawLogs() {
         else
             mAddItem(new lLog(baWAVE10_SOUTH_LOG_X, baWAVE10_SOUTH_LOG_Y, "South", ++sim.CurrentFoodId));
     }
-
 }
 function mDrawMap() {
     rSetDrawColor(206, 183, 117, 255);

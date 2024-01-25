@@ -134,21 +134,15 @@ function baTick() {
     // spawns
     let isDefaultCycle = (ba.TickCounter > 1 && ba.TickCounter % 10 === 1);
     if (ba.RunnersAlive < ba.MaxRunnersAlive && ba.RunnersKilled + ba.RunnersAlive < ba.TotalRunners) {
-        if (ba.Runnerspawns.length === 0 && isDefaultCycle) {
+        if ((ba.Runnerspawns.length === 0 && isDefaultCycle) ||
+            (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerSpawnsIndex] === ba.TickCounter)) {
             baSpawnRunner();
-        }
-        else if (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerSpawnsIndex] === ba.TickCounter) {
-            baSpawnRunner();
-            ++ba.RunnerSpawnsIndex;
         }
     }
     if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
-        if (ba.HealerSpawns.length === 0 && isDefaultCycle) {
+        if ((ba.HealerSpawns.length === 0 && isDefaultCycle) ||
+            (ba.HealerSpawns.length > 0 && ba.HealerSpawns[ba.HealerSpawnsIndex] === ba.TickCounter)) {
             baSpawnHealer();
-        }
-        else if (ba.HealerSpawns.length > 0 && ba.HealerSpawns[ba.HealerSpawnsIndex] === ba.TickCounter) {
-            baSpawnHealer();
-            ++ba.HealerSpawnsIndex;
         }
     }
     if (isDefaultCycle) {
@@ -169,6 +163,7 @@ function baSpawnRunner() {
     let ySpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_RUNNER_SPAWN_Y : baWAVE10_RUNNER_SPAWN_Y;
     ba.Runners.push(new ruRunner(xSpawn, ySpawn, new rngRunnerRNG(movements), false, ba.CurrentRunnerId++));
     ++ba.RunnersAlive;
+    ++ba.RunnerSpawnsIndex;
 }
 function baSpawnHealer() {
     if (!sim.ToggleHealers.checked) {
@@ -178,6 +173,7 @@ function baSpawnHealer() {
     let ySpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_NPC_HEALER_SPAWN_Y : baWAVE10_NPC_HEALER_SPAWN_Y;
     ba.Healers.push(new heHealer(xSpawn, ySpawn, ba.CurrentHealerId++));
     ++ba.HealersAlive;
+    ++ba.HealerSpawnsIndex;
 }
 function baDrawOverlays() {
     if (m.mCurrentMap !== mWAVE_1_TO_9 && m.mCurrentMap !== mWAVE10) {
