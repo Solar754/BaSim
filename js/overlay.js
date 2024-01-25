@@ -68,7 +68,7 @@ function oYTiletoPx(yTile) { // bottom right
 
 //}
 /*
-misc 
+misc notes
 -- adding text next to a dropped food (mDrawItems)
 
 if (item.isGood === true) {

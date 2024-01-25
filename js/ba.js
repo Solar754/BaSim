@@ -44,7 +44,7 @@ const baWAVE1_COLLECTOR_SPAWN_Y = 8;
 const baWAVE10_COLLECTOR_SPAWN_X = 32;
 const baWAVE10_COLLECTOR_SPAWN_Y = 8;
 
-function TickToSecond(tick) {
+function tickToSecond(tick) {
     tick = Math.max(tick - 1, 0);
     return (tick * 0.6).toFixed(1);
 }
@@ -115,7 +115,7 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
     pl.RenderArea = [];
 
     sim.TickCountSpan.innerHTML = ba.TickCounter;
-    sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
+    sim.SecondsCountSpan.innerHTML = tickToSecond(ba.TickCounter);
 }
 function baTick() {
     ++ba.TickCounter;
@@ -131,69 +131,53 @@ function baTick() {
         let index = ba.Runners.indexOf(runner);
         ba.Runners.splice(index, 1);
     }
-    if (ba.TickCounter > 1 && ba.TickCounter % 10 === 1) {
-        if (ba.RunnersAlive < ba.MaxRunnersAlive && ba.RunnersKilled + ba.RunnersAlive < ba.TotalRunners && ba.Runnerspawns.length === 0) {
-            let movements;
-            if (ba.RunnerMovements.length > ba.RunnerMovementsIndex) {
-                movements = ba.RunnerMovements[ba.RunnerMovementsIndex++];
-            } else {
-                movements = "";
-            }
-            if (m.mCurrentMap === mWAVE_1_TO_9) {
-                ba.Runners.push(new ruRunner(baWAVE1_RUNNER_SPAWN_X, baWAVE1_RUNNER_SPAWN_Y, new rngRunnerRNG(movements), false, ba.CurrentRunnerId++));
-            } else {
-                ba.Runners.push(new ruRunner(baWAVE10_RUNNER_SPAWN_X, baWAVE10_RUNNER_SPAWN_Y, new rngRunnerRNG(movements), true, ba.CurrentRunnerId++));
-            }
-            ++ba.RunnersAlive;
+    // spawns
+    let isDefaultCycle = (ba.TickCounter > 1 && ba.TickCounter % 10 === 1);
+    if (ba.RunnersAlive < ba.MaxRunnersAlive && ba.RunnersKilled + ba.RunnersAlive < ba.TotalRunners) {
+        if (ba.Runnerspawns.length === 0 && isDefaultCycle) {
+            baSpawnRunner();
         }
-        if (sim.ToggleHealers.checked && ba.Healerspawns.length === 0) {
-            if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
-                if (m.mCurrentMap === mWAVE_1_TO_9) {
-                    ba.Healers.push(new heHealer(baWAVE1_NPC_HEALER_SPAWN_X, baWAVE1_NPC_HEALER_SPAWN_Y, ba.CurrentHealerId++));
-                } else {
-                    ba.Healers.push(new heHealer(baWAVE10_NPC_HEALER_SPAWN_X, baWAVE10_NPC_HEALER_SPAWN_Y, ba.CurrentHealerId++));
-                }
-                ++ba.HealersAlive;
-            }
-        }
-    }
-    // custom spawn times
-    if (ba.RunnersAlive < ba.MaxRunnersAlive && ba.RunnersKilled + ba.RunnersAlive < ba.TotalRunners && ba.Runnerspawns.length > 0) {
-        if (ba.Runnerspawns[ba.RunnerspawnsIndex] === ba.TickCounter) {
-            let movements;
-            if (ba.RunnerMovements.length > ba.RunnerMovementsIndex) {
-                movements = ba.RunnerMovements[ba.RunnerMovementsIndex++];
-            } else {
-                movements = "";
-            }
-            if (m.mCurrentMap === mWAVE_1_TO_9) {
-                ba.Runners.push(new ruRunner(baWAVE1_RUNNER_SPAWN_X, baWAVE1_RUNNER_SPAWN_Y, new rngRunnerRNG(movements), false, ba.CurrentRunnerId++));
-            } else {
-                ba.Runners.push(new ruRunner(baWAVE10_RUNNER_SPAWN_X, baWAVE10_RUNNER_SPAWN_Y, new rngRunnerRNG(movements), true, ba.CurrentRunnerId++));
-            }
-            ++ba.RunnersAlive;
+        else if (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerspawnsIndex] === ba.TickCounter) {
+            baSpawnRunner();
             ++ba.RunnerspawnsIndex;
         }
     }
-    if (sim.ToggleHealers.checked && ba.Healerspawns.length > 0) {
-        if (ba.Healerspawns[ba.HealerspawnsIndex] === ba.TickCounter) {
-            if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
-                if (m.mCurrentMap === mWAVE_1_TO_9) {
-                    ba.Healers.push(new heHealer(baWAVE1_NPC_HEALER_SPAWN_X, baWAVE1_NPC_HEALER_SPAWN_Y, ba.CurrentHealerId++));
-                } else {
-                    ba.Healers.push(new heHealer(baWAVE10_NPC_HEALER_SPAWN_X, baWAVE10_NPC_HEALER_SPAWN_Y, ba.CurrentHealerId++));
-                }
-                ++ba.HealersAlive;
-                ++ba.HealerspawnsIndex;
-            }
+    if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
+        if (ba.Healerspawns.length === 0 && isDefaultCycle) {
+            baSpawnHealer();
+        }
+        else if (ba.Healerspawns.length > 0 && ba.Healerspawns[ba.HealerspawnsIndex] === ba.TickCounter) {
+            baSpawnHealer();
+            ++ba.HealerspawnsIndex;
         }
     }
-    if (ba.TickCounter > 1 && ba.TickCounter % 10 === 1) {
+    if (isDefaultCycle) {
         mDrawLogs();
     }
     sim.TickCountSpan.innerHTML = ba.TickCounter;
-    sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
+    sim.SecondsCountSpan.innerHTML = tickToSecond(ba.TickCounter);
     simMovementsInputWatcher()
+}
+function baSpawnRunner() {
+    let movements;
+    if (ba.RunnerMovements.length > ba.RunnerMovementsIndex) {
+        movements = ba.RunnerMovements[ba.RunnerMovementsIndex++];
+    } else {
+        movements = "";
+    }
+    let xSpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_RUNNER_SPAWN_X : baWAVE10_RUNNER_SPAWN_X;
+    let ySpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_RUNNER_SPAWN_Y : baWAVE10_RUNNER_SPAWN_Y;
+    ba.Runners.push(new ruRunner(xSpawn, ySpawn, new rngRunnerRNG(movements), false, ba.CurrentRunnerId++));
+    ++ba.RunnersAlive;
+}
+function baSpawnHealer() {
+    if (!sim.ToggleHealers.checked) {
+        return;
+    }
+    let xSpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_NPC_HEALER_SPAWN_X : baWAVE10_NPC_HEALER_SPAWN_X;
+    let ySpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_NPC_HEALER_SPAWN_Y : baWAVE10_NPC_HEALER_SPAWN_Y;
+    ba.Healers.push(new heHealer(xSpawn, ySpawn, ba.CurrentHealerId++));
+    ++ba.HealersAlive;
 }
 function baDrawOverlays() {
     if (m.mCurrentMap !== mWAVE_1_TO_9 && m.mCurrentMap !== mWAVE10) {

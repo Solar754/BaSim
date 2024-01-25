@@ -136,7 +136,7 @@ function loadSaveState(state) {
     } else {
         sim.TickCountSpan.innerHTML = `${ba.TickCounter} / ${stateHistory.latest().ba.TickCounter}`;
     }
-    sim.SecondsCountSpan.innerHTML = TickToSecond(ba.TickCounter);
+    sim.SecondsCountSpan.innerHTML = tickToSecond(ba.TickCounter);
     simSetRunning(true);
     simSetPause(true);
     simToggleRenderOnChange();

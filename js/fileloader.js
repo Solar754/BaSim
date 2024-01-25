@@ -9,11 +9,10 @@ let files = [
     "healer.js",
     "renderer.js",
     "rsrenderer.js",
-    "simstate.js",
     "item.js",
-    "overlay.js"
+    "overlay.js",
+    "simstate.js"
 ];
-
 for (let file of files) {
     let my_awesome_script = document.createElement('script');
     my_awesome_script.setAttribute('src', './js/' + file);

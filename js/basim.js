@@ -1,3 +1,6 @@
+/*
+* Main controller, manage user actions
+*/
 'use strict';
 
 const HTML_CANVAS = "basimcanvas";
