@@ -59,7 +59,7 @@ var ba = {
     TotalRunners: undefined,
     MaxRunnersAlive: undefined,
     Runnerspawns: undefined,
-    RunnerspawnsIndex: undefined,
+    RunnerSpawnsIndex: undefined,
     RunnerMovements: undefined,
     RunnerMovementsIndex: undefined,
     Healers: undefined,
@@ -67,8 +67,8 @@ var ba = {
     HealersKilled: undefined,
     TotalHealers: undefined,
     MaxHealersAlive: undefined,
-    Healerspawns: undefined,
-    HealerspawnsIndex: undefined,
+    HealerSpawns: undefined,
+    HealerSpawnsIndex: undefined,
     Players: undefined, // unused
     CollectorX: undefined,
     CollectorY: undefined,
@@ -80,11 +80,11 @@ var ba = {
     EastTrapCharges: undefined,
     WestTrapCharges: undefined
 }
-function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, runnerMovements, runnerSpawns, healerSpawns) {
+function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, runnerMovements, runnerSpawns, HealerSpawns) {
     ba.Runners = [];
     ba.RunnersToRemove = [];
     ba.Runnerspawns = runnerSpawns;
-    ba.RunnerspawnsIndex = 0;
+    ba.RunnerSpawnsIndex = 0;
     ba.RunnersAlive = 0;
     ba.RunnersKilled = 0;
     ba.HealersAlive = 0;
@@ -97,8 +97,8 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
     ba.RunnerMovementsIndex = 0;
 
     ba.Healers = [];
-    ba.Healerspawns = healerSpawns;
-    ba.HealerspawnsIndex = 0;
+    ba.HealerSpawns = HealerSpawns;
+    ba.HealerSpawnsIndex = 0;
 
     ba.TickCounter = 0;
     ba.CollectorX = -1;
@@ -137,18 +137,18 @@ function baTick() {
         if (ba.Runnerspawns.length === 0 && isDefaultCycle) {
             baSpawnRunner();
         }
-        else if (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerspawnsIndex] === ba.TickCounter) {
+        else if (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerSpawnsIndex] === ba.TickCounter) {
             baSpawnRunner();
-            ++ba.RunnerspawnsIndex;
+            ++ba.RunnerSpawnsIndex;
         }
     }
     if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
-        if (ba.Healerspawns.length === 0 && isDefaultCycle) {
+        if (ba.HealerSpawns.length === 0 && isDefaultCycle) {
             baSpawnHealer();
         }
-        else if (ba.Healerspawns.length > 0 && ba.Healerspawns[ba.HealerspawnsIndex] === ba.TickCounter) {
+        else if (ba.HealerSpawns.length > 0 && ba.HealerSpawns[ba.HealerSpawnsIndex] === ba.TickCounter) {
             baSpawnHealer();
-            ++ba.HealerspawnsIndex;
+            ++ba.HealerSpawnsIndex;
         }
     }
     if (isDefaultCycle) {
