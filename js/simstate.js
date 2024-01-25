@@ -1,3 +1,6 @@
+/*
+* Manage saved states, process loading stored state
+*/
 var state = {};
 
 var stateHistory = new function () {
@@ -48,7 +51,6 @@ var stateHistory = new function () {
     };
 };
 
-/*save, load code*/
 // populate dummy instance with saved values
 Object.prototype.update = function (obj) {
     Object.keys(obj).forEach((key) => {

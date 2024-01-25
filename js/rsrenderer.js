@@ -1,3 +1,6 @@
+/*
+* Generic draw methods 
+*/
 //{ RsRenderer - rr
 function rrInit(tileSize) {
     rrTileSize = tileSize;

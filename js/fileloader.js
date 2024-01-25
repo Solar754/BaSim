@@ -1,3 +1,6 @@
+/*
+* Add new scripts here
+*/
 let files = [
     "ba.js",
     "map.js",
@@ -7,7 +10,8 @@ let files = [
     "renderer.js",
     "rsrenderer.js",
     "simstate.js",
-    "item.js"
+    "item.js",
+    "overlay.js"
 ];
 
 for (let file of files) {

@@ -1,3 +1,7 @@
+/*
+* Base per-tick logic and behavior
+* Draws ba map details
+*/
 //{ BaArena - ba
 const baWEST_TRAP_X = 15;
 const baWEST_TRAP_Y = 25;
@@ -280,15 +284,6 @@ function baDrawEntities() {
     if (ba.CollectorX !== -1) { // draw coll
         rSetDrawColor(240, 240, 10, 200);
         rrFill(ba.CollectorX, ba.CollectorY);
-    }
-}
-function baDrawMarkedTiles() {
-    let markedTilesArr = [...markedTiles].map(JSON.parse);
-    rSetDrawColor(0, 0, 0, 255);
-    for (let i of markedTilesArr) {
-        let xTile = i[0].toString();
-        let yTile = i[1].toString();
-        rrOutline(xTile, yTile);
     }
 }
 function baIsNearWestTrap(x, y) {

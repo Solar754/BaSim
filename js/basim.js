@@ -21,8 +21,6 @@ const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 
-var markedTiles = [];
-
 window.onload = simInit;
 
 //{ Simulation - sim
@@ -77,9 +75,7 @@ function simInit() {
 	sim.ClearMarkers = document.getElementById(HTML_CLEAR_MARKERS);
 	sim.ClearMarkers.onclick = simClearMarkersOnClick;
 
-	markedTiles = localStorage.getItem("baTiles");
-	if (markedTiles == null) markedTiles = [];
-	else markedTiles = JSON.parse(markedTiles);
+	markedTiles.fetch();
 
 	sim.SaveState = document.getElementById(HTML_SAVE_BUTTON);
 	sim.SaveState.onclick = simSaveStateOnClick;
@@ -434,19 +430,14 @@ function simCanvasOnMouseDown(e) {
 	let yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
 	if (sim.MarkerMode) {
 		if (e.button === 0) {
-			let strTileTuple = JSON.stringify([xTile, yTile]);
-			if (markedTiles.includes(strTileTuple)) {
-				markedTiles = markedTiles.filter(e => e !== strTileTuple);
-			} else {
-				markedTiles.push(strTileTuple);
-			}
-			localStorage.setItem("baTiles", JSON.stringify(markedTiles));
+			markedTiles.push(xTile, yTile);
 			simDraw();
 		}
 	}
 	else if (e.button === 0 && pl.RepairCountdown === 0) {
 		pl.ShouldPickupFood = false;
 		plPathfind(xTile, yTile);
+		oDrawYellowClick(e);
 	} else if (e.button === 2) {
 		if (xTile === ba.CollectorX && yTile === ba.CollectorY) {
 			ba.CollectorTargetX = -1;
@@ -455,30 +446,8 @@ function simCanvasOnMouseDown(e) {
 			ba.CollectorTargetX = xTile;
 			ba.CollectorTargetY = yTile;
 		}
+		oDrawYellowClick(e);
 	}
-	simDrawYellowClick(e);
-}
-function simDrawYellowClick(e) {
-	const DURATION = 540; // ms
-	function clearGif(gif) {
-		gif.src = "";
-		document.body.removeChild(gif);
-	}
-	let collection = document.getElementsByClassName("ripple");
-	for (let ele of collection) {
-		clearGif(ele);
-	}
-	let yellowClick = document.createElement("img");
-	yellowClick.className = "ripple";
-	yellowClick.src = "css/yellow_click.gif";
-	document.body.appendChild(yellowClick);
-	yellowClick.style.left = `${e.clientX - 6}px`;
-	yellowClick.style.top = `${e.clientY - 6}px`;
-	setTimeout(() => {
-		try {
-			clearGif(yellowClick);
-		} catch (err) { }
-	}, DURATION)
 }
 function simWaveSelectOnChange(e) {
 	if (sim.WaveSelect.value === "10") {
@@ -501,8 +470,7 @@ function simToggleRenderOnChange(e) {
 	simDraw();
 }
 function simClearMarkersOnClick(e) {
-	markedTiles = [];
-	localStorage.removeItem("baTiles");
+	markedTiles.clear();
 	simDraw();
 }
 function simSaveStateOnClick() {
@@ -540,7 +508,7 @@ function simDraw() {
 	plDrawPlayer();
 	mDrawGrid();
 	baDrawOverlays();
-	baDrawMarkedTiles();
+	markedTiles.draw();
 	rPresent();
 }
 var sim = {

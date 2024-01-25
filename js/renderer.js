@@ -1,3 +1,6 @@
+/*
+* Render (pending drawn) updates to canvas
+*/
 //{ Renderer - r
 const rPIXEL_ALPHA = 255 << 24;
 
@@ -98,16 +101,6 @@ function rDrawCone(x, y, width) { // Not optimised to use i yet
 }
 function rXYToI(x, y) {
     return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;
-}
-function rXtoPx(xTile) { // top left
-    var canvasRect = rr.Canvas.getBoundingClientRect();
-    let xPixel = (xTile * rrTileSize) + canvasRect.left;
-    return xPixel;
-}
-function rYtoPx(yTile) { // bottom right
-    var canvasRect = rr.Canvas.getBoundingClientRect();
-    let yPixel = canvasRect.bottom - 1 - (yTile * rrTileSize);
-    return yPixel;
 }
 var rr = {
     Canvas: undefined,
