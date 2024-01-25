@@ -265,12 +265,12 @@ function simStartStopButtonOnClick() {
 	} else {
 		let movements = simParseMovementsInput();
 		let runnerSpawns = simParseSpawnsInput(sim.RunnerSpawns);
-		let HealerSpawns = simParseSpawnsInput(sim.HealerSpawns);
+		let healerSpawns = simParseSpawnsInput(sim.HealerSpawns);
 		if (movements === null) {
 			alert("Invalid runner movements. Example: ws-s");
 			return;
 		}
-		if (runnerSpawns === null || HealerSpawns === null) {
+		if (runnerSpawns === null || healerSpawns === null) {
 			alert("Invalid spawn intervals. Example: 11,21,31");
 			return;
 		}
@@ -338,7 +338,7 @@ function simStartStopButtonOnClick() {
 				totalHealers = 8;
 				break;
 		}
-		baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, movements, runnerSpawns, HealerSpawns);
+		baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, movements, runnerSpawns, healerSpawns);
 		if (m.mCurrentMap === mWAVE10) {
 			plInit(baWAVE10_DEFENDER_SPAWN_X, baWAVE10_DEFENDER_SPAWN_Y);
 			//			plInit(baWAVE10_MAIN_SPAWN_X, baWAVE10_MAIN_SPAWN_Y);
