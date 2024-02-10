@@ -24,7 +24,7 @@ const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 const HTML_TOGGLE_TEAM = 'toggleteam';
-const HTML_TOGGLE_COLCMD = 'togglecolcmd';
+// ["togglemaincmd", "togglesecondcmd", "togglehealcmd", "togglecolcmd"]
 
 window.onload = simInit;
 
@@ -89,7 +89,10 @@ function simInit() {
 
 	sim.SpawnTeam = document.getElementById(HTML_TOGGLE_TEAM);
 	sim.SpawnTeam.onchange = simToggleTeamOnClick;
-	sim.ToggleColCmd = document.getElementById(HTML_TOGGLE_COLCMD);
+
+	let allRoleMarkers = document.getElementsByName("rolemarker");
+	allRoleMarkers.forEach(m => m.onclick = simToggleOnlyOneRoleMarker);
+
 	let clearCmds = document.getElementsByClassName("clearcmds")
 	for (let ele of clearCmds) {
 		ele.onclick = cmdClearPath;
@@ -437,9 +440,20 @@ function simCanvasOnMouseDown(e) {
 	let xTile = Math.trunc((e.clientX - canvasRect.left) / rrTileSize);
 	let yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
 
-	if (sim.ToggleColCmd.checked) {
+	// TODO clean
+	if (document.getElementById("togglemaincmd").checked) {
+		cmdMarkPath("main", xTile, yTile);
+	}
+	else if (document.getElementById("togglesecondcmd").checked) {
+		cmdMarkPath("second", xTile, yTile);
+	}
+	else if (document.getElementById("togglehealcmd").checked) {
+		cmdMarkPath("heal", xTile, yTile);
+	}
+	else if (document.getElementById("togglecolcmd").checked) {
 		cmdMarkPath("col", xTile, yTile);
 	}
+
 	else if (sim.MarkerMode) {
 		if (e.button === 0) {
 			markedTiles.push(xTile, yTile);
@@ -488,6 +502,14 @@ function simClearMarkersOnClick(e) {
 function simToggleTeamOnClick(e) {
 	mResetMap();
 	simReset(e);
+}
+function simToggleOnlyOneRoleMarker(e) {
+	let originalVal = e.target.checked;
+	let myCheckbox = document.getElementsByName("rolemarker");
+	Array.prototype.forEach.call(myCheckbox, function (el) {
+		el.checked = false;
+	});
+	e.target.checked = originalVal;
 }
 function simSaveStateOnClick() {
 	console.log("Saving state...");
@@ -556,6 +578,5 @@ var sim = {
 	MarkerMode: false,
 	ClearMarkers: undefined,
 	SpawnTeam: undefined,
-	ToggleColCmd: undefined,
 }
 //}

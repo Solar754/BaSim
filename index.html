@@ -25,6 +25,8 @@ Wave: <select id="waveselect">
 Runner movements: <input id="runnermovements" type="text" /><br>
 Runner spawns: <input id="runnerspawns" type="text" /><br>
 Healer spawns: <input id="healerspawns" type="text" /><br>
+<input type="checkbox" id="toggleteam">
+<label for="toggleteam">Team</label>
 <input type="checkbox" id="togglehealers">
 <label for="togglehealers">Healers</label>
 <input type="checkbox" id="togglerender">
@@ -41,15 +43,33 @@ Tick count: <span id="tickcount"></span> (<span id="secondscount"></span>s)<br>
     <br>
     <table>
         <tr>
-            <th colspan="5">
-                <input type="checkbox" id="toggleteam">
-                <label for="toggleteam">Team</label>
-            </th>
-        </tr>
-        <tr>
+            <td>
+                Main<br>
+                <input type="checkbox" name="rolemarker" id="togglemaincmd">
+                <label for="togglemaincmd">Marker</label>
+                <button class="clearcmds" for="maincmds">Clear</button>
+                <br>
+                <textarea id="maincmds"></textarea>
+            </td>
+            <td>
+                Second<br>
+                <input type="checkbox" name="rolemarker" id="togglesecondcmd">
+                <label for="togglesecondcmd">Marker</label>
+                <button class="clearcmds" for="secondcmds">Clear</button>
+                <br>
+                <textarea id="secondcmds"></textarea>
+            </td>
+            <td>
+                Heal<br>
+                <input type="checkbox" name="rolemarker" id="togglehealcmd">
+                <label for="togglehealcmd">Marker</label>
+                <button class="clearcmds" for="healcmds">Clear</button>
+                <br>
+                <textarea id="healcmds"></textarea>
+            </td>
             <td>
                 Collector<br>
-                <input type="checkbox" id="togglecolcmd">
+                <input type="checkbox" name="rolemarker" id="togglecolcmd">
                 <label for="togglecolcmd">Marker</label>
                 <button class="clearcmds" for="colcmds">Clear</button>
                 <br>
