@@ -23,6 +23,8 @@ const HTML_SECONDS_COUNT = "secondscount";
 const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
+const HTML_TOGGLE_TEAM = 'toggleteam';
+const HTML_TOGGLE_COLCMD = 'togglecolcmd';
 
 window.onload = simInit;
 
@@ -84,6 +86,14 @@ function simInit() {
 	sim.SaveState.onclick = simSaveStateOnClick;
 	sim.LoadState = document.getElementById(HTML_LOAD_BUTTON);
 	sim.LoadState.onclick = simLoadStateOnClick;
+
+	sim.SpawnTeam = document.getElementById(HTML_TOGGLE_TEAM);
+	sim.SpawnTeam.onchange = simToggleTeamOnClick;
+	sim.ToggleColCmd = document.getElementById(HTML_TOGGLE_COLCMD);
+	let clearCmds = document.getElementsByClassName("clearcmds")
+	for (let ele of clearCmds) {
+		ele.onclick = cmdClearPath;
+	}
 
 	simSetRunning(false);
 
@@ -341,16 +351,11 @@ function simStartStopButtonOnClick() {
 		baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, movements, runnerSpawns, healerSpawns);
 		if (m.mCurrentMap === mWAVE10) {
 			plInit(baWAVE10_DEFENDER_SPAWN_X, baWAVE10_DEFENDER_SPAWN_Y);
-			//			plInit(baWAVE10_MAIN_SPAWN_X, baWAVE10_MAIN_SPAWN_Y);
-			//			plInit(baWAVE10_2A_SPAWN_X, baWAVE10_2A_SPAWN_Y);
-			//			plInit(baWAVE10_PLAYER_HEALER_SPAWN_X, baWAVE10_PLAYER_HEALER_SPAWN_Y);
-			//			plInit(baWAVE10_COLLECTOR_SPAWN_X, baWAVE10_COLLECTOR_SPAWN_Y);
 		} else {
 			plInit(baWAVE1_DEFENDER_SPAWN_X, baWAVE1_DEFENDER_SPAWN_Y);
-			//            plInit(baWAVE1_MAIN_SPAWN_X, baWAVE1_MAIN_SPAWN_Y);
-			//            plInit(baWAVE1_2A_SPAWN_X, baWAVE1_2A_SPAWN_Y);
-			//            plInit(baWAVE1_PLAYER_HEALER_SPAWN_X, baWAVE1_PLAYER_HEALER_SPAWN_Y);
-			//            plInit(baWAVE1_COLLECTOR_SPAWN_X, baWAVE1_COLLECTOR_SPAWN_Y);
+		}
+		if (sim.SpawnTeam.checked) {
+			cmdInit();
 		}
 		console.log("Wave " + wave + " started!");
 		simTick();
@@ -403,14 +408,14 @@ function simWindowOnKeyDown(e) { // food_drop
 			mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
 		} else if (e.key === "e") {
 			pl.ShouldPickupFood = true;
-			plPathfind(pl.X, pl.Y);
+			plPathfind(pl, pl.X, pl.Y);
 		} else if (e.key === "t") {
 			if (baIsNextToEastTrap(pl.X, pl.Y) && ba.EastTrapCharges < 2) {
-				plPathfind(pl.X, pl.Y);
+				plPathfind(pl, pl.X, pl.Y);
 				pl.RepairCountdown = 5;
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
 			} else if (baIsNextToWestTrap(pl.X, pl.Y) && ba.WestTrapCharges < 2) {
-				plPathfind(pl.X, pl.Y);
+				plPathfind(pl, pl.X, pl.Y);
 				pl.RepairCountdown = 5;
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
 			}
@@ -431,7 +436,11 @@ function simCanvasOnMouseDown(e) {
 	var canvasRect = rr.Canvas.getBoundingClientRect();
 	let xTile = Math.trunc((e.clientX - canvasRect.left) / rrTileSize);
 	let yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
-	if (sim.MarkerMode) {
+
+	if (sim.ToggleColCmd.checked) {
+		cmdMarkPath("col", xTile, yTile);
+	}
+	else if (sim.MarkerMode) {
 		if (e.button === 0) {
 			markedTiles.push(xTile, yTile);
 			simDraw();
@@ -439,9 +448,9 @@ function simCanvasOnMouseDown(e) {
 	}
 	else if (e.button === 0 && pl.RepairCountdown === 0) {
 		pl.ShouldPickupFood = false;
-		plPathfind(xTile, yTile);
+		plPathfind(pl, xTile, yTile);
 		oDrawYellowClick(e);
-	} else if (e.button === 2) {
+	} else if (e.button === 2 && !sim.SpawnTeam.checked) {
 		if (xTile === ba.CollectorX && yTile === ba.CollectorY) {
 			ba.CollectorTargetX = -1;
 			ba.CollectorTargetY = -1;
@@ -476,6 +485,10 @@ function simClearMarkersOnClick(e) {
 	markedTiles.clear();
 	simDraw();
 }
+function simToggleTeamOnClick(e) {
+	mResetMap();
+	simReset(e);
+}
 function simSaveStateOnClick() {
 	console.log("Saving state...");
 	if (!sim.IsPaused)
@@ -498,6 +511,7 @@ function simLoadStateOnClick() {
 function simTick() {
 	baTick();
 	plTick();
+	cmdTick();
 	simDraw();
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
@@ -509,6 +523,7 @@ function simDraw() {
 	mDrawItems();
 	baDrawEntities();
 	plDrawPlayer();
+	cmdDrawTeam();
 	mDrawGrid();
 	baDrawOverlays();
 	markedTiles.draw();
@@ -539,6 +554,8 @@ var sim = {
 	ToggleHealers: undefined,
 	ToggleRender: undefined,
 	MarkerMode: false,
-	ClearMarkers: undefined
+	ClearMarkers: undefined,
+	SpawnTeam: undefined,
+	ToggleColCmd: undefined,
 }
 //}

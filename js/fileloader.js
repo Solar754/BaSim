@@ -11,7 +11,8 @@ let files = [
     "rsrenderer.js",
     "item.js",
     "overlay.js",
-    "simstate.js"
+    "simstate.js",
+    "controller.js"
 ];
 for (let file of files) {
     let new_script = document.createElement('script');

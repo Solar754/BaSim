@@ -98,95 +98,95 @@ function plDrawRender(player) {
         }
     }
 }
-function plPathfind(destX, destY) {
+function plPathfind(player, destX, destY) {
     for (let i = 0; i < m.mWidthTiles * m.mHeightTiles; ++i) {
-        pl.ShortestDistances[i] = 99999999;
-        pl.WayPoints[i] = 0;
+        player.ShortestDistances[i] = 99999999;
+        player.WayPoints[i] = 0;
     }
-    pl.WayPoints[pl.X + pl.Y * m.mWidthTiles] = 99;
-    pl.ShortestDistances[pl.X + pl.Y * m.mWidthTiles] = 0;
-    pl.PathQueuePos = 0;
+    player.WayPoints[player.X + player.Y * m.mWidthTiles] = 99;
+    player.ShortestDistances[player.X + player.Y * m.mWidthTiles] = 0;
+    player.PathQueuePos = 0;
     let pathQueueEnd = 0;
-    pl.PathQueueX[pathQueueEnd] = pl.X;
-    pl.PathQueueY[pathQueueEnd++] = pl.Y;
+    player.PathQueueX[pathQueueEnd] = player.X;
+    player.PathQueueY[pathQueueEnd++] = player.Y;
     let currentX;
     let currentY;
     let foundDestination = false;
-    while (pl.PathQueuePos !== pathQueueEnd) {
-        currentX = pl.PathQueueX[pl.PathQueuePos];
-        currentY = pl.PathQueueY[pl.PathQueuePos++];
+    while (player.PathQueuePos !== pathQueueEnd) {
+        currentX = player.PathQueueX[player.PathQueuePos];
+        currentY = player.PathQueueY[player.PathQueuePos++];
         if (currentX === destX && currentY === destY) {
             foundDestination = true;
             break;
         }
-        let newDistance = pl.ShortestDistances[currentX + currentY * m.mWidthTiles] + 1;
+        let newDistance = player.ShortestDistances[currentX + currentY * m.mWidthTiles] + 1;
         let index = currentX - 1 + currentY * m.mWidthTiles;
-        if (currentX > 0 && pl.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136776) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX - 1;
-            pl.PathQueueY[pathQueueEnd++] = currentY;
-            pl.WayPoints[index] = 2;
-            pl.ShortestDistances[index] = newDistance;
+        if (currentX > 0 && player.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136776) === 0) {
+            player.PathQueueX[pathQueueEnd] = currentX - 1;
+            player.PathQueueY[pathQueueEnd++] = currentY;
+            player.WayPoints[index] = 2;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX + 1 + currentY * m.mWidthTiles;
-        if (currentX < m.mWidthTiles - 1 && pl.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136896) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX + 1;
-            pl.PathQueueY[pathQueueEnd++] = currentY;
-            pl.WayPoints[index] = 8;
-            pl.ShortestDistances[index] = newDistance;
+        if (currentX < m.mWidthTiles - 1 && player.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136896) === 0) {
+            player.PathQueueX[pathQueueEnd] = currentX + 1;
+            player.PathQueueY[pathQueueEnd++] = currentY;
+            player.WayPoints[index] = 8;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX + (currentY - 1) * m.mWidthTiles;
-        if (currentY > 0 && pl.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136770) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX;
-            pl.PathQueueY[pathQueueEnd++] = currentY - 1;
-            pl.WayPoints[index] = 1;
-            pl.ShortestDistances[index] = newDistance;
+        if (currentY > 0 && player.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136770) === 0) {
+            player.PathQueueX[pathQueueEnd] = currentX;
+            player.PathQueueY[pathQueueEnd++] = currentY - 1;
+            player.WayPoints[index] = 1;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX + (currentY + 1) * m.mWidthTiles;
-        if (currentY < m.mHeightTiles - 1 && pl.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136800) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX;
-            pl.PathQueueY[pathQueueEnd++] = currentY + 1;
-            pl.WayPoints[index] = 4;
-            pl.ShortestDistances[index] = newDistance;
+        if (currentY < m.mHeightTiles - 1 && player.WayPoints[index] === 0 && (m.mCurrentMap[index] & 19136800) === 0) {
+            player.PathQueueX[pathQueueEnd] = currentX;
+            player.PathQueueY[pathQueueEnd++] = currentY + 1;
+            player.WayPoints[index] = 4;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX - 1 + (currentY - 1) * m.mWidthTiles;
-        if (currentX > 0 && currentY > 0 && pl.WayPoints[index] === 0 &&
+        if (currentX > 0 && currentY > 0 && player.WayPoints[index] === 0 &&
             (m.mCurrentMap[index] & 19136782) == 0 &&
             (m.mCurrentMap[currentX - 1 + currentY * m.mWidthTiles] & 19136776) === 0 &&
             (m.mCurrentMap[currentX + (currentY - 1) * m.mWidthTiles] & 19136770) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX - 1;
-            pl.PathQueueY[pathQueueEnd++] = currentY - 1;
-            pl.WayPoints[index] = 3;
-            pl.ShortestDistances[index] = newDistance;
+            player.PathQueueX[pathQueueEnd] = currentX - 1;
+            player.PathQueueY[pathQueueEnd++] = currentY - 1;
+            player.WayPoints[index] = 3;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX + 1 + (currentY - 1) * m.mWidthTiles;
-        if (currentX < m.mWidthTiles - 1 && currentY > 0 && pl.WayPoints[index] === 0 &&
+        if (currentX < m.mWidthTiles - 1 && currentY > 0 && player.WayPoints[index] === 0 &&
             (m.mCurrentMap[index] & 19136899) == 0 &&
             (m.mCurrentMap[currentX + 1 + currentY * m.mWidthTiles] & 19136896) === 0 &&
             (m.mCurrentMap[currentX + (currentY - 1) * m.mWidthTiles] & 19136770) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX + 1;
-            pl.PathQueueY[pathQueueEnd++] = currentY - 1;
-            pl.WayPoints[index] = 9;
-            pl.ShortestDistances[index] = newDistance;
+            player.PathQueueX[pathQueueEnd] = currentX + 1;
+            player.PathQueueY[pathQueueEnd++] = currentY - 1;
+            player.WayPoints[index] = 9;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX - 1 + (currentY + 1) * m.mWidthTiles;
-        if (currentX > 0 && currentY < m.mHeightTiles - 1 && pl.WayPoints[index] === 0 &&
+        if (currentX > 0 && currentY < m.mHeightTiles - 1 && player.WayPoints[index] === 0 &&
             (m.mCurrentMap[index] & 19136824) == 0 &&
             (m.mCurrentMap[currentX - 1 + currentY * m.mWidthTiles] & 19136776) === 0 &&
             (m.mCurrentMap[currentX + (currentY + 1) * m.mWidthTiles] & 19136800) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX - 1;
-            pl.PathQueueY[pathQueueEnd++] = currentY + 1;
-            pl.WayPoints[index] = 6;
-            pl.ShortestDistances[index] = newDistance;
+            player.PathQueueX[pathQueueEnd] = currentX - 1;
+            player.PathQueueY[pathQueueEnd++] = currentY + 1;
+            player.WayPoints[index] = 6;
+            player.ShortestDistances[index] = newDistance;
         }
         index = currentX + 1 + (currentY + 1) * m.mWidthTiles;
-        if (currentX < m.mWidthTiles - 1 && currentY < m.mHeightTiles - 1 && pl.WayPoints[index] === 0 &&
+        if (currentX < m.mWidthTiles - 1 && currentY < m.mHeightTiles - 1 && player.WayPoints[index] === 0 &&
             (m.mCurrentMap[index] & 19136992) == 0 &&
             (m.mCurrentMap[currentX + 1 + currentY * m.mWidthTiles] & 19136896) === 0 &&
             (m.mCurrentMap[currentX + (currentY + 1) * m.mWidthTiles] & 19136800) === 0) {
-            pl.PathQueueX[pathQueueEnd] = currentX + 1;
-            pl.PathQueueY[pathQueueEnd++] = currentY + 1;
-            pl.WayPoints[index] = 12;
-            pl.ShortestDistances[index] = newDistance;
+            player.PathQueueX[pathQueueEnd] = currentX + 1;
+            player.PathQueueY[pathQueueEnd++] = currentY + 1;
+            player.WayPoints[index] = 12;
+            player.ShortestDistances[index] = newDistance;
         }
     }
     if (!foundDestination) {
@@ -196,7 +196,7 @@ function plPathfind(destX, destY) {
         for (let x = destX - deviation; x <= destX + deviation; ++x) {
             for (let y = destY - deviation; y <= destY + deviation; ++y) {
                 if (x >= 0 && y >= 0 && x < m.mWidthTiles && y < m.mHeightTiles) {
-                    let distanceStart = pl.ShortestDistances[x + y * m.mWidthTiles];
+                    let distanceStart = player.ShortestDistances[x + y * m.mWidthTiles];
                     if (distanceStart < 100) {
                         let dx = Math.max(destX - x);
                         let dy = Math.max(destY - y);
@@ -213,15 +213,15 @@ function plPathfind(destX, destY) {
             }
         }
         if (!foundDestination) {
-            pl.PathQueuePos = 0;
+            player.PathQueuePos = 0;
             return;
         }
     }
-    pl.PathQueuePos = 0;
-    while (currentX !== pl.X || currentY !== pl.Y) {
-        let waypoint = pl.WayPoints[currentX + currentY * m.mWidthTiles];
-        pl.PathQueueX[pl.PathQueuePos] = currentX;
-        pl.PathQueueY[pl.PathQueuePos++] = currentY;
+    player.PathQueuePos = 0;
+    while (currentX !== player.X || currentY !== player.Y) {
+        let waypoint = player.WayPoints[currentX + currentY * m.mWidthTiles];
+        player.PathQueueX[player.PathQueuePos] = currentX;
+        player.PathQueueY[player.PathQueuePos++] = currentY;
         if ((waypoint & 2) !== 0) {
             ++currentX;
         } else if ((waypoint & 8) !== 0) {

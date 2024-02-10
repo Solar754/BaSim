@@ -113,6 +113,7 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
 
     pl.RenderDistance = 15;
     pl.RenderArea = [];
+    cmd.Team = [];
 
     sim.TickCountSpan.innerHTML = ba.TickCounter;
     sim.SecondsCountSpan.innerHTML = tickToSecond(ba.TickCounter);
@@ -286,6 +287,12 @@ function baTileBlocksPenance(x, y) {
     // Collector blocks
     if (x === ba.CollectorX && y === ba.CollectorY) {
         return true;
+    }
+    // Team blocks
+    for (let teammate of cmd.Team) {
+        if (x === teammate.X && y === teammate.Y) {
+            return true;
+        }
     }
     if (y === 22) {
         if (x >= 20 && x <= 22) {
