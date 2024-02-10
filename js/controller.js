@@ -1,9 +1,9 @@
 /*
 TODO
-- healer support
-- add other teammates
 - generic html events (mainly togglecolcmd)
+- add other teammates
 - better css
+- instructions for how to use
 - state support
 - timeout for unreachable tiles
 */
@@ -11,14 +11,17 @@ TODO
 //{ Team Controller - cmd
 var cmd = {
     Team: [],
-    colColor: [240, 240, 10, 200]
+    atkColor: [240, 10, 10, 200],
+    healColor: [10, 240, 10, 220],
+    colColor: [240, 240, 10, 200],
 }
 function cmdInit() {
     if (m.mCurrentMap === mWAVE10) {
         cmd.Team.push(new cmdTeammate(
             baWAVE10_COLLECTOR_SPAWN_X,
             baWAVE10_COLLECTOR_SPAWN_Y,
-            cmdParseTiles("colcmds"), cmd.colColor
+            cmdParseTiles("colcmds"),
+            cmd.colColor, "collector"
         ));
         //			plInit(baWAVE10_MAIN_SPAWN_X, baWAVE10_MAIN_SPAWN_Y);
         //			plInit(baWAVE10_2A_SPAWN_X, baWAVE10_2A_SPAWN_Y);
@@ -28,7 +31,8 @@ function cmdInit() {
         cmd.Team.push(new cmdTeammate(
             baWAVE1_COLLECTOR_SPAWN_X,
             baWAVE1_COLLECTOR_SPAWN_Y,
-            cmdParseTiles("colcmds"), cmd.colColor
+            cmdParseTiles("colcmds"),
+            cmd.colColor, "collector"
         ));
         //            plInit(baWAVE1_MAIN_SPAWN_X, baWAVE1_MAIN_SPAWN_Y);
         //            plInit(baWAVE1_2A_SPAWN_X, baWAVE1_2A_SPAWN_Y);
@@ -76,7 +80,7 @@ function cmdDrawTeam() {
         m.draw();
     }
 }
-function cmdTeammate(x, y, tiles, color) {
+function cmdTeammate(x, y, tiles, color, role = "teammate") {
     this.X = x;
     this.Y = y;
     this.PathQueuePos = 0;
@@ -84,6 +88,7 @@ function cmdTeammate(x, y, tiles, color) {
     this.PathQueueY = [];
     this.ShortestDistances = [];
     this.WayPoints = [];
+    this.Role = role; // must be unique!
     this.Color = color;
     this.Tiles = tiles;
     this.CurrentDst = {

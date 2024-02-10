@@ -8,6 +8,7 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.destinationY = y;
     this.targetX = x; // calculated during every healer interaction; 2 interactions per tick
     this.targetY = y;
+    this.playerTarget; // generic player object
     this.runnerTarget; // stores runner object
     this.isTargetingPlayer = false;
     this.isTargetingRunner = false;
@@ -17,39 +18,29 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.sprayTimer = 0; // used to time when a healer should be aggroing runners or players
     this.id = id;
 }
+heHealer.prototype.findPlayerTarget = function () {
+    let plTarget = undefined;
+    let possibleTargets = [];
+    let players = heCompilePlayerTargets();
+    players.forEach((player) => {
+        if (mHasLineOfSight(player.X, player.Y, this.x, this.y, 15)) {
+            possibleTargets.push(player);
+        }
+    });
+    if (possibleTargets.length > 0) {
+        plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+    }
+    this.playerTarget = plTarget;
+}
 heHealer.prototype.tick = function () {
-
-    // TODO: create inheritance structure for players
-
     // healer stands still when it spawns, until player comes into LOS
-    // If multiple players in LOS, randomly choose (rand=0 for def, 1 for col)
-    if (this.justSpawned === true) {
-        if (mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15) && mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-            let rand = Math.floor(Math.random() * 2);
-            if (rand === 0) {
-                console.log(ba.TickCounter + ": healer " + this.id + " chose defender");
-                this.destinationX = findTargetTile(this.x, this.y, pl.X, pl.Y)[0];
-                this.destinationY = findTargetTile(this.x, this.y, pl.X, pl.Y)[1];
-                this.isTargetingPlayer = true;
-            }
-            else {
-                console.log(ba.TickCounter + ": healer " + this.id + " chose collector");
-                this.destinationX = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[0];
-                this.destinationY = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[1];
-                this.isTargetingCollector = true;
-            }
-            this.justSpawned = false;
-        }
-        else if (mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15)) {
-            this.destinationX = findTargetTile(this.x, this.y, pl.X, pl.Y)[0];
-            this.destinationY = findTargetTile(this.x, this.y, pl.X, pl.Y)[1];
+    // if multiple players in LOS, randomly choose
+    if (this.justSpawned) {
+        this.findPlayerTarget();
+        if (this.playerTarget) {
+            this.destinationX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+            this.destinationY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
             this.isTargetingPlayer = true;
-            this.justSpawned = false;
-        }
-        else if (mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-            this.destinationX = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[0];
-            this.destinationY = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[1];
-            this.isTargetingCollector = true;
             this.justSpawned = false;
         }
     }
@@ -75,85 +66,38 @@ heHealer.prototype.tick = function () {
                 this.isTargetingRunner = true;
                 this.tryTarget('runner');
             }
-
             // if no runners in LOS, do random movement
             else {
-                let rnd = Math.floor(Math.random() * 8);
-                if (rnd === 0) {
-                    console.log(ba.TickCounter + ": healer " + this.id + " did random movement");
-                    const wanderRange = 60;
-                    let rndX = Math.floor(Math.random() * (2 * wanderRange + 1));
-                    this.destinationX = this.spawnX - wanderRange + rndX;
-                    let rndY = Math.floor(Math.random() * (2 * wanderRange + 1));
-                    this.destinationY = this.spawnY - wanderRange + rndY;
-                }
+                this.selectRandomTile();
                 this.doMovement();
             }
         }
-
         // try to target player every tick only after 2 ticks of pause
         else if (this.lastTarget === 'runner' && this.sprayTimer > 2) {
-            if (mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15) && mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-                let rand = Math.floor(Math.random() * 2);
-                if (rand === 0) {
-                    console.log(ba.TickCounter + ": healer " + this.id + " chose defender");
-                    this.isTargetingPlayer = true;
-                    this.tryTarget('player');
-                }
-                else {
-                    console.log(ba.TickCounter + ": healer " + this.id + " chose collector");
-                    this.isTargetingCollector = true;
-                    this.tryTarget('collector');
-                }
-            }
-            else if (mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15)) {
+            this.findPlayerTarget();
+            if (this.playerTarget) {
                 this.isTargetingPlayer = true;
                 this.tryTarget('player');
             }
-            else if (mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-                this.isTargetingCollector = true;
-                this.tryTarget('collector');
-            }
             // if nobody in LOS, do random movement
             else {
-                let rnd = Math.floor(Math.random() * 8);
-                if (rnd === 0) {
-                    console.log(ba.TickCounter + ": healer " + this.id + " did random movement");
-                    const wanderRange = 60;
-                    let rndX = Math.floor(Math.random() * (2 * wanderRange + 1));
-                    this.destinationX = this.spawnX - wanderRange + rndX;
-                    let rndY = Math.floor(Math.random() * (2 * wanderRange + 1));
-                    this.destinationY = this.spawnY - wanderRange + rndY;
-                }
+                this.selectRandomTile();
                 this.doMovement();
             }
         }
-
         // If healer isn't supposed to be targeting anything this tick, do random movement
         else {
-            let rnd = Math.floor(Math.random() * 8);
-            if (rnd === 0) {
-                console.log(ba.TickCounter + ": healer " + this.id + " did random movement");
-                const wanderRange = 60;
-                let rndX = Math.floor(Math.random() * (2 * wanderRange + 1));
-                this.destinationX = this.spawnX - wanderRange + rndX;
-                let rndY = Math.floor(Math.random() * (2 * wanderRange + 1));
-                this.destinationY = this.spawnY - wanderRange + rndY;
-            }
+            this.selectRandomTile();
             this.doMovement();
         }
     }
-
     // move toward player when targeting player
     else if (this.isTargetingPlayer) {
+        // update x,y
+        let allPlayers = heCompilePlayerTargets();
+        this.playerTarget = allPlayers.filter(player => player.Role === this.playerTarget.Role)[0];
         this.tryTarget('player');
     }
-
-    // move toward coll when targeting coll
-    else if (this.isTargetingCollector) {
-        this.tryTarget('collector');
-    }
-
     // move toward random runner in range found earlier when targeting runner
     else if (this.isTargetingRunner) {
         if (this.runnerTarget.despawnCountdown === 0) {
@@ -162,38 +106,14 @@ heHealer.prototype.tick = function () {
             this.lastTarget = 'runner';
             this.sprayTimer = 0;
 
-            if (mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15) && mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-                let rand = Math.floor(Math.random() * 2);
-                if (rand === 0) {
-                    console.log(ba.TickCounter + ": healer " + this.id + " chose defender");
-                    this.isTargetingPlayer = true;
-                    this.tryTarget('player');
-                }
-                else {
-                    console.log(ba.TickCounter + ": healer " + this.id + " chose collector");
-                    this.isTargetingCollector = true;
-                    this.tryTarget('collector');
-                }
-            }
-            else if (mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15)) {
+            this.findPlayerTarget();
+            if (this.playerTarget) {
                 this.isTargetingPlayer = true;
                 this.tryTarget('player');
             }
-            else if (mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-                this.isTargetingCollector = true;
-                this.tryTarget('collector');
-            }
             // if nobody in LOS, do random movement
             else {
-                let rnd = Math.floor(Math.random() * 8);
-                if (rnd === 0) {
-                    console.log(ba.TickCounter + ": healer " + this.id + " did random movement");
-                    const wanderRange = 60;
-                    let rndX = Math.floor(Math.random() * (2 * wanderRange + 1));
-                    this.destinationX = this.spawnX - wanderRange + rndX;
-                    let rndY = Math.floor(Math.random() * (2 * wanderRange + 1));
-                    this.destinationY = this.spawnY - wanderRange + rndY;
-                }
+                this.selectRandomTile();
                 this.doMovement();
             }
         }
@@ -236,50 +156,38 @@ heHealer.prototype.tryTarget = function (type) {
         }
     }
     else if (type === 'player') {
-        this.targetX = findTargetTile(this.x, this.y, pl.X, pl.Y)[0];
-        this.targetY = findTargetTile(this.x, this.y, pl.X, pl.Y)[1];
-        if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15)) {
+        this.targetX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+        this.targetY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+        if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.playerTarget.X, this.playerTarget.Y, this.x, this.y, 15)) {
             this.isTargetingPlayer = false;
             this.lastTarget = 'player';
             this.sprayTimer = 0;
         }
         else {
-            this.destinationX = findTargetTile(this.x, this.y, pl.X, pl.Y)[0];
-            this.destinationY = findTargetTile(this.x, this.y, pl.X, pl.Y)[1];
+            this.destinationX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+            this.destinationY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
 
             this.doMovement();
 
-            this.targetX = findTargetTile(this.x, this.y, pl.X, pl.Y)[0];
-            this.targetY = findTargetTile(this.x, this.y, pl.X, pl.Y)[1];
-            if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(pl.X, pl.Y, this.x, this.y, 15)) {
+            this.targetX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+            this.targetY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+            if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.playerTarget.X, this.playerTarget.Y, this.x, this.y, 15)) {
                 this.isTargetingPlayer = false;
                 this.lastTarget = 'player';
                 this.sprayTimer = 0;
             }
         }
     }
-    else if (type === 'collector') {
-        this.targetX = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[0];
-        this.targetY = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[1];
-        if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-            this.isTargetingCollector = false;
-            this.lastTarget = 'player';
-            this.sprayTimer = 0;
-        }
-        else {
-            this.destinationX = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[0];
-            this.destinationY = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[1];
-
-            this.doMovement();
-
-            this.targetX = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[0];
-            this.targetY = findTargetTile(this.x, this.y, ba.CollectorX, ba.CollectorY)[1];
-            if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(ba.CollectorX, ba.CollectorY, this.x, this.y, 15)) {
-                this.isTargetingCollector = false;
-                this.lastTarget = 'player';
-                this.sprayTimer = 0;
-            }
-        }
+}
+heHealer.prototype.selectRandomTile = function () {
+    const WANDER_RANGE = 60;
+    let rnd = Math.floor(Math.random() * 8);
+    if (rnd === 0) {
+        console.log(ba.TickCounter + ": healer " + this.id + " did random movement");
+        let rndX = Math.floor(Math.random() * (2 * WANDER_RANGE + 1));
+        this.destinationX = this.spawnX - WANDER_RANGE + rndX;
+        let rndY = Math.floor(Math.random() * (2 * WANDER_RANGE + 1));
+        this.destinationY = this.spawnY - WANDER_RANGE + rndY;
     }
 }
 // Moves healer toward its destination. Prioritizes east/west over north/south.
@@ -300,6 +208,16 @@ heHealer.prototype.doMovement = function () {
     } else if (this.destinationY < this.y && !baTileBlocksPenance(startX, this.y - 1) && !baTileBlocksPenance(this.x, this.y - 1) && mCanMoveSouth(startX, this.y) && mCanMoveSouth(this.x, this.y)) {
         --this.y;
     }
+}
+
+function heCompilePlayerTargets() {
+    let playerTargets = [];
+    if (sim.SpawnTeam.checked) {
+        playerTargets = structuredClone(cmd.Team);
+    }
+    playerTargets.push({ X: pl.X, Y: pl.Y, Role: "player" });
+    playerTargets.push({ X: ba.CollectorX, Y: ba.CollectorY, Role: "collector" });
+    return playerTargets;
 }
 
 // jumpDistance = tileDistance = Max(abs(Bx - Ax),abs(By - Ay));

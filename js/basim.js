@@ -162,7 +162,7 @@ function simUpdateHealerTable() {
 		tableRow.appendChild(td);
 		td = document.createElement("td");
 		if (healer.isTargetingPlayer)
-			td.innerHTML = "player";
+			td.innerHTML = healer.playerTarget.Role;
 		else if (healer.isTargetingCollector)
 			td.innerHTML = "collector";
 		else if (healer.isTargetingRunner)
