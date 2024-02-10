@@ -3,129 +3,143 @@
 <link rel="stylesheet" href="css/style.css">
 <script src="js/basim.js"></script>
 <script src="js/fileloader.js"></script>
-Lure distance: <select id="deflevelselect">
-    <option value="4">4 tiles (Level 1)</option>
-    <option value="5" selected>5 tiles (Level 2-5)</option>
-    <option value="6">6 tiles</option>
-    <option value="7">7 tiles</option>
-    <option value="8">8 tiles</option>
-</select><br>
-Wave: <select id="waveselect">
-    <option value="1">Wave 1</option>
-    <option value="2">Wave 2</option>
-    <option value="3">Wave 3</option>
-    <option value="4">Wave 4</option>
-    <option value="5">Wave 5</option>
-    <option value="6">Wave 6</option>
-    <option value="7">Wave 7</option>
-    <option value="8">Wave 8</option>
-    <option value="9">Wave 9</option>
-    <option value="10">Wave 10</option>
-</select><br>
-Runner movements: <input id="runnermovements" type="text" /><br>
-Runner spawns: <input id="runnerspawns" type="text" /><br>
-Healer spawns: <input id="healerspawns" type="text" /><br>
-<input type="checkbox" id="toggleteam">
-<label for="toggleteam">Team</label>
-<input type="checkbox" id="togglehealers">
-<label for="togglehealers">Healers</label>
-<input type="checkbox" id="togglerender">
-<label for="togglerender">Render</label>
-<input type="checkbox" id="togglemarker">
-<label for="togglemarker">Marker</label>
-<button id="clearmarkers">Clear</button><br>
-<button id="wavestart"></button>
-<button id="wavepause" style="display: none;"></button>
-<button id="wavestepback" style="display: none;">Step Backward</button>
-<button id="wavestep" style="display: none;">Step Forward</button>
-Tick count: <span id="tickcount"></span> (<span id="secondscount"></span>s)<br>
-<div>
-    <br>
-    <table>
-        <tr>
-            <td>
-                Main<br>
-                <input type="checkbox" name="rolemarker" id="togglemaincmd">
-                <label for="togglemaincmd">Marker</label>
-                <button class="clearcmds" for="maincmds">Clear</button>
-                <br>
-                <textarea id="maincmds"></textarea>
-            </td>
-            <td>
-                Second<br>
-                <input type="checkbox" name="rolemarker" id="togglesecondcmd">
-                <label for="togglesecondcmd">Marker</label>
-                <button class="clearcmds" for="secondcmds">Clear</button>
-                <br>
-                <textarea id="secondcmds"></textarea>
-            </td>
-            <td>
-                Heal<br>
-                <input type="checkbox" name="rolemarker" id="togglehealcmd">
-                <label for="togglehealcmd">Marker</label>
-                <button class="clearcmds" for="healcmds">Clear</button>
-                <br>
-                <textarea id="healcmds"></textarea>
-            </td>
-            <td>
-                Collector<br>
-                <input type="checkbox" name="rolemarker" id="togglecolcmd">
-                <label for="togglecolcmd">Marker</label>
-                <button class="clearcmds" for="colcmds">Clear</button>
-                <br>
-                <textarea id="colcmds"></textarea>
-            </td>
-        </tr>
-    </table>
-    <br>
+<div class="grid-container">
+    <div class="container">
+        <div class="one">
+            Lure distance: <select id="deflevelselect">
+                <option value="4">4 tiles (Level 1)</option>
+                <option value="5" selected>5 tiles (Level 2-5)</option>
+                <option value="6">6 tiles</option>
+                <option value="7">7 tiles</option>
+                <option value="8">8 tiles</option>
+            </select><br>
+            Wave: <select id="waveselect">
+                <option value="1">Wave 1</option>
+                <option value="2">Wave 2</option>
+                <option value="3">Wave 3</option>
+                <option value="4">Wave 4</option>
+                <option value="5">Wave 5</option>
+                <option value="6">Wave 6</option>
+                <option value="7">Wave 7</option>
+                <option value="8">Wave 8</option>
+                <option value="9">Wave 9</option>
+                <option value="10">Wave 10</option>
+            </select><br>
+            Runner movements: <input id="runnermovements" type="text" /><br>
+            Runner spawns: <input id="runnerspawns" type="text" /><br>
+            Healer spawns: <input id="healerspawns" type="text" /><br>
+            <input type="checkbox" id="toggleteam">
+            <label for="toggleteam">Team</label>
+            <input type="checkbox" id="togglehealers">
+            <label for="togglehealers">Healers</label>
+            <input type="checkbox" id="togglerender">
+            <label for="togglerender">Render</label>
+            <input type="checkbox" id="togglemarker">
+            <label for="togglemarker">Marker</label>
+            <button id="clearmarkers">Clear</button><br>
+            <button id="wavestart"></button>
+            <button id="wavepause" style="display: none;"></button>
+            <button id="wavestepback" style="display: none;">Step Backward</button>
+            <button id="wavestep" style="display: none;">Step Forward</button>
+            Tick count: <span id="tickcount"></span> (<span id="secondscount"></span>s)<br>
+        </div>
+        <div class="two">
+            <table id="teammatetable" style="display: none;">
+                <tr>
+                    <td>
+                        Main<br>
+                        <input type="checkbox" name="rolemarker" id="togglemaincmd">
+                        <label for="togglemaincmd">Marker</label>
+                        <button class="clearcmds" for="maincmds">Clear</button>
+                        <br>
+                        <textarea id="maincmds"></textarea>
+                    </td>
+                    <td>
+                        Second<br>
+                        <input type="checkbox" name="rolemarker" id="togglesecondcmd">
+                        <label for="togglesecondcmd">Marker</label>
+                        <button class="clearcmds" for="secondcmds">Clear</button>
+                        <br>
+                        <textarea id="secondcmds"></textarea>
+                    </td>
+                    <td>
+                        Heal<br>
+                        <input type="checkbox" name="rolemarker" id="togglehealcmd">
+                        <label for="togglehealcmd">Marker</label>
+                        <button class="clearcmds" for="healcmds">Clear</button>
+                        <br>
+                        <textarea id="healcmds"></textarea>
+                    </td>
+                    <td>
+                        Collector<br>
+                        <input type="checkbox" name="rolemarker" id="togglecolcmd">
+                        <label for="togglecolcmd">Marker</label>
+                        <button class="clearcmds" for="colcmds">Clear</button>
+                        <br>
+                        <textarea id="colcmds"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align:left;">
+                        <a href="#"
+                            onclick="alert('21,25:10 means teammate will move to 21,25 no earlier than tick 10')">
+                            syntax
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <canvas id="basimcanvas"></canvas><br>
+    </div>
+    <div class="container">
+        <div class="one">
+            <button id="savestate">(S)ave State</button>
+            <button id="loadstate">(L)oad State</button><br>
+            <b>space</b> starts or stops the wave.<br>
+            <b>left-click</b> moves the player.<br>
+            <b>right-click</b> places a collector.<br>
+            <b>r</b> drops a right food.<br>
+            <b>w</b> drops a wrong food.<br>
+            <b>e</b> picks up a food or log.<br>
+            <b>t</b> repairs trap.<br><br>
+            <b>Thanks to ...</b>
+            <ul>
+                <li>Henke (original sim)</li>
+                <li>Mclovin (og modded sim)</li>
+                <li>Raid (healer targeting)</li>
+                <li>B5 & Capeshit (render mechanics)</li>
+                <li>Fosters (step back)</li>
+            </ul>
+        </div>
+        <div>
+            <table id="runnertable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Runner</th>
+                        <th>Tick</th>
+                        <th>State</th>
+                        <th>Position</th>
+                        <th>Destination</th>
+                        <th>Target</th>
+                        <th>Chat</th>
+                    </tr>
+                </thead>
+            </table><br>
+            <table id="healertable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Healer</th>
+                        <th>Current Target</th>
+                        <th>Last Target</th>
+                        <th>Spray Timer</th>
+                        <th>Position</th>
+                        <th>Destination</th>
+                    </tr>
+                </thead>
+            </table>
+            <br>
+        </div>
+    </div>
 </div>
-<canvas id="basimcanvas"></canvas><br>
-<section class="container">
-    <div class="one">
-        <button id="savestate">(S)ave State</button>
-        <button id="loadstate">(L)oad State</button><br>
-        <b>space</b> starts or stops the wave.<br>
-        <b>left-click</b> moves the player.<br>
-        <b>right-click</b> places a collector.<br>
-        <b>r</b> drops a right food.<br>
-        <b>w</b> drops a wrong food.<br>
-        <b>e</b> picks up a food or log.<br>
-        <b>t</b> repairs trap.<br><br>
-        <b>Thanks to ...</b>
-        <ul>
-            <li>Henke (original sim)</li>
-            <li>Mclovin (og modded sim)</li>
-            <li>Raid (healer targeting)</li>
-            <li>B5 & Capeshit (render mechanics)</li>
-            <li>Fosters (step back)</li>
-        </ul>
-    </div>
-    <div class="two">
-        <table id="runnertable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Runner</th>
-                    <th>Tick</th>
-                    <th>State</th>
-                    <th>Position</th>
-                    <th>Destination</th>
-                    <th>Target</th>
-                    <th>Chat</th>
-                </tr>
-            </thead>
-        </table><br>
-        <table id="healertable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Healer</th>
-                    <th>Current Target</th>
-                    <th>Last Target</th>
-                    <th>Spray Timer</th>
-                    <th>Position</th>
-                    <th>Destination</th>
-                </tr>
-            </thead>
-        </table>
-        <br>
-    </div>
-</section>

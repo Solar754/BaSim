@@ -92,11 +92,12 @@ function simInit() {
 
 	let allRoleMarkers = document.getElementsByName("rolemarker");
 	allRoleMarkers.forEach(m => m.onclick = simToggleOnlyOneRoleMarker);
-
 	let clearCmds = document.getElementsByClassName("clearcmds")
 	for (let ele of clearCmds) {
 		ele.onclick = cmdClearPath;
 	}
+	// example syntax
+	document.getElementById('maincmds').value = "21,25:10\n"
 
 	simSetRunning(false);
 
@@ -276,6 +277,8 @@ function simStartStopButtonOnClick() {
 		mResetMap();
 		simReset(true);
 	} else {
+		let allRoleMarkers = document.getElementsByName("rolemarker");
+		allRoleMarkers.forEach(m => m.checked = false);
 		let movements = simParseMovementsInput();
 		let runnerSpawns = simParseSpawnsInput(sim.RunnerSpawns);
 		let healerSpawns = simParseSpawnsInput(sim.HealerSpawns);
@@ -500,6 +503,14 @@ function simClearMarkersOnClick(e) {
 	simDraw();
 }
 function simToggleTeamOnClick(e) {
+	if (e.target.checked) {
+		document.getElementById("teammatetable").style.display = "table";
+	}
+	else {
+		document.getElementById("teammatetable").style.display = "none";
+	}
+	let allRoleMarkers = document.getElementsByName("rolemarker");
+	allRoleMarkers.forEach(m => m.checked = false);
 	mResetMap();
 	simReset(e);
 }

@@ -1,6 +1,11 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto;
+}
+
 textarea {
-    width: 100px;
-    resize: vertical;
+    width: 85px;
+    resize: none;
 }
 
 table,
@@ -25,12 +30,10 @@ td {
 
 .container {
     width: 100%;
-    height: 200px;
     margin: auto;
 }
 
 .one {
-    height: 200px;
     float: left;
     padding-right: 1rem;
 }
@@ -41,7 +44,8 @@ td {
 }
 
 .two {
-    height: 200px;
+    margin-left: 23rem;
+    position: fixed;
 }
 
 .ripple {

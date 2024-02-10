@@ -1,7 +1,5 @@
 /*
 TODO
-- better css
-- instructions for how to use
 - state support
 - toggle to preserve team-specific tile indicators during run
 - timeout for unreachable tiles
@@ -118,7 +116,7 @@ function cmdTeammate(x, y, tiles, color, role = "teammate") {
     this.PathQueueY = [];
     this.ShortestDistances = [];
     this.WayPoints = [];
-    this.Role = role; // must be unique!
+    this.Role = role; // must be unique
     this.Color = color;
     this.Tiles = tiles;
     this.CurrentDst = {
