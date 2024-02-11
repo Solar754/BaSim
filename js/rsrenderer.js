@@ -1,5 +1,5 @@
 /*
-* Generic draw methods 
+* Basim draw wrapper methods over canvas
 */
 //{ RsRenderer - rr
 function rrInit(tileSize) {
@@ -54,6 +54,9 @@ function rrNorthLineBig(x, y, length) {
 }
 function rrCone(x, y) {
     rDrawCone(x * rrTileSize, y * rrTileSize, rrTileSize);
+}
+function rrText(x, y, text) {
+    rDrawText(x * rrTileSize, rr.CanvasHeight - 1 - (y * rrTileSize), rrTileSize - 1, text);
 }
 function rrFillItem(x, y) {
     let padding = rrTileSize >>> 2;

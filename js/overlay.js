@@ -58,51 +58,20 @@ function oDrawYellowClick(e) {
 }
 
 function oDrawAllRolePaths() {
+    let includeNumbers = document.getElementById("rolemarkernumbers").checked;
     simDraw(); // clear canvas
-    for (let role of ROLE_NAMES) {
+    for (let role of cmdROLE_NAMES) {
         let tiles = cmdParseTiles(role);
         let color = cmd[`${role}Color`];
         rSetDrawColor(...color.slice(0, 3), 90);
-        for (let tile of tiles) {
-            rrFill(tile.X, tile.Y);
+
+        for (let i = 0; i < tiles.length; i++) {
+            rrFill(tiles[i].X, tiles[i].Y);
+            if (includeNumbers) {
+                rrText(tiles[i].X, tiles[i].Y, i + 1);
+            }
         }
     }
     rPresent();
 }
-
-function oXTiletoPx(xTile) { // top left
-    var canvasRect = rr.Canvas.getBoundingClientRect();
-    return (xTile * rrTileSize) + canvasRect.left;
-}
-function oYTiletoPx(yTile) { // bottom right
-    var canvasRect = rr.Canvas.getBoundingClientRect();
-    return canvasRect.bottom - 1 - (yTile * rrTileSize);
-}
-
 //}
-/*
-misc notes
--- adding text onto a tile
-
-.numbertile {
-    margin: 0;
-    position: absolute;
-    user-select: none;
-    pointer-events: none;
-    font-size: 14px;
-}
-
-
-function oNumberTile(xTile = 30, yTile = 20, role = "", counter = 12) {
-    let xPixel = oXTiletoPx(xTile);
-    let yPixel = oYTiletoPx(yTile);
-    let tmp = document.createElement("span");
-    tmp.id = String(xTile) + String(yTile) + role + counter
-    tmp.className = "numbertile"
-    tmp.style.left = xPixel + 3 + 'px';
-    tmp.style.top = yPixel - 13 + 'px';
-    tmp.innerHTML = counter
-    document.body.appendChild(tmp);
-}
-
-*/

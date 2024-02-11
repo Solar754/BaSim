@@ -1,5 +1,5 @@
 /*
-* Render (pending drawn) updates to canvas
+* Write pixels to canvas
 */
 //{ Renderer - r
 const rPIXEL_ALPHA = 255 << 24;
@@ -37,6 +37,8 @@ function rClear() {
 function rPresent() {
     rr.ImageData.data.set(rr.Pixels8);
     rr.Context.putImageData(rr.ImageData, 0, 0);
+    rr.CanvasTextQueue.forEach(text => rr.Context.fillText(...text));
+    rr.CanvasTextQueue = [];
 }
 function rDrawPixel(i) {
     let color = rr.Pixels32[i];
@@ -99,6 +101,10 @@ function rDrawCone(x, y, width) { // Not optimised to use i yet
         ++y;
     }
 }
+function rDrawText(x, y, size, text) {
+    rr.Context.font = size + "px serif";
+    rr.CanvasTextQueue.push([text, x, y]);
+}
 function rXYToI(x, y) {
     return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;
 }
@@ -107,6 +113,7 @@ var rr = {
     CanvasWidth: undefined,
     CanvasHeight: undefined,
     CanvasYFixOffset: undefined,
+    CanvasTextQueue: [],
     Context: undefined,
     ImageData: undefined,
     Pixels: undefined,

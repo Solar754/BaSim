@@ -1,10 +1,8 @@
 /*
-TODO
-- timeout for unreachable tiles
+* Create and manage team
 */
-
 //{ Team Controller - cmd
-const ROLE_NAMES = ["main", "second", "heal", "col"];
+const cmdROLE_NAMES = ["main", "second", "heal", "col"];
 
 var cmd = {
     Team: [],
@@ -13,7 +11,7 @@ var cmd = {
     healColor: [10, 240, 10, 220],
     colColor: [240, 240, 10, 200],
 }
-function cmdTeammate(x, y, color, role = ROLE_NAMES[0]) {
+function cmdTeammate(x, y, color, role = cmdROLE_NAMES[0]) {
     this.X = x;
     this.Y = y;
     this.PathQueuePos = 0;
@@ -62,6 +60,8 @@ cmdTeammate.prototype.draw = function () {
     if (this.X >= 0) {
         rSetDrawColor(...this.Color);
         rrFill(this.X, this.Y);
+        rSetDrawColor(0, 0, 0, 200);
+        rrOutline(this.X, this.Y);
     }
 }
 function cmdInit() {

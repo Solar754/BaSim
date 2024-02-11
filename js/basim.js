@@ -23,8 +23,8 @@ const HTML_SECONDS_COUNT = "secondscount";
 const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
-const HTML_TOGGLE_TEAM = 'toggleteam';
-const HTML_ROLE_MARKER = `rolemarker`;
+const HTML_TOGGLE_TEAM = "toggleteam";
+const HTML_ROLE_MARKER = "rolemarker";
 
 window.onload = simInit;
 
@@ -86,13 +86,15 @@ function simInit() {
 	sim.SaveState.onclick = simSaveStateOnClick;
 	sim.LoadState = document.getElementById(HTML_LOAD_BUTTON);
 	sim.LoadState.onclick = simLoadStateOnClick;
-
 	sim.SpawnTeam = document.getElementById(HTML_TOGGLE_TEAM);
 	sim.SpawnTeam.onchange = simToggleTeamOnClick;
+
 	sim.AllRoleMarkers = document.getElementsByName(HTML_ROLE_MARKER);
 	sim.AllRoleMarkers.forEach(m => m.onclick = simToggleOnlyOneRoleMarker);
 	let clearCmds = document.getElementsByName("clearcmds");
 	clearCmds.forEach(m => m.onclick = cmdClearPath);
+	let includeNumbers = document.getElementById("rolemarkernumbers");
+	includeNumbers.onclick = (e) => { oDrawAllRolePaths(); }
 
 	simSetRunning(false);
 
@@ -441,7 +443,7 @@ function simCanvasOnMouseDown(e) {
 	let yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
 
 	// add coordinate to textarea on click
-	for (let role of ROLE_NAMES) {
+	for (let role of cmdROLE_NAMES) {
 		let id = `${role}togglemarker`;
 		if (document.getElementById(id).checked) {
 			cmdUpdateRolePath(role, xTile, yTile);
