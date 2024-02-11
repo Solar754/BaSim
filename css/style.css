@@ -45,7 +45,7 @@ td {
 
 .two {
     margin-left: 23rem;
-    position: fixed;
+    position: absolute;
     white-space: nowrap;
 }
 
