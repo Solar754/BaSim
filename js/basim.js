@@ -96,8 +96,6 @@ function simInit() {
 	for (let ele of clearCmds) {
 		ele.onclick = cmdClearPath;
 	}
-	// example syntax
-	document.getElementById('maincmds').value = "21,25:10\n"
 
 	simSetRunning(false);
 
@@ -445,16 +443,16 @@ function simCanvasOnMouseDown(e) {
 
 	// TODO clean
 	if (document.getElementById("togglemaincmd").checked) {
-		cmdMarkPath("main", xTile, yTile);
+		oDrawRolePath("main", xTile, yTile);
 	}
 	else if (document.getElementById("togglesecondcmd").checked) {
-		cmdMarkPath("second", xTile, yTile);
+		oDrawRolePath("second", xTile, yTile);
 	}
 	else if (document.getElementById("togglehealcmd").checked) {
-		cmdMarkPath("heal", xTile, yTile);
+		oDrawRolePath("heal", xTile, yTile);
 	}
 	else if (document.getElementById("togglecolcmd").checked) {
-		cmdMarkPath("col", xTile, yTile);
+		oDrawRolePath("col", xTile, yTile);
 	}
 
 	else if (sim.MarkerMode) {
@@ -503,7 +501,7 @@ function simClearMarkersOnClick(e) {
 	simDraw();
 }
 function simToggleTeamOnClick(e) {
-	if (e.target.checked) {
+	if (sim.SpawnTeam.checked) {
 		document.getElementById("teammatetable").style.display = "table";
 	}
 	else {

@@ -57,6 +57,15 @@ function oDrawYellowClick(e) {
     }, DURATION);
 }
 
+function oDrawRolePath(rolename, xTile, yTile) {
+    let textarea = document.getElementById(`${rolename}cmds`);
+    textarea.value += `${xTile},${yTile}\n`;
+    let color = cmd[`${rolename}Color`];
+    rSetDrawColor(...color.slice(0, 3), 90);
+    rrFill(xTile, yTile);
+    rPresent();
+}
+
 function oXTiletoPx(xTile) { // top left
     var canvasRect = rr.Canvas.getBoundingClientRect();
     return (xTile * rrTileSize) + canvasRect.left;
@@ -86,12 +95,4 @@ if (item.isGood === true) {
     document.body.appendChild(tmp);
 }
 
-----------------------
--- highlight clicked tile (simCanvasOnMouseDown)
-
-rSetDrawColor(240, 240, 240, 80);
-xTile = Math.trunc((e.clientX - canvasRect.left) / rrTileSize);
-yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
-rrFill(xTile, yTile);
-rPresent();
 */

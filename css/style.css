@@ -46,6 +46,7 @@ td {
 .two {
     margin-left: 23rem;
     position: fixed;
+    white-space: nowrap;
 }
 
 .ripple {

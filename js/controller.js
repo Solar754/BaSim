@@ -1,6 +1,5 @@
 /*
 TODO
-- state support
 - toggle to preserve team-specific tile indicators during run
 - timeout for unreachable tiles
 */
@@ -8,10 +7,61 @@ TODO
 //{ Team Controller - cmd
 var cmd = {
     Team: [],
-    mainColor: [240, 10, 10, 200],
-    secondColor: [240, 10, 10, 200],
+    mainColor: [240, 10, 10, 220],
+    secondColor: [200, 50, 50, 220],
     healColor: [10, 240, 10, 220],
     colColor: [240, 240, 10, 200],
+}
+function cmdTeammate(x, y, tiles, color, role = "teammate") {
+    this.X = x;
+    this.Y = y;
+    this.PathQueuePos = 0;
+    this.PathQueueX = [];
+    this.PathQueueY = [];
+    this.ShortestDistances = [];
+    this.WayPoints = [];
+    this.Role = role; // must be unique
+    this.Color = color;
+    this.Tiles = tiles;
+    this.TileIdx = 0;
+    this.CurrentDst = {
+        X: x,
+        Y: y,
+        tick: 0,
+    };
+}
+cmdTeammate.prototype.tick = function () {
+    // Having 2 if's is for moving twice per tick
+    // Having 1 if's is for moving once per tick
+    if (this.PathQueuePos > 0) {
+        this.X = this.PathQueueX[--this.PathQueuePos];
+        this.Y = this.PathQueueY[this.PathQueuePos];
+        if (this.PathQueuePos > 0) {
+            this.X = this.PathQueueX[--this.PathQueuePos];
+            this.Y = this.PathQueueY[this.PathQueuePos];
+        }
+    }
+}
+cmdTeammate.prototype.pathfind = function () {
+    if (ba.TickCounter <= 1) {
+        return;
+    }
+    let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
+    if ((!this.CurrentDst || arrived) && this.TileIdx < this.Tiles.length) {
+        this.CurrentDst = this.Tiles[this.TileIdx++];
+    }
+    if (ba.TickCounter <= this.CurrentDst?.WaitUntil) {
+        return;
+    }
+    if (this.CurrentDst && (arrived || this.CurrentDst?.WaitUntil !== 0)) {
+        plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
+    }
+}
+cmdTeammate.prototype.draw = function () {
+    if (this.X >= 0) {
+        rSetDrawColor(...this.Color);
+        rrFill(this.X, this.Y);
+    }
 }
 function cmdInit() {
     if (m.mCurrentMap === mWAVE10) {
@@ -31,13 +81,13 @@ function cmdInit() {
             baWAVE10_PLAYER_HEALER_SPAWN_X,
             baWAVE10_PLAYER_HEALER_SPAWN_Y,
             cmdParseTiles("healcmds"),
-            cmd.healColor, "healer"
+            cmd.healColor, "heal"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE10_COLLECTOR_SPAWN_X,
             baWAVE10_COLLECTOR_SPAWN_Y,
             cmdParseTiles("colcmds"),
-            cmd.colColor, "collector"
+            cmd.colColor, "col"
         ));
     }
     else {
@@ -57,23 +107,15 @@ function cmdInit() {
             baWAVE1_PLAYER_HEALER_SPAWN_X,
             baWAVE1_PLAYER_HEALER_SPAWN_Y,
             cmdParseTiles("healcmds"),
-            cmd.healColor, "healer"
+            cmd.healColor, "heal"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE1_COLLECTOR_SPAWN_X,
             baWAVE1_COLLECTOR_SPAWN_Y,
             cmdParseTiles("colcmds"),
-            cmd.colColor, "collector"
+            cmd.colColor, "col"
         ));
     }
-}
-function cmdMarkPath(rolename, xTile, yTile) {
-    let textarea = document.getElementById(`${rolename}cmds`);
-    textarea.value += `${xTile},${yTile}\n`;
-    let color = cmd[`${rolename}Color`];
-    rSetDrawColor(...color.slice(0, 3), 90);
-    rrFill(xTile, yTile);
-    rPresent();
 }
 function cmdParseTiles(id) { // expected: x,y:tick
     let tiles = []
@@ -98,64 +140,15 @@ function cmdClearPath(e) {
     simDraw();
 }
 function cmdTick() {
-    for (let m of cmd.Team) {
-        m.pathfind();
-        m.tick();
+    for (let player of cmd.Team) {
+        player.Tiles = cmdParseTiles(`${player.Role}cmds`);
+        player.pathfind();
+        player.tick();
     }
 }
 function cmdDrawTeam() {
-    for (let m of cmd.Team) {
-        m.draw();
-    }
-}
-function cmdTeammate(x, y, tiles, color, role = "teammate") {
-    this.X = x;
-    this.Y = y;
-    this.PathQueuePos = 0;
-    this.PathQueueX = [];
-    this.PathQueueY = [];
-    this.ShortestDistances = [];
-    this.WayPoints = [];
-    this.Role = role; // must be unique
-    this.Color = color;
-    this.Tiles = tiles;
-    this.CurrentDst = {
-        X: x,
-        Y: y,
-        tick: 0,
-    };
-}
-cmdTeammate.prototype.pathfind = function () {
-    if (ba.TickCounter <= 1) {
-        return;
-    }
-    let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
-    if (!this.CurrentDst || arrived) {
-        this.CurrentDst = this.Tiles.shift();
-    }
-    if (ba.TickCounter < this.CurrentDst?.WaitUntil) {
-        return;
-    }
-    if (this.CurrentDst && (arrived || this.CurrentDst?.WaitUntil !== 0)) {
-        plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
-    }
-}
-cmdTeammate.prototype.tick = function () {
-    // Having 2 if's is for moving twice per tick
-    // Having 1 if's is for moving once per tick
-    if (this.PathQueuePos > 0) {
-        this.X = this.PathQueueX[--this.PathQueuePos];
-        this.Y = this.PathQueueY[this.PathQueuePos];
-        if (this.PathQueuePos > 0) {
-            this.X = this.PathQueueX[--this.PathQueuePos];
-            this.Y = this.PathQueueY[this.PathQueuePos];
-        }
-    }
-}
-cmdTeammate.prototype.draw = function () {
-    if (this.X >= 0) {
-        rSetDrawColor(...this.Color);
-        rrFill(this.X, this.Y);
+    for (let player of cmd.Team) {
+        player.draw();
     }
 }
 //}

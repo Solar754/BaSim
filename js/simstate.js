@@ -67,6 +67,7 @@ function buildSaveState() {
 
     // player stuff
     state.pl = structuredClone(pl);
+    state.cmd = structuredClone(cmd)
 
     // map stuff
     // Save a bit of memory not deep-copying the map image since it's set to
@@ -91,6 +92,7 @@ function buildSaveState() {
     state.sim.WaveVal = sim.WaveSelect.value;
     state.sim.LevelVal = sim.DefLevelSelect.value;
     state.sim.HealerToggle = sim.ToggleHealers.checked;
+    state.sim.TeamToggle = sim.SpawnTeam.checked;
     return state;
 }
 
@@ -105,11 +107,20 @@ function loadSaveState(state) {
     sim.WaveSelect.value = state["sim"].WaveVal;
     simWaveSelectOnChange();
     sim.ToggleHealers.checked = state["sim"].HealerToggle;
+    sim.SpawnTeam.checked = state["sim"].TeamToggle;
+    simToggleTeamOnClick();
 
     ba = structuredClone(state["ba"]);
     pl = structuredClone(state["pl"]);
     m.mItemZones = structuredClone(state["m"].mItemZones);
     sim.update(state["sim"]);
+
+    cmd.Team = [];
+    state["cmd"].Team.forEach(player => {
+        let tmpPlayer = new cmdTeammate();
+        tmpPlayer.update(player)
+        cmd.Team.push(tmpPlayer);
+    });
 
     ba.Healers = [];
     state["ba"].Healers.forEach(healer => {
