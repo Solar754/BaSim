@@ -4,7 +4,7 @@ TODO
 */
 
 //{ Team Controller - cmd
-ROLE_NAMES = ["main", "second", "heal", "col"]
+const ROLE_NAMES = ["main", "second", "heal", "col"];
 
 var cmd = {
     Team: [],
@@ -146,6 +146,7 @@ function cmdUpdateRolePath(role, xTile, yTile) {
     else {
         textarea.value += `${xTile},${yTile}:${ba.TickCounter}\n`;
     }
+    textarea.scrollTop = textarea.scrollHeight;
     oDrawAllRolePaths();
 }
 function cmdClearPath(e) {

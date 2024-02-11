@@ -82,20 +82,26 @@ function oYTiletoPx(yTile) { // bottom right
 //}
 /*
 misc notes
--- adding text next to a dropped food (mDrawItems)
+-- adding text onto a tile
 
-if (item.isGood === true) {
-    let xPixel = rXtoPx(item.x);
-    let yPixel = rYtoPx(item.y);
+.numbertile {
+    margin: 0;
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+    font-size: 14px;
+}
 
-    let tmp = document.createElement("strong");
-    tmp.innerHTML = "3"
-    tmp.id = String(item.x) + String(item.y)
-    tmp.className = "food"
-    tmp.style.margin = '0';
-    tmp.style.position = 'absolute';
-    tmp.style.left = xPixel + 8 + 'px';
-    tmp.style.top = yPixel - 12 + 'px';
+
+function oNumberTile(xTile = 30, yTile = 20, role = "", counter = 12) {
+    let xPixel = oXTiletoPx(xTile);
+    let yPixel = oYTiletoPx(yTile);
+    let tmp = document.createElement("span");
+    tmp.id = String(xTile) + String(yTile) + role + counter
+    tmp.className = "numbertile"
+    tmp.style.left = xPixel + 3 + 'px';
+    tmp.style.top = yPixel - 13 + 'px';
+    tmp.innerHTML = counter
     document.body.appendChild(tmp);
 }
 

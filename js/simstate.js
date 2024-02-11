@@ -67,7 +67,7 @@ function buildSaveState() {
 
     // player stuff
     state.pl = structuredClone(pl);
-    state.cmd = structuredClone(cmd)
+    state.cmd = structuredClone(cmd);
 
     // map stuff
     // Save a bit of memory not deep-copying the map image since it's set to
@@ -118,7 +118,7 @@ function loadSaveState(state) {
     cmd.Team = [];
     state["cmd"].Team.forEach(player => {
         let tmpPlayer = new cmdTeammate();
-        tmpPlayer.update(player)
+        tmpPlayer.update(player);
         cmd.Team.push(tmpPlayer);
     });
 
@@ -139,7 +139,7 @@ function loadSaveState(state) {
         tmpR.foodTarget = structuredClone(runner.foodTarget);
         ba.Runners.push(tmpR);
     });
-    simMovementsInputWatcher()
+    simMovementsInputWatcher();
 
     // html
     if (state == stateHistory.latest() || !stateHistory.latest()) {
