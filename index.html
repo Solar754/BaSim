@@ -46,35 +46,35 @@
         <div class="two">
             <table id="teammatetable" style="display: none;">
                 <tr>
-                    <td>
+                    <td name="main">
                         Main<br>
-                        <input type="checkbox" name="rolemarker" id="togglemaincmd">
-                        <label for="togglemaincmd">Marker</label>
-                        <button class="clearcmds" for="maincmds">Clear</button>
+                        <input type="checkbox" name="rolemarker" id="maintogglemarker">
+                        <label for="maintogglemarker">Marker</label>
+                        <button name="clearcmds" for="maincmds">Clear</button>
                         <br>
                         <textarea id="maincmds"></textarea>
                     </td>
-                    <td>
+                    <td name="second">
                         Second<br>
-                        <input type="checkbox" name="rolemarker" id="togglesecondcmd">
-                        <label for="togglesecondcmd">Marker</label>
-                        <button class="clearcmds" for="secondcmds">Clear</button>
+                        <input type="checkbox" name="rolemarker" id="secondtogglemarker">
+                        <label for="secondtogglemarker">Marker</label>
+                        <button name="clearcmds" for="secondcmds">Clear</button>
                         <br>
                         <textarea id="secondcmds"></textarea>
                     </td>
-                    <td>
+                    <td name="heal">
                         Heal<br>
-                        <input type="checkbox" name="rolemarker" id="togglehealcmd">
-                        <label for="togglehealcmd">Marker</label>
-                        <button class="clearcmds" for="healcmds">Clear</button>
+                        <input type="checkbox" name="rolemarker" id="healtogglemarker">
+                        <label for="healtogglemarker">Marker</label>
+                        <button name="clearcmds" for="healcmds">Clear</button>
                         <br>
                         <textarea id="healcmds"></textarea>
                     </td>
-                    <td>
+                    <td name="col">
                         Collector<br>
-                        <input type="checkbox" name="rolemarker" id="togglecolcmd">
-                        <label for="togglecolcmd">Marker</label>
-                        <button class="clearcmds" for="colcmds">Clear</button>
+                        <input type="checkbox" name="rolemarker" id="coltogglemarker">
+                        <label for="coltogglemarker">Marker</label>
+                        <button name="clearcmds" for="colcmds">Clear</button>
                         <br>
                         <textarea id="colcmds"></textarea>
                     </td>
@@ -82,7 +82,7 @@
                 <tr>
                     <td colspan="5" style="text-align:left;">
                         <a href="#"
-                            onclick="alert('21,25:10 means teammate will click to move to tile 21,25 no earlier than tick 10')">
+                            onclick="alert('21,25:10 means the teammate will click to move to tile 21,25 no earlier than tick 10')">
                             syntax
                         </a>
                     </td>

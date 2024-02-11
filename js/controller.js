@@ -1,10 +1,11 @@
 /*
 TODO
-- toggle to preserve team-specific tile indicators during run
 - timeout for unreachable tiles
 */
 
 //{ Team Controller - cmd
+ROLE_NAMES = ["main", "second", "heal", "col"]
+
 var cmd = {
     Team: [],
     mainColor: [240, 10, 10, 220],
@@ -12,7 +13,7 @@ var cmd = {
     healColor: [10, 240, 10, 220],
     colColor: [240, 240, 10, 200],
 }
-function cmdTeammate(x, y, tiles, color, role = "teammate") {
+function cmdTeammate(x, y, color, role = ROLE_NAMES[0]) {
     this.X = x;
     this.Y = y;
     this.PathQueuePos = 0;
@@ -22,7 +23,7 @@ function cmdTeammate(x, y, tiles, color, role = "teammate") {
     this.WayPoints = [];
     this.Role = role; // must be unique
     this.Color = color;
-    this.Tiles = tiles;
+    this.Tiles = cmdParseTiles(role);
     this.TileIdx = 0;
     this.CurrentDst = {
         X: x,
@@ -68,25 +69,21 @@ function cmdInit() {
         cmd.Team.push(new cmdTeammate(
             baWAVE10_MAIN_SPAWN_X,
             baWAVE10_MAIN_SPAWN_Y,
-            cmdParseTiles("maincmds"),
             cmd.mainColor, "main"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE10_2A_SPAWN_X,
             baWAVE10_2A_SPAWN_Y,
-            cmdParseTiles("secondcmds"),
             cmd.secondColor, "second"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE10_PLAYER_HEALER_SPAWN_X,
             baWAVE10_PLAYER_HEALER_SPAWN_Y,
-            cmdParseTiles("healcmds"),
             cmd.healColor, "heal"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE10_COLLECTOR_SPAWN_X,
             baWAVE10_COLLECTOR_SPAWN_Y,
-            cmdParseTiles("colcmds"),
             cmd.colColor, "col"
         ));
     }
@@ -94,32 +91,40 @@ function cmdInit() {
         cmd.Team.push(new cmdTeammate(
             baWAVE1_MAIN_SPAWN_X,
             baWAVE1_MAIN_SPAWN_Y,
-            cmdParseTiles("maincmds"),
             cmd.mainColor, "main"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE1_2A_SPAWN_X,
             baWAVE1_2A_SPAWN_Y,
-            cmdParseTiles("secondcmds"),
             cmd.secondColor, "second"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE1_PLAYER_HEALER_SPAWN_X,
             baWAVE1_PLAYER_HEALER_SPAWN_Y,
-            cmdParseTiles("healcmds"),
             cmd.healColor, "heal"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE1_COLLECTOR_SPAWN_X,
             baWAVE1_COLLECTOR_SPAWN_Y,
-            cmdParseTiles("colcmds"),
             cmd.colColor, "col"
         ));
     }
 }
-function cmdParseTiles(id) { // expected: x,y:tick
+function cmdTick() {
+    for (let player of cmd.Team) {
+        player.Tiles = cmdParseTiles(player.Role);
+        player.pathfind();
+        player.tick();
+    }
+}
+function cmdDrawTeam() {
+    for (let player of cmd.Team) {
+        player.draw();
+    }
+}
+function cmdParseTiles(role) { // expected: x,y:tick
     let tiles = []
-    let vals = document.getElementById(id).value;
+    let vals = document.getElementById(`${role}cmds`).value;
     vals = vals.split("\n");
     for (let input of vals) {
         if (!input) continue;
@@ -133,22 +138,23 @@ function cmdParseTiles(id) { // expected: x,y:tick
     }
     return tiles
 }
+function cmdUpdateRolePath(role, xTile, yTile) {
+    let textarea = document.getElementById(`${role}cmds`);
+    if (!ba.TickCounter) {
+        textarea.value += `${xTile},${yTile}\n`;
+    }
+    else {
+        textarea.value += `${xTile},${yTile}:${ba.TickCounter}\n`;
+    }
+    oDrawAllRolePaths();
+}
 function cmdClearPath(e) {
     let id = e.target.getAttribute("for");
     let cmds = document.getElementById(id);
     cmds.value = "";
-    simDraw();
+    oDrawAllRolePaths();
 }
-function cmdTick() {
-    for (let player of cmd.Team) {
-        player.Tiles = cmdParseTiles(`${player.Role}cmds`);
-        player.pathfind();
-        player.tick();
-    }
-}
-function cmdDrawTeam() {
-    for (let player of cmd.Team) {
-        player.draw();
-    }
+function cmdUncheckAllRoles() {
+    sim.AllRoleMarkers.forEach(m => m.checked = false);
 }
 //}

@@ -57,17 +57,16 @@ function oDrawYellowClick(e) {
     }, DURATION);
 }
 
-function oDrawRolePath(rolename, xTile, yTile) {
-    let textarea = document.getElementById(`${rolename}cmds`);
-    if (!ba.TickCounter) {
-        textarea.value += `${xTile},${yTile}\n`;
+function oDrawAllRolePaths() {
+    simDraw(); // clear canvas
+    for (let role of ROLE_NAMES) {
+        let tiles = cmdParseTiles(role);
+        let color = cmd[`${role}Color`];
+        rSetDrawColor(...color.slice(0, 3), 90);
+        for (let tile of tiles) {
+            rrFill(tile.X, tile.Y);
+        }
     }
-    else {
-        textarea.value += `${xTile},${yTile}:${ba.TickCounter}\n`;
-    }
-    let color = cmd[`${rolename}Color`];
-    rSetDrawColor(...color.slice(0, 3), 90);
-    rrFill(xTile, yTile);
     rPresent();
 }
 

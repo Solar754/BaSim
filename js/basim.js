@@ -24,7 +24,7 @@ const HTML_DEF_LEVEL_SELECT = "deflevelselect";
 const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 const HTML_TOGGLE_TEAM = 'toggleteam';
-// ["togglemaincmd", "togglesecondcmd", "togglehealcmd", "togglecolcmd"]
+const HTML_ROLE_MARKER = `rolemarker`;
 
 window.onload = simInit;
 
@@ -89,13 +89,10 @@ function simInit() {
 
 	sim.SpawnTeam = document.getElementById(HTML_TOGGLE_TEAM);
 	sim.SpawnTeam.onchange = simToggleTeamOnClick;
-
-	let allRoleMarkers = document.getElementsByName("rolemarker");
-	allRoleMarkers.forEach(m => m.onclick = simToggleOnlyOneRoleMarker);
-	let clearCmds = document.getElementsByClassName("clearcmds")
-	for (let ele of clearCmds) {
-		ele.onclick = cmdClearPath;
-	}
+	sim.AllRoleMarkers = document.getElementsByName(HTML_ROLE_MARKER);
+	sim.AllRoleMarkers.forEach(m => m.onclick = simToggleOnlyOneRoleMarker);
+	let clearCmds = document.getElementsByName("clearcmds");
+	clearCmds.forEach(m => m.onclick = cmdClearPath);
 
 	simSetRunning(false);
 
@@ -250,6 +247,7 @@ function simPauseResumeButtonOnClick() {
 			simSetPause(true);
 		}
 	}
+	cmdUncheckAllRoles();
 }
 function simStepButtonOnClick() {
 	if (!(sim.IsRunning && sim.IsPaused)) {
@@ -261,6 +259,7 @@ function simStepButtonOnClick() {
 	} else {
 		simTick();
 	}
+	cmdUncheckAllRoles();
 }
 function simStepBackwardButtonOnClick() {
 	const state = stateHistory.backward();
@@ -268,6 +267,7 @@ function simStepBackwardButtonOnClick() {
 		return;
 	}
 	loadSaveState(state);
+	cmdUncheckAllRoles();
 }
 
 function simStartStopButtonOnClick() {
@@ -275,8 +275,6 @@ function simStartStopButtonOnClick() {
 		mResetMap();
 		simReset(true);
 	} else {
-		let allRoleMarkers = document.getElementsByName("rolemarker");
-		allRoleMarkers.forEach(m => m.checked = false);
 		let movements = simParseMovementsInput();
 		let runnerSpawns = simParseSpawnsInput(sim.RunnerSpawns);
 		let healerSpawns = simParseSpawnsInput(sim.HealerSpawns);
@@ -365,6 +363,7 @@ function simStartStopButtonOnClick() {
 		simTick();
 		sim.TickTimerId = setInterval(simTick, 600);
 	}
+	cmdUncheckAllRoles();
 }
 function simMovementsInputWatcher() {
 	ba.runnerMovements = simParseMovementsInput();
@@ -441,21 +440,16 @@ function simCanvasOnMouseDown(e) {
 	let xTile = Math.trunc((e.clientX - canvasRect.left) / rrTileSize);
 	let yTile = Math.trunc((canvasRect.bottom - 1 - e.clientY) / rrTileSize);
 
-	// TODO clean
-	if (document.getElementById("togglemaincmd").checked) {
-		oDrawRolePath("main", xTile, yTile);
-	}
-	else if (document.getElementById("togglesecondcmd").checked) {
-		oDrawRolePath("second", xTile, yTile);
-	}
-	else if (document.getElementById("togglehealcmd").checked) {
-		oDrawRolePath("heal", xTile, yTile);
-	}
-	else if (document.getElementById("togglecolcmd").checked) {
-		oDrawRolePath("col", xTile, yTile);
+	// add coordinate to textarea on click
+	for (let role of ROLE_NAMES) {
+		let id = `${role}togglemarker`;
+		if (document.getElementById(id).checked) {
+			cmdUpdateRolePath(role, xTile, yTile);
+			return;
+		}
 	}
 
-	else if (sim.MarkerMode) {
+	if (sim.MarkerMode) {
 		if (e.button === 0) {
 			markedTiles.push(xTile, yTile);
 			simDraw();
@@ -507,18 +501,20 @@ function simToggleTeamOnClick(e) {
 	else {
 		document.getElementById("teammatetable").style.display = "none";
 	}
-	let allRoleMarkers = document.getElementsByName("rolemarker");
-	allRoleMarkers.forEach(m => m.checked = false);
+	cmdUncheckAllRoles();
 	mResetMap();
 	simReset(e);
 }
 function simToggleOnlyOneRoleMarker(e) {
 	let originalVal = e.target.checked;
-	let myCheckbox = document.getElementsByName("rolemarker");
-	Array.prototype.forEach.call(myCheckbox, function (el) {
-		el.checked = false;
-	});
+	cmdUncheckAllRoles();
 	e.target.checked = originalVal;
+	if (e.target.checked) {
+		oDrawAllRolePaths();
+	}
+	else {
+		simDraw();
+	}
 }
 function simSaveStateOnClick() {
 	console.log("Saving state...");
@@ -587,5 +583,6 @@ var sim = {
 	MarkerMode: false,
 	ClearMarkers: undefined,
 	SpawnTeam: undefined,
+	AllRoleMarkers: undefined
 }
 //}

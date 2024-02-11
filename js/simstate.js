@@ -83,7 +83,7 @@ function buildSaveState() {
     state.sim = {};
     Object.keys(sim).forEach(key => {
         let simObj = sim[key];
-        if (simObj instanceof HTMLElement) {
+        if (simObj instanceof HTMLElement || simObj instanceof NodeList) {
             state.sim[key] = simObj;
         } else {
             state.sim[key] = structuredClone(simObj);
