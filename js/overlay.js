@@ -59,7 +59,12 @@ function oDrawYellowClick(e) {
 
 function oDrawRolePath(rolename, xTile, yTile) {
     let textarea = document.getElementById(`${rolename}cmds`);
-    textarea.value += `${xTile},${yTile}\n`;
+    if (!ba.TickCounter) {
+        textarea.value += `${xTile},${yTile}\n`;
+    }
+    else {
+        textarea.value += `${xTile},${yTile}:${ba.TickCounter}\n`;
+    }
     let color = cmd[`${rolename}Color`];
     rSetDrawColor(...color.slice(0, 3), 90);
     rrFill(xTile, yTile);
