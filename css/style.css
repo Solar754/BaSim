@@ -62,4 +62,19 @@ td {
     perspective: 1000;
 }
 
+.dark-mode {
+    background-color:#191a1b;
+    color:rgba(255, 255, 255, 0.795);
+}
+body {
+    transition: 300ms ease-in-out;
+}
+.dark-mode b {
+    color: rgb(255, 255, 255);
+    transition: 300ms ease-in-out;
+}
+.darklight-button {
+    margin-left: 20px;
+}
+
 @keyframes ripple-effect {}
