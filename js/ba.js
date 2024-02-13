@@ -160,9 +160,10 @@ function baSpawnRunner() {
     } else {
         movements = "";
     }
+    let isWave10 = (m.mCurrentMap === mWAVE10);
     let xSpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_RUNNER_SPAWN_X : baWAVE10_RUNNER_SPAWN_X;
     let ySpawn = (m.mCurrentMap === mWAVE_1_TO_9) ? baWAVE1_RUNNER_SPAWN_Y : baWAVE10_RUNNER_SPAWN_Y;
-    ba.Runners.push(new ruRunner(xSpawn, ySpawn, new rngRunnerRNG(movements), false, ba.CurrentRunnerId++));
+    ba.Runners.push(new ruRunner(xSpawn, ySpawn, new rngRunnerRNG(movements), isWave10, ba.CurrentRunnerId++));
     ++ba.RunnersAlive;
     ++ba.RunnerSpawnsIndex;
 }
