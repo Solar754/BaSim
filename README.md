@@ -20,3 +20,4 @@ src's src: [https://henke96.github.io/BaSim/](https://henke96.github.io/BaSim/)
 - healer toggle
 - specify which tick healers and runners can spawn on
    - Example: 5,15 OR 5-15
+- team macro

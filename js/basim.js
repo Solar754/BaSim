@@ -108,6 +108,10 @@ function simInit() {
 	canvas.oncontextmenu = function (e) {
 		e.preventDefault();
 	};
+
+	// dark mode theme
+	document.getElementById("themebtn").onclick = oFlipThemeOnClick;
+	if (localStorage.getItem("basimTheme") == "⚫") oFlipThemeOnClick();
 }
 function simUpdateRunnerTable() {
 	if (!sim.IsRunning) {

@@ -74,4 +74,17 @@ function oDrawAllRolePaths() {
     }
     rPresent();
 }
+
+function oFlipThemeOnClick() {
+    let themeBtn = document.getElementById("themebtn");
+    document.body.classList.toggle("dark-theme");
+    if (themeBtn.textContent === "⚫") {
+        themeBtn.textContent = "🟡";
+        localStorage.setItem("basimTheme", "⚫");
+    }
+    else {
+        themeBtn.textContent = "⚫";
+        localStorage.setItem("basimTheme", "🟡");
+    }
+}
 //}
