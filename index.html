@@ -3,8 +3,6 @@
 <link rel="stylesheet" href="css/style.css">
 <script src="js/basim.js"></script>
 <script src="js/fileloader.js"></script>
-<script src="js/darkmode.js"></script>
-<body>
 <div class="grid-container">
     <div class="container">
         <div class="one">
@@ -14,8 +12,7 @@
                 <option value="6">6 tiles</option>
                 <option value="7">7 tiles</option>
                 <option value="8">8 tiles</option>
-            </select>
-            <button class="darklight-button" id="darklightBtn" onclick="darklightMode()">Dark mode</button><br>
+            </select><br>
             Wave: <select id="waveselect">
                 <option value="1">Wave 1</option>
                 <option value="2">Wave 2</option>
@@ -100,6 +97,7 @@
     </div>
     <div class="container">
         <div class="one">
+            <button id="themebtn">⚫</button>
             <button id="savestate">(S)ave State</button>
             <button id="loadstate">(L)oad State</button><br>
             <b>space</b> starts or stops the wave.<br>
@@ -148,4 +146,3 @@
         </div>
     </div>
 </div>
-</body>
