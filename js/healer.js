@@ -18,7 +18,7 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.sprayTimer = 0; // used to time when a healer should be aggroing runners or players
     this.id = id;
 }
-heHealer.prototype.findPlayerTarget = function () {
+heHealer.prototype.foundPlayerTarget = function () {
     let plTarget = undefined;
     let possibleTargets = [];
     let players = heCompilePlayerTargets();
@@ -31,18 +31,16 @@ heHealer.prototype.findPlayerTarget = function () {
         plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
     }
     this.playerTarget = plTarget;
+    return plTarget;
 }
 heHealer.prototype.tick = function () {
     // healer stands still when it spawns, until player comes into LOS
     // if multiple players in LOS, randomly choose
-    if (this.justSpawned) {
-        this.findPlayerTarget();
-        if (this.playerTarget) {
-            this.destinationX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-            this.destinationY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
-            this.isTargetingPlayer = true;
-            this.justSpawned = false;
-        }
+    if (this.justSpawned && this.foundPlayerTarget()) {
+        this.destinationX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+        this.destinationY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+        this.isTargetingPlayer = true;
+        this.justSpawned = false;
     }
 
     // idle wander state, 1/8 chance per tick to find new destination, unless found new target
@@ -74,8 +72,7 @@ heHealer.prototype.tick = function () {
         }
         // try to target player every tick only after 2 ticks of pause
         else if (this.lastTarget === 'runner' && this.sprayTimer > 2) {
-            this.findPlayerTarget();
-            if (this.playerTarget) {
+            if (this.foundPlayerTarget()) {
                 this.isTargetingPlayer = true;
                 this.tryTarget('player');
             }
@@ -93,7 +90,7 @@ heHealer.prototype.tick = function () {
     }
     // move toward player when targeting player
     else if (this.isTargetingPlayer) {
-        // update x,y
+        // update x,y for playerTarget
         let allPlayers = heCompilePlayerTargets();
         this.playerTarget = allPlayers.filter(player => player.Role === this.playerTarget.Role)[0];
         this.tryTarget('player');
@@ -106,8 +103,7 @@ heHealer.prototype.tick = function () {
             this.lastTarget = 'runner';
             this.sprayTimer = 0;
 
-            this.findPlayerTarget();
-            if (this.playerTarget) {
+            if (this.foundPlayerTarget()) {
                 this.isTargetingPlayer = true;
                 this.tryTarget('player');
             }

@@ -1,12 +1,24 @@
+:root[data-theme="light"] {
+    color-scheme: light;
+    --text: black;
+    --background: white;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --text: rgba(255, 255, 255, 0.795);
+    --background: #191a1b;
+}
+
+body {
+    color: var(--text);
+    background: var(--background);
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: auto;
     transition: 300ms ease-in-out;
-}
-
-.dark-theme {
-    background-color: #191a1b;
-    color: rgba(255, 255, 255, 0.795);
 }
 
 textarea {

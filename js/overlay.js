@@ -77,13 +77,14 @@ function oDrawAllRolePaths() {
 
 function oFlipThemeOnClick() {
     let themeBtn = document.getElementById("themebtn");
-    document.body.classList.toggle("dark-theme");
     if (themeBtn.textContent === "⚫") {
         themeBtn.textContent = "🟡";
+        document.documentElement.dataset.theme = 'dark';
         localStorage.setItem("basimTheme", "⚫");
     }
     else {
         themeBtn.textContent = "⚫";
+        document.documentElement.dataset.theme = 'light';
         localStorage.setItem("basimTheme", "🟡");
     }
 }
