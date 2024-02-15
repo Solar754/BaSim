@@ -43,6 +43,8 @@ const baWAVE1_COLLECTOR_SPAWN_X = 29;
 const baWAVE1_COLLECTOR_SPAWN_Y = 8;
 const baWAVE10_COLLECTOR_SPAWN_X = 32;
 const baWAVE10_COLLECTOR_SPAWN_Y = 8;
+
+const baPSN_FOOD_DMG = 4;
 const baHEALER_HEALTH = {
     "1": 27,
     "2": 32,
@@ -271,8 +273,13 @@ function baDrawEntities() {
     for (let i = 0; i < ba.Runners.length; ++i) {
         rrFill(ba.Runners[i].x, ba.Runners[i].y);
     }
-    rSetDrawColor(11, 199, 11, 150);
     for (let i = 0; i < ba.Healers.length; ++i) {
+        if (ba.Healers[i].hp == baHEALER_HEALTH[sim.WaveSelect.value]) {
+            rSetDrawColor(11, 199, 11, 150);
+        }
+        else {
+            rSetDrawColor(116, 169, 46, 170);
+        }
         rrFill(ba.Healers[i].x, ba.Healers[i].y);
     }
     if (ba.CollectorX !== -1) { // draw coll

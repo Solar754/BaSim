@@ -19,6 +19,14 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.justSpawned = true; // special state when healer spawns where it is idle but instead of moving, stays still
     this.sprayTimer = 0; // used to time when a healer should be aggroing runners or players
     this.id = id;
+
+    // psn stuff
+    this.hp = baHEALER_HEALTH[sim.WaveSelect.value];
+    this.spawnTick = ba.TickCounter;
+    this.lastPsnTick = ba.TickCounter;
+    this.isPsned = false;
+    this.naturalPsn = 4;
+    this.psnTickCount = 0;
 }
 heHealer.prototype.foundPlayerTarget = function () {
     let plTarget = undefined;
@@ -36,6 +44,8 @@ heHealer.prototype.foundPlayerTarget = function () {
     return plTarget;
 }
 heHealer.prototype.tick = function () {
+    this.applyPoisonDmg(false);
+
     this.prevX = this.x;
     this.prevY = this.y;
 
@@ -184,7 +194,6 @@ heHealer.prototype.selectRandomTile = function () {
     const WANDER_RANGE = 60;
     let rnd = Math.floor(Math.random() * 8);
     if (rnd === 0) {
-        console.log(ba.TickCounter + ": healer " + this.id + " did random movement");
         let rndX = Math.floor(Math.random() * (2 * WANDER_RANGE + 1));
         this.destinationX = this.spawnX - WANDER_RANGE + rndX;
         let rndY = Math.floor(Math.random() * (2 * WANDER_RANGE + 1));
@@ -208,6 +217,35 @@ heHealer.prototype.doMovement = function () {
         }
     } else if (this.destinationY < this.y && !baTileBlocksPenance(startX, this.y - 1) && !baTileBlocksPenance(this.x, this.y - 1) && mCanMoveSouth(startX, this.y) && mCanMoveSouth(this.x, this.y)) {
         --this.y;
+    }
+}
+heHealer.prototype.applyPoisonDmg = function (food) {
+    let startTimer = (ba.TickCounter - this.spawnTick >= 5);
+    if (food) {
+        this.hp = Math.max(0, this.hp - baPSN_FOOD_DMG);
+        this.naturalPsn = 4;
+        this.psnTickCount = 0;
+        if (!this.isPsned) {
+            this.isPsned = true;
+            if (startTimer) { // 5t after spawn already passed
+                this.spawnTick = ba.TickCounter;
+            }
+        }
+    }
+    else if (this.isPsned && startTimer) {
+        if (ba.TickCounter - this.lastPsnTick >= 5) {
+            this.hp = Math.max(0, this.hp - this.naturalPsn);
+            this.lastPsnTick = ba.TickCounter;
+            this.psnTickCount++;
+            console.log(tickToSecond(ba.TickCounter), " : ", this.naturalPsn)
+        }
+        if (this.psnTickCount == 5) {
+            this.naturalPsn--;
+            this.psnTickCount = 0;
+        }
+        if (this.naturalPsn <= 0) {
+            this.isPsned = false;
+        }
     }
 }
 

@@ -9,7 +9,6 @@ h2,1
 */
 
 //{ PlayerHealer - ph
-//baHEALER_HEALTH[sim.WaveSelect.value];
 function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.X = x;
     this.Y = y;
@@ -54,6 +53,15 @@ phPlayerHealer.prototype.tick = function () {
 phPlayerHealer.prototype.movedPreviousTick = function () {
     return (this.X !== this.PrevTile.X || this.Y !== this.PrevTile.Y);
 }
+phPlayerHealer.prototype.useFood = function () {
+    console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
+    for (let healer of ba.Healers) {
+        if (this.CurrentDst.healerId === healer.id) {
+            healer.applyPoisonDmg(true);
+            return;
+        }
+    }
+}
 phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
@@ -94,11 +102,11 @@ phPlayerHealer.prototype.pathfindHealer = function () {
         plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
     }
 
-    // if adjacent to healer or previous tile then move on to next queued tile
+    // if adjacent to healer or previous tile then use food and continue to next input
     let arrived = (this.X === this.AdjacentTargetTile?.X && this.Y === this.AdjacentTargetTile?.Y);
     arrived ||= (this.X === this.AdjacentPrevious?.X && this.Y === this.AdjacentPrevious?.Y);
-    if (arrived) {
-        console.log(ba.TickCounter + ": Used a food on healer " + this.CurrentDst.healerId);
+    if (arrived && ba.TickCounter > this.CurrentDst?.WaitUntil) {
+        this.useFood();
 
         this.CurrentDst = this.Tiles[this.TileIdx] || { X: this.X, Y: this.Y };
         if (this.TileIdx < this.Tiles.length) {
