@@ -1,11 +1,10 @@
 /*
 TODO set up w/ cmdTeammate, display healer id on healer
 
-2x stock + run-up + two on the 6
+2x stock + run-up + two on the 6:
 35,7
 45,25:8
-h1,1
-h1,1
+h1,2
 h2,1
 */
 
@@ -84,7 +83,7 @@ phPlayerHealer.prototype.pathfindHealer = function () {
     // check if healer exists/update to current tile
     this.findTarget();
 
-    // if healer was found and not tick it spawns
+    // if healer was found and not the tick it spawns
     if (this.AdjacentTargetTile && this.AdjacentPrevious?.X) {
         this.CurrentDst.X = this.AdjacentTargetTile.X;
         this.CurrentDst.Y = this.AdjacentTargetTile.Y;
@@ -141,11 +140,15 @@ function phParseTiles() { // expected: hID,#:tick
         input = input.split(/,|:/);
         let waitUntil = (input.length === 3) ? input[2] : 0;
         if (input[0][0] === "h") {
-            tiles.push({
-                healerId: parseInt(input[0].substring(1)),
-                numFood: parseInt(input[1]),
-                WaitUntil: parseInt(waitUntil),
-            });
+            let numFood = parseInt(input[1]);
+            while (numFood > 0) {
+                tiles.push({
+                    healerId: parseInt(input[0].substring(1)),
+                    useFood: true,
+                    WaitUntil: parseInt(waitUntil),
+                });
+                numFood--
+            }
         }
         else {
             tiles.push({
