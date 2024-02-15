@@ -3,7 +3,7 @@ TODO set up w/ cmdTeammate, display healer id on healer
 
 2x stock + run-up + two on the 6
 35,7
-45,25:8 -- or 7
+45,25:8
 h1,1
 h1,1
 h2,1
@@ -70,6 +70,10 @@ phPlayerHealer.prototype.pathfindTile = function () {
     let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
     if (arrived && this.TileIdx < this.Tiles.length) {
         this.CurrentDst = this.Tiles[this.TileIdx++];
+
+        if (this.CurrentDst?.healerId) {
+            return this.pathfindHealer();
+        }
     }
     if (ba.TickCounter <= this.CurrentDst?.WaitUntil) {
         return;
