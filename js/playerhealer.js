@@ -7,8 +7,6 @@ TODO set up w/ cmdTeammate, display healer id on healer
 function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.X = x;
     this.Y = y;
-    this.DestinationX;
-    this.DestinationY;
     this.PathQueuePos = 0;
     this.PathQueueX = [];
     this.PathQueueY = [];
@@ -19,6 +17,10 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.Color = color;
     this.Tiles = phParseTiles();
     this.TileIdx = 0;
+    this.PrevTile = {
+        X: x,
+        Y: y,
+    };
     this.CurrentDst = {
         X: x,
         Y: y,
@@ -26,15 +28,8 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     };
 }
 phPlayerHealer.prototype.tick = function () {
-    // FIXME
-    // apply poison if adjacent
-    if (this.CurrentDst?.healerId) {
-        let tile = phFindBestAdjacentTile(this.X, this.Y, this.CurrentDst.X, this.CurrentDst.Y);
-        if (this.X == tile[0] && this.Y == tile[1] && this.CurrentDst.numFood > 0) {
-            console.log("Using a food")
-            --this.CurrentDst.numFood;
-        }
-    }
+    this.PrevTile.X = this.X;
+    this.PrevTile.Y = this.Y;
     if (this.ArriveDelay) {
         this.ArriveDelay = false;
         return;
@@ -48,6 +43,9 @@ phPlayerHealer.prototype.tick = function () {
         }
     }
 }
+phPlayerHealer.prototype.movedPreviousTick = function () {
+    return (this.X !== this.PrevTile.X || this.Y !== this.PrevTile.Y);
+}
 phPlayerHealer.prototype.pathfind = function () {
     let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
     if (ba.TickCounter <= 1) {
@@ -56,6 +54,7 @@ phPlayerHealer.prototype.pathfind = function () {
     // target healer hasn't spawned yet
     if (this.CurrentDst?.healerId && !this.CurrentDst?.X) {
         this.findTarget();
+        arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
     }
     if (!arrived && this.CurrentDst?.healerId && this.CurrentDst?.X) {
         if (ba.TickCounter <= this.CurrentDst?.WaitUntil) {
@@ -66,18 +65,24 @@ phPlayerHealer.prototype.pathfind = function () {
     }
     // npc healer has been reached
     if (arrived && this.CurrentDst?.healerId) {
-        this.ArriveDelay = true;
+        if (this.movedPreviousTick()) {
+            this.ArriveDelay = true;
+        }
+        console.log("Using a food")
     }
     // fetch new tile if arrived or no current tile
-    if ((!this.CurrentDst || arrived) && this.TileIdx < this.Tiles.length) {
+    if (this.TileIdx >= this.Tiles.length) {
+        this.Tiles.push({ X: this.X, Y: this.Y });
+    }
+    if (arrived || !this.CurrentDst) {
         this.CurrentDst = this.Tiles[this.TileIdx++];
     }
     if (this.CurrentDst && (arrived || this.CurrentDst?.WaitUntil !== 0)) {
         plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
     }
-
 }
 phPlayerHealer.prototype.findTarget = function () {
+    if (!this.CurrentDst?.healerId) return;
     for (let healer of ba.Healers) {
         if (this.CurrentDst?.healerId === healer.id) {
             let targetTile = phFindBestAdjacentTile(this.X, this.Y, healer.x, healer.y)
