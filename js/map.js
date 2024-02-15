@@ -47,6 +47,9 @@ function mGetItemZone(xZone, yZone) {
 function mGetTileFlag(x, y) {
     return m.mCurrentMap[x + y * m.mWidthTiles];
 }
+function mCanMoveToTile(x, y) {
+    return (mGetTileFlag(x + 1, y) & (mMOVE_FULL_MASK)) === 0;
+}
 function mCanMoveEast(x, y) {
     return (mGetTileFlag(x + 1, y) & (mMOVE_WEST_MASK | mMOVE_FULL_MASK)) === 0;
 }

@@ -26,12 +26,10 @@ function cmdTeammate(x, y, color, role = cmdROLE_NAMES[0]) {
     this.CurrentDst = {
         X: x,
         Y: y,
-        tick: 0,
+        WaitUntil: 0
     };
 }
 cmdTeammate.prototype.tick = function () {
-    // Having 2 if's is for moving twice per tick
-    // Having 1 if's is for moving once per tick
     if (this.PathQueuePos > 0) {
         this.X = this.PathQueueX[--this.PathQueuePos];
         this.Y = this.PathQueueY[this.PathQueuePos];
@@ -76,7 +74,7 @@ function cmdInit() {
             baWAVE10_2A_SPAWN_Y,
             cmd.secondColor, "second"
         ));
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE10_PLAYER_HEALER_SPAWN_X,
             baWAVE10_PLAYER_HEALER_SPAWN_Y,
             cmd.healColor, "heal"
@@ -98,7 +96,7 @@ function cmdInit() {
             baWAVE1_2A_SPAWN_Y,
             cmd.secondColor, "second"
         ));
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE1_PLAYER_HEALER_SPAWN_X,
             baWAVE1_PLAYER_HEALER_SPAWN_Y,
             cmd.healColor, "heal"
@@ -123,6 +121,9 @@ function cmdDrawTeam() {
     }
 }
 function cmdParseTiles(role) { // expected: x,y:tick
+    if (role === "heal") {
+        return phParseTiles();
+    }
     let tiles = []
     let vals = document.getElementById(`${role}cmds`).value;
     vals = vals.split("\n");

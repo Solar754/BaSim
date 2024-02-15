@@ -4,7 +4,9 @@
 let files = [
     "ba.js",
     "map.js",
+    "controller.js",
     "player.js",
+    "playerhealer.js",
     "runner.js",
     "healer.js",
     "renderer.js",
@@ -12,7 +14,6 @@ let files = [
     "item.js",
     "overlay.js",
     "simstate.js",
-    "controller.js"
 ];
 for (let file of files) {
     let new_script = document.createElement('script');

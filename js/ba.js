@@ -43,6 +43,18 @@ const baWAVE1_COLLECTOR_SPAWN_X = 29;
 const baWAVE1_COLLECTOR_SPAWN_Y = 8;
 const baWAVE10_COLLECTOR_SPAWN_X = 32;
 const baWAVE10_COLLECTOR_SPAWN_Y = 8;
+const baHEALER_HEALTH = {
+    "1": 27,
+    "2": 32,
+    "3": 37,
+    "4": 43,
+    "5": 49,
+    "6": 55,
+    "7": 60,
+    "8": 67,
+    "9": 76,
+    "10": 60,
+}
 
 function tickToSecond(tick) {
     tick = Math.max(tick - 1, 0);

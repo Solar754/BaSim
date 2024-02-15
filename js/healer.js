@@ -37,8 +37,8 @@ heHealer.prototype.tick = function () {
     // healer stands still when it spawns, until player comes into LOS
     // if multiple players in LOS, randomly choose
     if (this.justSpawned && this.foundPlayerTarget()) {
-        this.destinationX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-        this.destinationY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+        this.destinationX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+        this.destinationY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
         this.isTargetingPlayer = true;
         this.justSpawned = false;
     }
@@ -129,21 +129,21 @@ heHealer.prototype.tryTarget = function (type) {
     //          healer attempts to interact
 
     if (type === 'runner') {
-        this.targetX = findTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
-        this.targetY = findTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
+        this.targetX = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
+        this.targetY = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
         if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.runnerTarget.x, this.runnerTarget.y, this.x, this.y, 5)) {
             this.isTargetingRunner = false;
             this.lastTarget = 'runner';
             this.sprayTimer = 0;
         }
         else {
-            this.destinationX = findTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
-            this.destinationY = findTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
+            this.destinationX = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
+            this.destinationY = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
 
             this.doMovement();
 
-            this.targetX = findTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
-            this.targetY = findTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
+            this.targetX = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
+            this.targetY = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
             if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.runnerTarget.x, this.runnerTarget.y, this.x, this.y, 5)) {
                 this.isTargetingRunner = false;
                 this.lastTarget = 'runner';
@@ -152,21 +152,21 @@ heHealer.prototype.tryTarget = function (type) {
         }
     }
     else if (type === 'player') {
-        this.targetX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-        this.targetY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+        this.targetX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+        this.targetY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
         if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.playerTarget.X, this.playerTarget.Y, this.x, this.y, 15)) {
             this.isTargetingPlayer = false;
             this.lastTarget = 'player';
             this.sprayTimer = 0;
         }
         else {
-            this.destinationX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-            this.destinationY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+            this.destinationX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+            this.destinationY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
 
             this.doMovement();
 
-            this.targetX = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-            this.targetY = findTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+            this.targetX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
+            this.targetY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
             if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.playerTarget.X, this.playerTarget.Y, this.x, this.y, 15)) {
                 this.isTargetingPlayer = false;
                 this.lastTarget = 'player';
@@ -224,28 +224,28 @@ function tileDistance(x1, y1, x2, y2) {
 
 // Healer targets closest adjacent tile to target, not target tile itself. The target tile is the one
 // whose distance is smallest, or if the distance is equal, in n/s -> e/w order
-function findTargetTile(x1, y1, x2, y2) { // (x1,y1) for healer, (x2,y2) for target
-    let northOfTarget = tileDistance(x1, y1, x2, y2 + 1);
-    let southOfTarget = tileDistance(x1, y1, x2, y2 - 1);
-    let eastOfTarget = tileDistance(x1, y1, x2 + 1, y2);
-    let westOfTarget = tileDistance(x1, y1, x2 - 1, y2);
+function heFindTargetTile(x1, y1, targetX, targetY) { // (x1,y1) for healer, (targetX,targetY) for target
+    let northOfTarget = tileDistance(x1, y1, targetX, targetY + 1);
+    let southOfTarget = tileDistance(x1, y1, targetX, targetY - 1);
+    let eastOfTarget = tileDistance(x1, y1, targetX + 1, targetY);
+    let westOfTarget = tileDistance(x1, y1, targetX - 1, targetY);
 
     let minDistance = Math.min(northOfTarget, southOfTarget, eastOfTarget, westOfTarget);
     if (minDistance === northOfTarget) {
         //console.log("north");
-        return [x2, y2 + 1];
+        return [targetX, targetY + 1];
     }
     if (minDistance === southOfTarget) {
         //console.log("south");
-        return [x2, y2 - 1];
+        return [targetX, targetY - 1];
     }
     if (minDistance === eastOfTarget) {
         //console.log("east");
-        return [x2 + 1, y2];
+        return [targetX + 1, targetY];
     }
     if (minDistance === westOfTarget) {
         //console.log("west");
-        return [x2 - 1, y2];
+        return [targetX - 1, targetY];
     }
 }
 //}

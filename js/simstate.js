@@ -117,7 +117,13 @@ function loadSaveState(state) {
 
     cmd.Team = [];
     state["cmd"].Team.forEach(player => {
-        let tmpPlayer = new cmdTeammate();
+        let tmpPlayer;
+        if (player.Role == "heal") {
+            tmpPlayer = new phPlayerHealer();
+        }
+        else {
+            tmpPlayer = new cmdTeammate();
+        }
         tmpPlayer.update(player);
         cmd.Team.push(tmpPlayer);
     });
