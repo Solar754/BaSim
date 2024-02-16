@@ -251,12 +251,12 @@ function simPauseResumeButtonOnClick() {
 		if (sim.IsPaused) {
 			sim.TickTimerId = setInterval(simTick, 600);
 			simSetPause(false);
+			cmdUncheckAllRoles();
 		} else {
 			clearInterval(sim.TickTimerId);
 			simSetPause(true);
 		}
 	}
-	cmdUncheckAllRoles();
 }
 function simStepButtonOnClick() {
 	if (!(sim.IsRunning && sim.IsPaused)) {
@@ -268,7 +268,6 @@ function simStepButtonOnClick() {
 	} else {
 		simTick();
 	}
-	cmdUncheckAllRoles();
 }
 function simStepBackwardButtonOnClick() {
 	const state = stateHistory.backward();
@@ -276,7 +275,6 @@ function simStepBackwardButtonOnClick() {
 		return;
 	}
 	loadSaveState(state);
-	cmdUncheckAllRoles();
 }
 
 function simStartStopButtonOnClick() {
@@ -519,6 +517,8 @@ function simToggleOnlyOneRoleMarker(e) {
 	cmdUncheckAllRoles();
 	e.target.checked = originalVal;
 	if (e.target.checked) {
+		if (!sim.IsPaused)
+			sim.PauseResumeButton.click();
 		oDrawAllRolePaths();
 	}
 	else {
