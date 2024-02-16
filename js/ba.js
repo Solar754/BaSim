@@ -150,7 +150,6 @@ function baTick() {
     }
     if (ba.HealersToRemove.length > 0) {
         ba.Healers = ba.Healers.filter(h => ba.HealersToRemove.indexOf(h.id) == -1);
-        ba.HealersToRemove = [];
     }
     // spawns
     let isDefaultCycle = (ba.TickCounter > 1 && ba.TickCounter % 10 === 1);

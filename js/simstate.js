@@ -93,7 +93,6 @@ function buildSaveState() {
     state.sim.LevelVal = sim.DefLevelSelect.value;
     state.sim.HealerToggle = sim.ToggleHealers.checked;
     state.sim.TeamToggle = sim.SpawnTeam.checked;
-    state.sim.healCmds = document.getElementById('healcmds').value;
 
     return state;
 }
@@ -111,7 +110,6 @@ function loadSaveState(state) {
     sim.ToggleHealers.checked = state["sim"].HealerToggle;
     sim.SpawnTeam.checked = state["sim"].TeamToggle;
     simToggleTeamOnClick();
-    document.getElementById('healcmds').value = state["sim"].healCmds;
 
     ba = structuredClone(state["ba"]);
     pl = structuredClone(state["pl"]);

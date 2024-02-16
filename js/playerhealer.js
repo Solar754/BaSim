@@ -13,6 +13,14 @@ note: spacing like (21) = tick 36.... sim requires input as 35 to happen same ti
 45,25:8
 h1,2
 h2,1
+
+w4
+35,7
+45,25:7
+h1,2
+h2,5
+h3,4
+h4,7
 */
 
 //{ PlayerHealer - ph
@@ -69,35 +77,42 @@ phPlayerHealer.prototype.useFood = function () {
         }
     }
 }
-phPlayerHealer.prototype.clearDeadFromQueue = function () {
+phPlayerHealer.prototype.skipDeadInQueue = function () {
     if (!this.CurrentDst.healerId) {
         return;
     }
-    let target = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
-    if (!target || !target.hp) {
-        let textcmds = document.getElementById(`healcmds`);
-        let textcmdsArr = textcmds.value.split("\n");
-        for (let i = this.Tiles.length - 1; i >= this.TileIdx; --i) {
-            if (this.Tiles[i]?.healerId == this.CurrentDst.healerId) {
-                this.Tiles.splice(i, 1);
-                textcmdsArr.splice(i, 1);
+
+    /*
+    scenarios:
+        - pathing tile (no healerId)
+        - fresh healer not yet spawned (won't be in isDead), and target=undefined [GOOD]
+        - dying healer (won't be in isDead), but target hp = 0 [BAD, need new]
+        - dead healer (in isDead), target=undefined [BAD, need new]
+    */
+
+    let isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
+    let maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
+
+    if (isDead || maybeDead?.hp === 0) {
+        if (this.TileIdx < this.Tiles.length) {
+            while (this.TileIdx < this.Tiles.length) {
+                this.CurrentDst = this.Tiles[this.TileIdx++];
+
+                if (!this.CurrentDst.healerId) return;
+
+                isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
+                maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
+                if (!isDead && !maybeDead) return;
             }
         }
-        textcmds.value = textcmdsArr.join("\n")
-
-        if (this.TileIdx >= this.Tiles.length) {
-            this.CurrentDst = { X: this.X, Y: this.Y };
-        }
-        else {
-            this.CurrentDst = this.Tiles[this.TileIdx++];
-        }
+        this.CurrentDst = { X: this.X, Y: this.Y };
     }
 }
 phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
-    this.clearDeadFromQueue();
+    this.skipDeadInQueue();
     if (this.CurrentDst?.healerId) {
         this.pathfindHealer();
     }
@@ -111,6 +126,7 @@ phPlayerHealer.prototype.pathfindTile = function () {
         this.CurrentDst = this.Tiles[this.TileIdx++];
 
         if (this.CurrentDst?.healerId) {
+            this.skipDeadInQueue();
             return this.pathfindHealer();
         }
     }
