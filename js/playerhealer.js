@@ -81,25 +81,14 @@ phPlayerHealer.prototype.skipDeadInQueue = function () {
     if (!this.CurrentDst.healerId) {
         return;
     }
-
-    /*
-    scenarios:
-        - pathing tile (no healerId)
-        - fresh healer not yet spawned (won't be in isDead), and target=undefined [GOOD]
-        - dying healer (won't be in isDead), but target hp = 0 [BAD, need new]
-        - dead healer (in isDead), target=undefined [BAD, need new]
-    */
-
     let isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
     let maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
-
     if (isDead || maybeDead?.hp === 0) {
         if (this.TileIdx < this.Tiles.length) {
             while (this.TileIdx < this.Tiles.length) {
                 this.CurrentDst = this.Tiles[this.TileIdx++];
 
                 if (!this.CurrentDst.healerId) return;
-
                 isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
                 maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
                 if (!isDead && !maybeDead) return;
@@ -112,7 +101,6 @@ phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
-    this.skipDeadInQueue();
     if (this.CurrentDst?.healerId) {
         this.pathfindHealer();
     }
@@ -126,7 +114,6 @@ phPlayerHealer.prototype.pathfindTile = function () {
         this.CurrentDst = this.Tiles[this.TileIdx++];
 
         if (this.CurrentDst?.healerId) {
-            this.skipDeadInQueue();
             return this.pathfindHealer();
         }
     }
@@ -136,6 +123,8 @@ phPlayerHealer.prototype.pathfindTile = function () {
     plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
 }
 phPlayerHealer.prototype.pathfindHealer = function () {
+    this.skipDeadInQueue(); // update currendDst
+
     // check if healer exists/update to current tile
     this.findTarget();
 
