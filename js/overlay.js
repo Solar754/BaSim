@@ -88,4 +88,46 @@ function oFlipThemeOnClick() {
         localStorage.setItem("basimTheme", "🟡");
     }
 }
+
+function oInstructions() {
+    let canvasElement = document.getElementById(HTML_CANVAS);
+
+    let instructionsElement = document.createElement("textarea");
+    instructionsElement.classList.add("instructions")
+    instructionsElement.readOnly = true;
+    instructionsElement.style.resize = "none";
+    instructionsElement.style.width = rr.CanvasWidth + "px";
+    instructionsElement.style.height = rr.CanvasHeight + "px";
+
+    instructionsElement.innerHTML = `General Teammate syntax:
+    Input tiles in x,y:tick format, or toggle marker to select tiles on canvas.
+    Tiles added while sim is running get timestamped with current tick and processed.
+    Tick is the earliest possible time a command happens and is optional. It reflects 
+    when a "click" would happen in-game.
+    
+    Example: 21,25:10 means the teammate will click to move to tile 21,25 no earlier than tick 10
+
+
+Player healer syntax:
+    In addition to general syntax, healers can be targeted with: 'hID,numFood:tick'.
+    Tick is the earliest possible time a command happens and is optional. It reflects 
+    when a "click" would happen in-game.
+
+    Example: h1,2:24 means on tick 24 player will start pathing as though they are using food on the 
+    first healer (healer 1) every tick, and when valid will use 2 food.
+    `
+    if (canvasElement.style.display === "none") {
+        canvasElement.style.display = "inline";
+        document.querySelectorAll('.instructions').forEach(e => e.remove());
+    }
+    else {
+        canvasElement.style.display = "none";
+
+        // var myimg = document.getElementById('myimg');
+        // var text = document.createTextNode("This is my caption.");
+        // myimg.parentNode.insertBefore(text, myimg.nextSibling)
+        //area.appendChild(instructionsElement);
+        canvasElement.parentNode.insertBefore(instructionsElement, canvasElement);
+    }
+}
 //}

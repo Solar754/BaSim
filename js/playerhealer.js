@@ -7,6 +7,15 @@ TODO
         r,/, (), [], -
 
 
+w1
+43,34
+h1,10
+h2,1
+h1,1
+47,26
+
+
+
 notes: 
 spacing like (21) = tick 36; sim requires input as tick 35 to happen on 36
 
