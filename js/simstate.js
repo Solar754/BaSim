@@ -93,6 +93,11 @@ function buildSaveState() {
     state.sim.LevelVal = sim.DefLevelSelect.value;
     state.sim.HealerToggle = sim.ToggleHealers.checked;
     state.sim.TeamToggle = sim.SpawnTeam.checked;
+    for (let cmd of cmdROLE_NAMES) {
+        let cmdName = cmd + 'cmds';
+        state.sim[cmdName] = document.getElementById(cmdName).value;
+    }
+
     return state;
 }
 
@@ -109,6 +114,11 @@ function loadSaveState(state) {
     sim.ToggleHealers.checked = state["sim"].HealerToggle;
     sim.SpawnTeam.checked = state["sim"].TeamToggle;
     simToggleTeamOnClick();
+
+    for (let cmd of cmdROLE_NAMES) {
+        let cmdName = cmd + 'cmds';
+        document.getElementById(cmdName).value = state.sim[cmdName];
+    }
 
     ba = structuredClone(state["ba"]);
     pl = structuredClone(state["pl"]);

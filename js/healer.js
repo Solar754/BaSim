@@ -48,19 +48,9 @@ heHealer.prototype.foundPlayerTarget = function () {
 }
 heHealer.prototype.tick = function () {
     this.applyPoisonDmg(false);
-
     if (!this.hp) {
-        this.despawnCountdown--;
-        if (this.despawnCountdown == 2) {
-            ba.HealersAlive--;
-            ba.HealersKilled++;
-        }
-        if (this.despawnCountdown == 0) {
-            ba.HealersToRemove.push(this.id);
-        }
-        return;
+        return this.isDying();
     }
-
     this.prevX = this.x;
     this.prevY = this.y;
 
@@ -242,7 +232,7 @@ heHealer.prototype.applyPoisonDmg = function (food) {
         this.psnTickCount = 0;
         if (!this.isPsned) {
             this.isPsned = true;
-            if (startTimer) { // 5t after spawn already passed
+            if (startTimer) { // +5t after spawn
                 this.spawnTick = ba.TickCounter;
             }
         }
@@ -263,6 +253,16 @@ heHealer.prototype.applyPoisonDmg = function (food) {
         if (this.naturalPsn <= 0) {
             this.isPsned = false;
         }
+    }
+}
+heHealer.prototype.isDying = function () {
+    this.despawnCountdown--;
+    if (this.despawnCountdown == 2) {
+        ba.HealersAlive--;
+        ba.HealersKilled++;
+    }
+    if (this.despawnCountdown == 0) {
+        ba.HealersToRemove.push(this.id);
     }
 }
 

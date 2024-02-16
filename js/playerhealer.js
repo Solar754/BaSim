@@ -69,33 +69,22 @@ phPlayerHealer.prototype.useFood = function () {
         }
     }
 }
-/*
-Wave 1 setup
-
-35,7
-45,25:8
-h1,1
-h2,1
-h1,1:51
-47,26
-h1,1
-36,38
-
-*/
 phPlayerHealer.prototype.clearDeadFromQueue = function () {
     if (!this.CurrentDst.healerId) {
         return;
     }
     let target = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
     if (!target || !target.hp) {
-        // FIXME need to remove from textarea as well
+        let textcmds = document.getElementById(`healcmds`);
+        let textcmdsArr = textcmds.value.split("\n");
         for (let i = this.Tiles.length - 1; i >= this.TileIdx; --i) {
             if (this.Tiles[i]?.healerId == this.CurrentDst.healerId) {
                 this.Tiles.splice(i, 1);
+                textcmdsArr.splice(i, 1);
             }
         }
+        textcmds.value = textcmdsArr.join("\n")
 
-        // clean up currentDst
         if (this.TileIdx >= this.Tiles.length) {
             this.CurrentDst = { X: this.X, Y: this.Y };
         }
@@ -206,6 +195,11 @@ function phParseTiles() { // expected: hID,#:tick
                 Y: parseInt(input[1]),
                 WaitUntil: parseInt(waitUntil),
             });
+        }
+    }
+    for (let i = 1; i < tiles.length; i++) {
+        if (tiles[i].WaitUntil < tiles[i - 1].WaitUntil) {
+            tiles[i].WaitUntil = tiles[i - 1].WaitUntil;
         }
     }
     return tiles

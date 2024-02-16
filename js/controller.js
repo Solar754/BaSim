@@ -23,6 +23,10 @@ function cmdTeammate(x, y, color, role = cmdROLE_NAMES[0]) {
     this.Color = color;
     this.Tiles = cmdParseTiles(role);
     this.TileIdx = 0;
+    this.PrevTile = {
+        X: x,
+        Y: y,
+    };
     this.CurrentDst = {
         X: x,
         Y: y,
@@ -30,6 +34,8 @@ function cmdTeammate(x, y, color, role = cmdROLE_NAMES[0]) {
     };
 }
 cmdTeammate.prototype.tick = function () {
+    this.PrevTile.X = this.X;
+    this.PrevTile.Y = this.Y;
     if (this.PathQueuePos > 0) {
         this.X = this.PathQueueX[--this.PathQueuePos];
         this.Y = this.PathQueueY[this.PathQueuePos];
@@ -39,20 +45,21 @@ cmdTeammate.prototype.tick = function () {
         }
     }
 }
+cmdTeammate.prototype.noMovement = function () {
+    return (this.PrevTile.X == this.CurrentDst.X && this.PrevTile.Y == this.CurrentDst.Y);
+}
 cmdTeammate.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
     let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
-    if ((!this.CurrentDst || arrived) && this.TileIdx < this.Tiles.length) {
+    if (arrived && this.TileIdx < this.Tiles.length) {
         this.CurrentDst = this.Tiles[this.TileIdx++];
     }
-    if (ba.TickCounter <= this.CurrentDst?.WaitUntil) {
+    if (ba.TickCounter <= this.CurrentDst?.WaitUntil || this.noMovement()) {
         return;
     }
-    if (this.CurrentDst && (arrived || this.CurrentDst?.WaitUntil !== 0)) {
-        plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
-    }
+    plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
 }
 cmdTeammate.prototype.draw = function () {
     if (this.X >= 0) {
