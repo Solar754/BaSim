@@ -1,7 +1,12 @@
 /*
-TODO display healer id on healer
+TODO 
+    - display healer id on healer
     - investigate npc healer random walk after tagging... think it's bugged
     - code deconstruction
+
+
+note: spacing like (21) = tick 36.... sim requires input as 35 to happen same tick
+    just like in-game
 
 2x stock + run-up + two on the 6:
 35,7
@@ -64,19 +69,47 @@ phPlayerHealer.prototype.useFood = function () {
         }
     }
 }
+/*
+Wave 1 setup
+
+35,7
+45,25:8
+h1,1
+h2,1
+h1,1:51
+47,26
+h1,1
+36,38
+
+*/
 phPlayerHealer.prototype.clearDeadFromQueue = function () {
-    // somewhat complex if requests for the healer are scattered around
-    //for (let i = ba.DeadHealers.length; i > 0; --i) {
-    //    let t = ba.DeadHealers.pop();
-    //    console.log(t)
-    // }
+    if (!this.CurrentDst.healerId) {
+        return;
+    }
+    let target = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
+    if (!target || !target.hp) {
+        // FIXME need to remove from textarea as well
+        for (let i = this.Tiles.length - 1; i >= this.TileIdx; --i) {
+            if (this.Tiles[i]?.healerId == this.CurrentDst.healerId) {
+                this.Tiles.splice(i, 1);
+            }
+        }
+
+        // clean up currentDst
+        if (this.TileIdx >= this.Tiles.length) {
+            this.CurrentDst = { X: this.X, Y: this.Y };
+        }
+        else {
+            this.CurrentDst = this.Tiles[this.TileIdx++];
+        }
+    }
 }
 phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
+    this.clearDeadFromQueue();
     if (this.CurrentDst?.healerId) {
-        this.clearDeadFromQueue();
         this.pathfindHealer();
     }
     else {
@@ -101,13 +134,12 @@ phPlayerHealer.prototype.pathfindHealer = function () {
     // check if healer exists/update to current tile
     this.findTarget();
 
-    // if healer was found and not the tick it spawns
+    // if healer was found but not the tick it spawns
     if (this.AdjacentTargetTile && this.AdjacentPrevious?.X) {
         this.CurrentDst.X = this.AdjacentTargetTile.X;
         this.CurrentDst.Y = this.AdjacentTargetTile.Y;
     }
 
-    // wait if needed
     if (this.CurrentDst.X && ba.TickCounter > this.CurrentDst?.WaitUntil) {
         plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
     }

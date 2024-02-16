@@ -182,6 +182,9 @@ function simUpdateHealerTable() {
 		td.innerHTML = healer.sprayTimer;
 		tableRow.appendChild(td);
 		td = document.createElement("td");
+		td.innerHTML = healer.isPsned;
+		tableRow.appendChild(td);
+		td = document.createElement("td");
 		td.innerHTML = healer.hp + "/" + baHEALER_HEALTH[sim.WaveSelect.value];
 		tableRow.appendChild(td);
 		td = document.createElement("td");

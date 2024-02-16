@@ -56,7 +56,7 @@ heHealer.prototype.tick = function () {
             ba.HealersKilled++;
         }
         if (this.despawnCountdown == 0) {
-            ba.DeadHealers.push(this.id);
+            ba.HealersToRemove.push(this.id);
         }
         return;
     }
