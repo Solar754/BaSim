@@ -77,6 +77,7 @@ var ba = {
     RunnerMovements: undefined,
     RunnerMovementsIndex: undefined,
     Healers: undefined,
+    DeadHealers: undefined,
     HealersAlive: undefined,
     HealersKilled: undefined,
     TotalHealers: undefined,
@@ -111,6 +112,7 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
     ba.RunnerMovementsIndex = 0;
 
     ba.Healers = [];
+    ba.DeadHealers = [];
     ba.HealerSpawns = HealerSpawns;
     ba.HealerSpawnsIndex = 0;
 
@@ -145,6 +147,9 @@ function baTick() {
         let runner = ba.RunnersToRemove[i];
         let index = ba.Runners.indexOf(runner);
         ba.Runners.splice(index, 1);
+    }
+    if (ba.DeadHealers.length > 0) {
+        ba.Healers = ba.Healers.filter(h => ba.DeadHealers.indexOf(h.id) == -1);
     }
     // spawns
     let isDefaultCycle = (ba.TickCounter > 1 && ba.TickCounter % 10 === 1);

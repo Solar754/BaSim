@@ -1,5 +1,7 @@
 /*
-TODO set up w/ cmdTeammate, display healer id on healer
+TODO display healer id on healer
+    - investigate npc healer random walk after tagging... think it's bugged
+    - code deconstruction
 
 2x stock + run-up + two on the 6:
 35,7
@@ -56,17 +58,25 @@ phPlayerHealer.prototype.movedPreviousTick = function () {
 phPlayerHealer.prototype.useFood = function () {
     console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
     for (let healer of ba.Healers) {
-        if (this.CurrentDst.healerId === healer.id) {
+        if (this.CurrentDst.healerId === healer.id && healer.hp) {
             healer.applyPoisonDmg(true);
             return;
         }
     }
+}
+phPlayerHealer.prototype.clearDeadFromQueue = function () {
+    // somewhat complex if requests for the healer are scattered around
+    //for (let i = ba.DeadHealers.length; i > 0; --i) {
+    //    let t = ba.DeadHealers.pop();
+    //    console.log(t)
+    // }
 }
 phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
     if (this.CurrentDst?.healerId) {
+        this.clearDeadFromQueue();
         this.pathfindHealer();
     }
     else {
