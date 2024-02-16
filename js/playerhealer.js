@@ -1,12 +1,14 @@
 /*
 TODO 
-    - display healer id on healer
-    - investigate npc healer random walk after tagging... think it's bugged
-    - code deconstruction
+
+- better place for instructions
+- code deconstruction
+    - make sure textarea isnt getting called more than once if special characters detected
+        r,/, (), [], -
 
 
-note: spacing like (21) = tick 36.... sim requires input as 35 to happen same tick
-    just like in-game
+notes: 
+spacing like (21) = tick 36; sim requires input as tick 35 to happen on 36
 
 2x stock + run-up + two on the 6:
 35,7
@@ -101,6 +103,7 @@ phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
+    this.skipDeadInQueue();
     if (this.CurrentDst?.healerId) {
         this.pathfindHealer();
     }
@@ -112,6 +115,7 @@ phPlayerHealer.prototype.pathfindTile = function () {
     let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
     if (arrived && this.TileIdx < this.Tiles.length) {
         this.CurrentDst = this.Tiles[this.TileIdx++];
+        this.skipDeadInQueue();
 
         if (this.CurrentDst?.healerId) {
             return this.pathfindHealer();
@@ -123,8 +127,6 @@ phPlayerHealer.prototype.pathfindTile = function () {
     plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
 }
 phPlayerHealer.prototype.pathfindHealer = function () {
-    this.skipDeadInQueue(); // update currendDst
-
     // check if healer exists/update to current tile
     this.findTarget();
 
