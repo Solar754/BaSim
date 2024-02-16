@@ -237,7 +237,6 @@ heHealer.prototype.applyPoisonDmg = function (food) {
             this.hp = Math.max(0, this.hp - this.naturalPsn);
             this.lastPsnTick = ba.TickCounter;
             this.psnTickCount++;
-            console.log(tickToSecond(ba.TickCounter), " : ", this.naturalPsn)
         }
         if (this.psnTickCount == 5) {
             this.naturalPsn--;
@@ -253,6 +252,9 @@ function heCompilePlayerTargets() {
     let playerTargets = [];
     if (sim.SpawnTeam.checked) {
         playerTargets = structuredClone(cmd.Team);
+        if (document.getElementById("ignorehealer").checked) {
+            playerTargets = playerTargets.filter(m => m.Role !== "heal");
+        }
     }
     playerTargets.push({ X: pl.X, Y: pl.Y, Role: "player" });
     playerTargets.push({ X: ba.CollectorX, Y: ba.CollectorY, Role: "collector" });
