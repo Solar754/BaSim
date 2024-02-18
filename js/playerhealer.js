@@ -11,8 +11,8 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.ShortestDistances = [];
     this.WayPoints = [];
     this.ArriveDelay = false;
-    this.targetHealer = undefined;
-    this.movementCounter = 0;
+    this.TargetHealer = undefined;
+    this.MovementCounter = 0;
     this.AdjacentTrueTile = undefined;
     this.AdjacentDrawn = undefined;
     this.Role = role; // must be unique
@@ -117,7 +117,7 @@ phPlayerHealer.prototype.pathfindHealer = function () {
 
     // uses a food same tick healer moves
     if (this.isMovingAfterStationary()) {
-        if (this.movementCounter == 1) {
+        if (this.MovementCounter == 1) {
             this.tick();
             this.ArriveDelay = true;
             return;
@@ -138,10 +138,10 @@ phPlayerHealer.prototype.isMovingAfterStationary = function () {
     let noMovePreviousTick = (this.X === this.PrevTile.X && this.Y === this.PrevTile.Y);
     let moveNextTick = (this.X !== this.CurrentDst.X || this.Y !== this.CurrentDst.Y);
     if (noMovePreviousTick && moveNextTick) {
-        this.movementCounter++;
+        this.MovementCounter++;
     }
     else {
-        this.movementCounter = 0;
+        this.MovementCounter = 0;
     }
     return noMovePreviousTick && moveNextTick;
 }
@@ -149,17 +149,17 @@ phPlayerHealer.prototype.targetIsAdjacent = function () {
     let trueTileIsAdj = (this.X === this.AdjacentTrueTile?.X && this.Y === this.AdjacentTrueTile?.Y);
     let drawnTileIsAdj = (this.X === this.AdjacentDrawn?.X && this.Y === this.AdjacentDrawn?.Y);
     let intercardinalDrawnIsAdj = (
-        (this.X + 1 === this.targetHealer?.drawnX && this.Y + 1 === this.targetHealer?.drawnY) // ne
-        || (this.X + 1 === this.targetHealer?.drawnX && this.Y - 1 === this.targetHealer?.drawnY) // se
-        || (this.X - 1 === this.targetHealer?.drawnX && this.Y - 1 === this.targetHealer?.drawnY) // sw
-        || (this.X - 1 === this.targetHealer?.drawnX && this.Y + 1 === this.targetHealer?.drawnY) // nw
+        (this.X + 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // ne
+        || (this.X + 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // se
+        || (this.X - 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // sw
+        || (this.X - 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // nw
     );
     return drawnTileIsAdj || (trueTileIsAdj && intercardinalDrawnIsAdj);
 }
 phPlayerHealer.prototype.findTarget = function () {
     for (let healer of ba.Healers) {
         if (this.CurrentDst?.healerId === healer.id) {
-            this.targetHealer = healer;
+            this.TargetHealer = healer;
             let adjDrawn = phFindBestAdjacentTile(this.X, this.Y, healer.drawnX, healer.drawnY);
             let adjTrue = phFindBestAdjacentTile(this.X, this.Y, healer.x, healer.y);
             this.AdjacentDrawn = { X: adjDrawn[0], Y: adjDrawn[1] };
@@ -167,7 +167,7 @@ phPlayerHealer.prototype.findTarget = function () {
             return true;
         }
     }
-    this.targetHealer = undefined;
+    this.TargetHealer = undefined;
     this.AdjacentDrawn = undefined;
     this.AdjacentTrueTile = undefined;
     return false;

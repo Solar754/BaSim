@@ -197,6 +197,10 @@ heHealer.prototype.tryTarget = function (type) {
     }
 }
 heHealer.prototype.selectRandomTile = function () {
+    // do not bounce on the same tick as player psn
+    if (this.sprayTimer == 1 && this.lastTarget == 'player') {
+        return;
+    }
     const WANDER_RANGE = 60;
     let rnd = Math.floor(Math.random() * 8);
     if (rnd === 0) {

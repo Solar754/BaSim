@@ -110,8 +110,8 @@ Player healer syntax
     Tick is the earliest possible time a command happens and is optional. It reflects 
     when a "click" would happen in-game.
 
-    Example: h1,2:24 means on tick 24 player will start pathing as though they are using food on the 
-    first healer (healer 1) every tick, and when valid will use 2 food.
+    Example: h1,2:24 means after tick 24 player will start pathing as though they are using food on the 
+    first healer (healer 1) every tick, and two food will be used.
 
 
 Ignore healer toggle
@@ -165,7 +165,6 @@ Trivial code convert tool
     let instructionsExist = document.querySelectorAll('.instructions').length > 0;
     if (canvasElement.style.display === "none") {
         canvasElement.style.display = "inline";
-        console.log(document.querySelectorAll('.instructions'))
         document.querySelectorAll('.instructions').forEach(e => e.style.display = "none");
     }
     else {
