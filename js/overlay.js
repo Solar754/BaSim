@@ -96,7 +96,7 @@ function oInstructions() {
     instructionsElement.style.resize = "none";
     instructionsElement.style.width = rr.CanvasWidth + "px";
     instructionsElement.style.height = rr.CanvasHeight + "px";
-    instructionsElement.innerHTML = `General teammate syntax:
+    instructionsElement.innerHTML = `General teammate syntax
     Input tiles in x,y:tick format, or toggle marker to select tiles on canvas.
     Tiles added while sim is running get timestamped with current tick and processed.
     Tick is the earliest possible time a command happens and is optional. It reflects 
@@ -105,7 +105,7 @@ function oInstructions() {
     Example: 21,25:10 means the teammate will click to move to tile 21,25 no earlier than tick 10
 
 
-Player healer syntax:
+Player healer syntax
     In addition to general syntax, healers can be targeted with: 'hID,numFood:tick'.
     Tick is the earliest possible time a command happens and is optional. It reflects 
     when a "click" would happen in-game.
@@ -113,16 +113,77 @@ Player healer syntax:
     Example: h1,2:24 means on tick 24 player will start pathing as though they are using food on the 
     first healer (healer 1) every tick, and when valid will use 2 food.
 
-Ignore healer toggle:
+
+Ignore healer toggle
     When toggled on, npc healers will not target player healer.
+
+
+Trivial code convert tool
+    This tool takes a basic approach to convert code into player healer commands.
+    At the moment it makes no attempt to path anywhere after running up post-stock.
+    
+    Syntax:
+        r#/ -- number of ticks to spend at the dispenser and then run up east
+        (#) -- number of seconds to wait until last food is placed (wont go to next healer until 
+                spacing is satisfied)
+        //  -- "call change", not very useful at the moment but can be used to space out rps in 
+                a roundabout way
+        x   -- spam down until dead
+
+    Example 1x os w4: r2/2(12)-5-4//0-0-0-x
     `
+
+    let codeCalculator = document.createElement("input");
+    codeCalculator.type = "text";
+    codeCalculator.id = "codecalculatorinput";
+    codeCalculator.classList.add("instructions");
+    codeCalculator.style.width = rr.CanvasWidth * (1 / 4) + "px";
+    codeCalculator.placeholder = "r2/2(12)-5-4//0-0-0-x";
+
+    let codeTextarea = document.createElement("textarea");
+    codeTextarea.classList.add("instructions")
+    codeTextarea.id = "codecalculatortextarea";
+    codeTextarea.style.resize = "none";
+    codeTextarea.style.width = rr.CanvasWidth * (1 / 4) + "px";
+    codeTextarea.style.height = rr.CanvasHeight - 22 + "px";
+
+    let wrapper = document.createElement("div");
+    wrapper.classList.add("instructions");
+    wrapper.classList.add("container");
+
+    let subwrapper1 = document.createElement("div");
+    subwrapper1.classList.add("instructions");
+    subwrapper1.classList.add("one");
+
+    let subwrapper2 = document.createElement("div");
+    subwrapper2.classList.add("instructions");
+    subwrapper2.classList.add("two");
+    subwrapper2.style.paddingLeft = "26rem";
+
+    let subwrapper2Split = document.createElement("br");
+
+    let instructionsExist = document.querySelectorAll('.instructions').length > 0;
     if (canvasElement.style.display === "none") {
         canvasElement.style.display = "inline";
-        document.querySelectorAll('.instructions').forEach(e => e.remove());
+        console.log(document.querySelectorAll('.instructions'))
+        document.querySelectorAll('.instructions').forEach(e => e.style.display = "none");
     }
     else {
         canvasElement.style.display = "none";
-        canvasElement.parentNode.insertBefore(instructionsElement, canvasElement);
+
+        if (instructionsExist) {
+            document.querySelectorAll('.instructions').forEach(e => e.style.display = "grid");
+        }
+        else {
+            canvasElement.parentNode.insertBefore(wrapper, canvasElement);
+            wrapper.appendChild(subwrapper1);
+            wrapper.appendChild(subwrapper2);
+            subwrapper1.appendChild(instructionsElement);
+            subwrapper2.appendChild(codeCalculator);
+            subwrapper2.appendChild(subwrapper2Split);
+            subwrapper2.appendChild(codeTextarea);
+        }
+        document.getElementById(HTML_CALCULATOR_INPUT).oninput = loTrivialCalculator;
     }
 }
 //}

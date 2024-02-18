@@ -184,6 +184,7 @@ function phParseTiles() { // expected: hID,#:tick
     let tiles = []
     let vals = document.getElementById(`healcmds`).value;
 
+    // disabled for now
     //if (isCode(vals)) {
     //    vals = loParseCode(vals);
     //}
