@@ -68,15 +68,13 @@ phPlayerHealer.prototype.skipDeadInQueue = function () {
     let isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
     let maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
     if (isDead || maybeDead?.hp === 0) {
-        if (this.TileIdx < this.Tiles.length) {
-            while (this.TileIdx < this.Tiles.length) {
-                this.CurrentDst = this.Tiles[this.TileIdx++];
+        while (this.TileIdx < this.Tiles.length) {
+            this.CurrentDst = this.Tiles[this.TileIdx++];
 
-                if (!this.CurrentDst.healerId) return;
-                isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
-                maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
-                if ((!isDead && !maybeDead) || maybeDead?.hp > 0) return;
-            }
+            if (!this.CurrentDst.healerId) return;
+            isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
+            maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
+            if ((!isDead && !maybeDead) || maybeDead?.hp > 0) return;
         }
         this.CurrentDst = { X: this.X, Y: this.Y };
     }

@@ -103,12 +103,14 @@ function oInstructions() {
     First runner will move west on spawn, and next random movement (no food/crash direction) will be south.
     Second runner will move south on spawn.
 
+    
 Runner/healer spawns
     Specify when runner/healer should spawn. 
     Reserves will only come out if eligible and if time is specified.
 
     Example: 11,21,31
     First spawn will be when tick counter = 11, then 21, etc....
+
 
 General teammate syntax
     Input tiles in x,y:tick format, or toggle marker to select tiles on canvas.
