@@ -286,6 +286,11 @@ function baDrawEntities() {
             rSetDrawColor(116, 169, 46, 170);
         }
         rrFill(ba.Healers[i].x, ba.Healers[i].y);
+
+        if (ba.Healers[i].psnHitsplat) {
+            rSetDrawColor(30, 142, 59, 220);
+            rrFillItem(ba.Healers[i].x, ba.Healers[i].y);
+        }
     }
     if (ba.CollectorX !== -1) { // draw coll
         rSetDrawColor(240, 240, 10, 200);

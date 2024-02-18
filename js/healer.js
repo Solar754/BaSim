@@ -27,6 +27,7 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.isPsned = false;
     this.naturalPsn = 4;
     this.psnTickCount = 0;
+    this.psnHitsplat = false;
 
     // dying stuff
     this.despawnCountdown = 3;
@@ -239,12 +240,17 @@ heHealer.prototype.applyPoisonDmg = function (food) {
         if (!this.hp) { // manual psn +1t death
             this.despawnCountdown += 1;
         }
+        this.psnHitsplat = true;
     }
     else if (this.isPsned && startTimer) {
         if (ba.TickCounter - this.lastPsnTick >= 5) {
             this.hp = Math.max(0, this.hp - this.naturalPsn);
             this.lastPsnTick = ba.TickCounter;
             this.psnTickCount++;
+            this.psnHitsplat = true;
+        }
+        else {
+            this.psnHitsplat = false;
         }
         if (this.psnTickCount == 5) {
             this.naturalPsn--;
@@ -253,6 +259,9 @@ heHealer.prototype.applyPoisonDmg = function (food) {
         if (this.naturalPsn <= 0) {
             this.isPsned = false;
         }
+    }
+    else {
+        this.psnHitsplat = false;
     }
 }
 heHealer.prototype.isDying = function () {

@@ -148,13 +148,13 @@ phPlayerHealer.prototype.isMovingAfterStationary = function () {
 phPlayerHealer.prototype.targetIsAdjacent = function () {
     let trueTileIsAdj = (this.X === this.AdjacentTrueTile?.X && this.Y === this.AdjacentTrueTile?.Y);
     let drawnTileIsAdj = (this.X === this.AdjacentDrawn?.X && this.Y === this.AdjacentDrawn?.Y);
-    let isIntercardinalDrawnAdj = (
+    let intercardinalDrawnIsAdj = (
         (this.X + 1 === this.targetHealer?.drawnX && this.Y + 1 === this.targetHealer?.drawnY) // ne
         || (this.X + 1 === this.targetHealer?.drawnX && this.Y - 1 === this.targetHealer?.drawnY) // se
         || (this.X - 1 === this.targetHealer?.drawnX && this.Y - 1 === this.targetHealer?.drawnY) // sw
         || (this.X - 1 === this.targetHealer?.drawnX && this.Y + 1 === this.targetHealer?.drawnY) // nw
     );
-    return drawnTileIsAdj || (trueTileIsAdj && isIntercardinalDrawnAdj);
+    return drawnTileIsAdj || (trueTileIsAdj && intercardinalDrawnIsAdj);
 }
 phPlayerHealer.prototype.findTarget = function () {
     for (let healer of ba.Healers) {
