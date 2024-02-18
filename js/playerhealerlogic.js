@@ -113,8 +113,8 @@ function loRestock(stockCount) {
 
 // parse from instructions input
 function loTrivialCalculator(e) {
-    let tiles = []
-    code = document.getElementById(HTML_CALCULATOR_INPUT).value;
+    let tiles = [];
+    let code = document.getElementById(HTML_CALCULATOR_INPUT).value;
     let calls = code.split("//");
 
     // for each call....

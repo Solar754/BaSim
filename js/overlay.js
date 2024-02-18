@@ -96,7 +96,21 @@ function oInstructions() {
     instructionsElement.style.resize = "none";
     instructionsElement.style.width = rr.CanvasWidth + "px";
     instructionsElement.style.height = rr.CanvasHeight + "px";
-    instructionsElement.innerHTML = `General teammate syntax
+    instructionsElement.innerHTML = `Runner movements
+    Control runner random e/w/s movement. Can be updated while sim is running.
+
+    Example: ws-s
+    First runner will move west on spawn, and next random movement (no food/crash direction) will be south.
+    Second runner will move south on spawn.
+
+Runner/healer spawns
+    Specify when runner/healer should spawn. 
+    Reserves will only come out if eligible and if time is specified.
+
+    Example: 11,21,31
+    First spawn will be when tick counter = 11, then 21, etc....
+
+General teammate syntax
     Input tiles in x,y:tick format, or toggle marker to select tiles on canvas.
     Tiles added while sim is running get timestamped with current tick and processed.
     Tick is the earliest possible time a command happens and is optional. It reflects 
@@ -118,8 +132,9 @@ Ignore healer toggle
     When toggled on, npc healers will not target player healer.
 
 
-Trivial code convert tool
+Trivial code convert tool (on the right)
     This tool takes a basic approach to convert code into player healer commands.
+    Copy-paste generated/modified code into the heal text box after toggling "Team".
     At the moment it makes no attempt to path anywhere after running up post-stock.
     
     Syntax:
@@ -158,7 +173,7 @@ Trivial code convert tool
     let subwrapper2 = document.createElement("div");
     subwrapper2.classList.add("instructions");
     subwrapper2.classList.add("two");
-    subwrapper2.style.paddingLeft = "26rem";
+    subwrapper2.style.marginLeft = "49rem";
 
     let subwrapper2Split = document.createElement("br");
 

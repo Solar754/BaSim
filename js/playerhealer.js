@@ -13,6 +13,7 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.ArriveDelay = false;
     this.TargetHealer = undefined;
     this.MovementCounter = 0;
+    this.StandStillCounter = 0;
     this.AdjacentTrueTile = undefined;
     this.AdjacentDrawn = undefined;
     this.Role = role; // must be unique
@@ -43,6 +44,12 @@ phPlayerHealer.prototype.tick = function () {
             this.X = this.PathQueueX[--this.PathQueuePos];
             this.Y = this.PathQueueY[this.PathQueuePos];
         }
+    }
+    if (this.X == this.PrevTile.X && this.Y == this.PrevTile.Y) {
+        this.StandStillCounter++;
+    }
+    else {
+        this.StandStillCounter = 0;
     }
 }
 phPlayerHealer.prototype.useFood = function () {
@@ -154,7 +161,8 @@ phPlayerHealer.prototype.targetIsAdjacent = function () {
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // sw
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // nw
     );
-    return drawnTileIsAdj || (trueTileIsAdj && intercardinalDrawnIsAdj);
+    let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 0 && !this.MovementCounter);
+    return drawnTileIsAdj || (trueTileIsAdj && intercardinalDrawnIsAdj) || playerIsStill;
 }
 phPlayerHealer.prototype.findTarget = function () {
     for (let healer of ba.Healers) {
