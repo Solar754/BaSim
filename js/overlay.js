@@ -62,9 +62,8 @@ function oDrawAllRolePaths() {
     simDraw(); // clear canvas
     for (let role of cmdROLE_NAMES) {
         let tiles = cmdParseTiles(role);
-        let color = cmd[`${role}Color`];
+        let color = cmd[role + `Color`];
         rSetDrawColor(...color.slice(0, 3), 90);
-
         for (let i = 0; i < tiles.length; i++) {
             rrFill(tiles[i].X, tiles[i].Y);
             if (includeNumbers) {
@@ -91,15 +90,13 @@ function oFlipThemeOnClick() {
 
 function oInstructions() {
     let canvasElement = document.getElementById(HTML_CANVAS);
-
     let instructionsElement = document.createElement("textarea");
     instructionsElement.classList.add("instructions")
     instructionsElement.readOnly = true;
     instructionsElement.style.resize = "none";
     instructionsElement.style.width = rr.CanvasWidth + "px";
     instructionsElement.style.height = rr.CanvasHeight + "px";
-
-    instructionsElement.innerHTML = `General Teammate syntax:
+    instructionsElement.innerHTML = `General teammate syntax:
     Input tiles in x,y:tick format, or toggle marker to select tiles on canvas.
     Tiles added while sim is running get timestamped with current tick and processed.
     Tick is the earliest possible time a command happens and is optional. It reflects 
@@ -122,11 +119,6 @@ Player healer syntax:
     }
     else {
         canvasElement.style.display = "none";
-
-        // var myimg = document.getElementById('myimg');
-        // var text = document.createTextNode("This is my caption.");
-        // myimg.parentNode.insertBefore(text, myimg.nextSibling)
-        //area.appendChild(instructionsElement);
         canvasElement.parentNode.insertBefore(instructionsElement, canvasElement);
     }
 }

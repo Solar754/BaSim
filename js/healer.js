@@ -8,8 +8,8 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.destinationY = y;
     this.targetX = x; // calculated during every healer interaction; 2 interactions per tick
     this.targetY = y;
-    this.prevX = undefined;
-    this.prevY = undefined;
+    this.drawnX = x;
+    this.drawnY = y;
     this.playerTarget; // generic player object
     this.runnerTarget; // stores runner object
     this.isTargetingPlayer = false;
@@ -51,8 +51,8 @@ heHealer.prototype.tick = function () {
     if (!this.hp) {
         return this.isDying();
     }
-    this.prevX = this.x;
-    this.prevY = this.y;
+    this.drawnX = this.x;
+    this.drawnY = this.y;
 
     // healer stands still when it spawns, until player comes into LOS
     // if multiple players in LOS, randomly choose
