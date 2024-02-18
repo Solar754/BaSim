@@ -171,7 +171,7 @@ Trivial code convert tool
         canvasElement.style.display = "none";
 
         if (instructionsExist) {
-            document.querySelectorAll('.instructions').forEach(e => e.style.display = "grid");
+            document.querySelectorAll('.instructions').forEach(e => e.style.display = "inline-grid");
         }
         else {
             canvasElement.parentNode.insertBefore(wrapper, canvasElement);
