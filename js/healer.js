@@ -8,8 +8,8 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.destinationY = y;
     this.targetX = x; // calculated during every healer interaction; 2 interactions per tick
     this.targetY = y;
-    this.drawnX = x;
-    this.drawnY = y;
+    this.drawnX = undefined;
+    this.drawnY = undefined;
     this.playerTarget; // generic player object
     this.runnerTarget; // stores runner object
     this.isTargetingPlayer = false;

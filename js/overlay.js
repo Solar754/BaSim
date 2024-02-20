@@ -140,7 +140,7 @@ Trivial code convert tool (on the right)
     At the moment it makes no attempt to path anywhere after running up post-stock.
     
     Syntax:
-        r#/ -- number of ticks to spend at the dispenser and then run up east
+        r#/ -- number of times to stock and then run up east
         (#) -- number of seconds to wait until last food is placed (wont go to next healer until 
                 spacing is satisfied)
         //  -- "call change", not very useful at the moment but can be used to space out rps in 

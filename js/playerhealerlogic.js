@@ -6,11 +6,24 @@ const HTML_CALCULATOR_INPUT = "codecalculatorinput";
 const HTML_CALCULATOR_TEXTAREA = "codecalculatortextarea";
 
 const DISPENSER = "35,7";
-let codeTiles = [];
 
 function isCode(code) {
     let format = /[-()x\[\]\/]+/;
     return format.test(code) || code.includes("r");
+}
+
+function loParseCode(code) {
+    let player = cmd.Team.filter(p => p.Role == "heal")[0];
+    if (!player) {
+        return loTrivialCalculator(undefined, code);
+    }
+    return updateSpacingPriority(player.Tiles);
+}
+
+function updateSpacingPriority(tiles) {
+    return tiles.sort((left, right) => {
+        return left.WaitUntil > right.WaitUntil
+    });
 }
 
 // provided 5(10) as 5,(,) ... will return 5, 10
@@ -21,14 +34,6 @@ function removeSubstringAndReturn(str, startSymbol, endSymbol) {
     str = str.replace(substr, "");
     substr = substr.substring(1, substr.length - 1);
     return [str, substr];
-}
-
-function loParseCode(code) {
-    let player = cmd.Team.filter(p => p.Role == "heal")[0];
-    if (!player) {
-        return loTrivialCalculator(undefined, code);
-    }
-    return player.Tiles;
 }
 
 // parse from instructions input or player healer textbox
@@ -67,7 +72,7 @@ function loTrivialCalculator(e, simCode = undefined) {
             if (actions.includes("(")) {
                 let updatedActions = removeSubstringAndReturn(actions, "(", ")");
                 actions = updatedActions[0];
-                spacing = Math.round(parseFloat(updatedActions[1]) / 0.6) + 1;
+                spacing = Math.round(parseFloat(updatedActions[1]) / 0.6);
             }
             if (!actions) {
                 continue;

@@ -69,7 +69,11 @@ phPlayerHealer.prototype.skipDeadInQueue = function () {
     let maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
     if (isDead || maybeDead?.hp === 0) {
         while (this.TileIdx < this.Tiles.length) {
+            let tmpWaitUntil = this.CurrentDst.WaitUntil;
             this.CurrentDst = this.Tiles[this.TileIdx++];
+            if (this.CurrentDst.WaitUntil < tmpWaitUntil) {
+                this.CurrentDst.WaitUntil = tmpWaitUntil;
+            }
 
             if (!this.CurrentDst.healerId) return;
             isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
@@ -115,8 +119,7 @@ phPlayerHealer.prototype.pathfindHealer = function () {
         this.CurrentDst.X = this.AdjacentTrueTile.X;
         this.CurrentDst.Y = this.AdjacentTrueTile.Y;
     }
-
-    if (this.CurrentDst.X && ba.TickCounter > this.CurrentDst?.WaitUntil) {
+    if (this.CurrentDst.X) {
         plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
     }
 
@@ -219,11 +222,6 @@ function phParseTiles() { // expected: hID,#:tick
                 Y: parseInt(input[1]),
                 WaitUntil: parseInt(waitUntil),
             });
-        }
-    }
-    for (let i = 1; i < tiles.length; i++) {
-        if (tiles[i].WaitUntil < tiles[i - 1].WaitUntil) {
-            tiles[i].WaitUntil = tiles[i - 1].WaitUntil;
         }
     }
     return tiles
