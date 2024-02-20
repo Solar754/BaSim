@@ -153,14 +153,14 @@ phPlayerHealer.prototype.isMovingAfterStationary = function () {
 phPlayerHealer.prototype.targetIsAdjacent = function () {
     let trueTileIsAdj = (this.X === this.AdjacentTrueTile?.X && this.Y === this.AdjacentTrueTile?.Y);
     let drawnTileIsAdj = (this.X === this.AdjacentDrawn?.X && this.Y === this.AdjacentDrawn?.Y);
-    let intercardinalDrawnIsAdj = (
+    let drawnIsIntercardinalAdj = (
         (this.X + 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // ne
         || (this.X + 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // se
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // sw
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // nw
     );
     let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 0 && !this.MovementCounter);
-    return drawnTileIsAdj || (trueTileIsAdj && intercardinalDrawnIsAdj) || playerIsStill;
+    return drawnTileIsAdj || (trueTileIsAdj && drawnIsIntercardinalAdj) || playerIsStill;
 }
 phPlayerHealer.prototype.findTarget = function () {
     for (let healer of ba.Healers) {
@@ -190,13 +190,14 @@ function phParseTiles() { // expected: hID,#:tick
     let tiles = []
     let vals = document.getElementById(`healcmds`).value;
 
-    // disabled for now
-    //if (isCode(vals)) {
-    //    vals = loParseCode(vals);
-    //}
-    //else {
-    vals = vals.split("\n");
-    //}
+    if (isCode(vals)) {
+        if (cmd.Team.filter(p => p.Role == "heal")[0])
+            return loParseCode(vals);
+        vals = loParseCode(vals);
+    }
+    else {
+        vals = vals.split("\n");
+    }
     for (let input of vals) {
         if (!input) continue;
         input = input.split(/,|:/);
