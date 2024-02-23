@@ -18,10 +18,10 @@ function loParseCode(code) {
     if (!player) {
         return loTrivialCalculator(undefined, code);
     }
-    return updateSpacingPriority(player);
+    return loUpdateSpacingPriority(player);
 }
 
-function updateSpacingPriority(player) {
+function loUpdateSpacingPriority(player) {
     let tiles = player.Tiles;
 
     // assign spacing by spawn time if unassigned then sort
@@ -48,23 +48,36 @@ function updateSpacingPriority(player) {
         });
     }
 
-    // if not targeting a healer, dont override
+    // wall trap pathing exception for 12s spawn
+    if (ba.TickCounter < 24) {
+        if (player.CurrentDst?.healerId == 2) {
+            player.TileIdx -= 1;
+            player.CurrentDst = { X: 45, Y: 33, WaitUntil: 22 }
+            return tiles;
+        }
+        return tiles;
+    }
+
+    // if not targeting a healer, dont override pathing
     if (!player.CurrentDst.healerId) return tiles;
 
     // prioritize a new spawn over current action
-    // doesn't take reserves into account
-    for (let i = player.TileIdx; i < tiles.length; i++) {
-        if (tiles[i]?.healerId <= ba.MaxHealersAlive && !tiles[i].isRepoison) {
-            if (tiles[i].WaitUntil == ba.TickCounter && player.CurrentDst?.healerId != tiles[i].healerId) {
-                let tmpTile = tiles[i];
-                tiles[i] = player.CurrentDst;
-                player.CurrentDst = tmpTile;
-                return tiles;
+    for (let healer of ba.Healers) {
+        if (!healer.isPsned && player.CurrentDst?.healerId == healer.id) {
+            return tiles;
+        }
+        else if (!healer.isPsned) {
+            for (let i = player.TileIdx; i < tiles.length; i++) {
+                if (tiles[i]?.healerId == healer.id) {
+                    let tmpTile = tiles[i];
+                    tiles[i] = player.CurrentDst;
+                    player.CurrentDst = tmpTile;
+                    return tiles;
+                }
             }
         }
     }
 
-    // compare current and next tile to see if swap needed (e.g. for reserves)
     // if current target hasn't spawned yet, deal with other queued targets
     if (player.CurrentDst.WaitUntil == ba.TickCounter - 1 && player.CurrentDst?.healerId) {
         for (let i = player.TileIdx; i < tiles.length; i++) {

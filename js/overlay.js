@@ -129,6 +129,9 @@ Player healer syntax
     Example: h1,2:24 means after tick 24 player will start pathing as though they are using food on the 
     first healer (healer 1) every tick, and two food will be used.
 
+    Trivial code syntax (see below) can also be entered here. Player healer will do its best to make 
+    its own decisions (don't expect much).
+
 
 Ignore healer toggle
     When toggled on, npc healers will not target player healer.
