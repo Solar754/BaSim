@@ -15,6 +15,7 @@ function isCode(code) {
 
 function loParseCode(code) {
     let player = cmd.Team.filter(p => p.Role == "heal")[0];
+    player.runningComplex = true;
     if (!player) {
         return loTrivialCalculator(undefined, code);
     }
@@ -43,6 +44,17 @@ function loUpdateSpacingPriority(player) {
                 }
             }
         }
+
+        // restock based on last healer, problem with reserves
+        // doesn't quite work
+        // need to work in the "//" somehow.? what about second call
+        // w7: r3/2(27)-6-6-1//r5/
+        for (let i = 1; i < tiles.length; i++) {
+            if (!tiles[i].healerId && !tiles[i].WaitUntil) {
+                tiles[i].WaitUntil = tiles[i - 1].WaitUntil + 1;
+            }
+        }
+
         return tiles.sort((left, right) => {
             return left.WaitUntil > right.WaitUntil
         });

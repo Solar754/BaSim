@@ -17,6 +17,7 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.AdjacentTrueTile = undefined;
     this.AdjacentDrawn = undefined;
     this.Role = role; // must be unique
+    this.runningComplex = false;
     this.Color = color;
     this.Tiles = phParseTiles();
     this.TileIdx = 0;
@@ -119,7 +120,11 @@ phPlayerHealer.prototype.pathfindHealer = function () {
         this.CurrentDst.X = this.AdjacentTrueTile.X;
         this.CurrentDst.Y = this.AdjacentTrueTile.Y;
     }
-    if (this.CurrentDst.X) {
+
+    if (this.CurrentDst.X && this.runningComplex) {
+        plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
+    }
+    else if (this.CurrentDst.X && ba.TickCounter > this.CurrentDst?.WaitUntil) {
         plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
     }
 
@@ -144,7 +149,16 @@ phPlayerHealer.prototype.pathfindHealer = function () {
 }
 phPlayerHealer.prototype.isMovingAfterStationary = function () {
     let noMovePreviousTick = (this.X === this.PrevTile.X && this.Y === this.PrevTile.Y);
+    let noMoveCurrentTick = (this.X == this.CurrentDst.X && this.Y == this.CurrentDst.Y)
     let moveNextTick = (this.X !== this.CurrentDst.X || this.Y !== this.CurrentDst.Y);
+
+    if (noMovePreviousTick && noMoveCurrentTick && !moveNextTick) {
+        this.StandStillCounter++;
+    }
+    else {
+        this.StandStillCounter = 0;
+    }
+
     if (noMovePreviousTick && moveNextTick) {
         this.MovementCounter++;
     }
@@ -162,7 +176,7 @@ phPlayerHealer.prototype.targetIsAdjacent = function () {
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // sw
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // nw
     );
-    let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 0 && !this.MovementCounter);
+    let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 1 && !this.MovementCounter);
     return drawnTileIsAdj || (trueTileIsAdj && drawnIsIntercardinalAdj) || playerIsStill;
 }
 phPlayerHealer.prototype.findTarget = function () {
