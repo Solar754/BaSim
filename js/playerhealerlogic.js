@@ -6,6 +6,7 @@ const HTML_CALCULATOR_INPUT = "codecalculatorinput";
 const HTML_CALCULATOR_TEXTAREA = "codecalculatortextarea";
 
 const DISPENSER = "35,7";
+const HEALER_CAVE = { X: 42, Y: 37 };
 
 function isCode(code) {
     let format = /[-()x\[\]\/]+/;
@@ -17,13 +18,67 @@ function loParseCode(code) {
     if (!player) {
         return loTrivialCalculator(undefined, code);
     }
-    return updateSpacingPriority(player.Tiles);
+    return updateSpacingPriority(player);
 }
 
-function updateSpacingPriority(tiles) {
-    return tiles.sort((left, right) => {
-        return left.WaitUntil > right.WaitUntil
-    });
+function updateSpacingPriority(player) {
+    let tiles = player.Tiles;
+
+    // assign spacing by spawn time if unassigned then sort
+    if (ba.TickCounter == 1) {
+        if (ba.HealerSpawns.length === 0) {
+            for (let tile of tiles) {
+                if (tile.WaitUntil == 0 && tile.healerId) {
+                    tile.WaitUntil = parseInt(tile.healerId + '1');
+                } else if (tile.healerId) {
+                    tile.isRepoison = true;
+                }
+            }
+        } else {
+            for (let tile of tiles) {
+                if (tile.WaitUntil == 0 && tile.healerId) {
+                    tile.WaitUntil = ba.HealerSpawns[tile.healerId - 1];
+                } else if (tile.healerId) {
+                    tile.isRepoison = true;
+                }
+            }
+        }
+        return tiles.sort((left, right) => {
+            return left.WaitUntil > right.WaitUntil
+        });
+    }
+
+    // if not targeting a healer, dont override
+    if (!player.CurrentDst.healerId) return tiles;
+
+    // prioritize a new spawn over current action
+    // doesn't take reserves into account
+    for (let i = player.TileIdx; i < tiles.length; i++) {
+        if (tiles[i]?.healerId <= ba.MaxHealersAlive && !tiles[i].isRepoison) {
+            if (tiles[i].WaitUntil == ba.TickCounter && player.CurrentDst?.healerId != tiles[i].healerId) {
+                let tmpTile = tiles[i];
+                tiles[i] = player.CurrentDst;
+                player.CurrentDst = tmpTile;
+                return tiles;
+            }
+        }
+    }
+
+    // compare current and next tile to see if swap needed (e.g. for reserves)
+    // if current target hasn't spawned yet, deal with other queued targets
+    if (player.CurrentDst.WaitUntil == ba.TickCounter - 1 && player.CurrentDst?.healerId) {
+        for (let i = player.TileIdx; i < tiles.length; i++) {
+            for (let healer of ba.Healers) {
+                if (player.CurrentDst.healerId === healer.id) {
+                    return tiles; // healer was found
+                }
+            }
+            let tmpTile = tiles[i];
+            tiles[i] = player.CurrentDst;
+            player.CurrentDst = tmpTile;
+        }
+    }
+    return tiles;
 }
 
 // provided 5(10) as 5,(,) ... will return 5, 10
