@@ -42,7 +42,6 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.destinationY = y;
     this.cycleTick = 1;
     this.targetState = 0;
-    this.huntTimer = 0;
     this.foodTarget = null;
     this.blughhhhCountdown = 0;
     this.standStillCounter = 0;
@@ -68,19 +67,14 @@ ruRunner.prototype.isRendered = function () {
 }
 ruRunner.prototype.renderUpdateTargetState = function () {
     if (this.targetState === 0) {
-        this.huntTimer = 0;
         return;
     }
-    // huntTimer == 2 is target tick
-    if (this.cycleTick >= 2 && this.cycleTick <= 6) {
-        if (this.isRendered()) {
-            this.huntTimer = (this.huntTimer + 1) % 3;
-        } else {
-            this.targetState++;
-            if (this.targetState > 3) {
-                this.targetState = 1;
-            }
+    if (this.cycleTick >= 2 && this.cycleTick <= 6 && !this.isRendered()) {
+        this.targetState++;
+        if (this.targetState > 3) {
+            this.targetState = 1;
         }
+
     }
 }
 ruRunner.prototype.tick = function () {
@@ -172,7 +166,7 @@ ruRunner.prototype.doMovement = function () { // TODO: Doesn't consider diagonal
     }
 }
 ruRunner.prototype.tryTargetFood = function () {
-    if (this.huntTimer !== 2 || !this.isRendered()) {
+    if (!this.isRendered()) {
         return;
     }
     let xZone = this.x >> 3;
