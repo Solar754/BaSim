@@ -15,10 +15,10 @@ function isCode(code) {
 
 function loParseCode(code) {
     let player = cmd.Team.filter(p => p.Role == "heal")[0];
-    player.runningComplex = true;
     if (!player) {
         return loTrivialCalculator(undefined, code);
     }
+    player.runningComplex = true;
     return loUpdateSpacingPriority(player);
 }
 

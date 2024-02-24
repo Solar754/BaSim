@@ -57,13 +57,9 @@ ruRunner.prototype.isRendered = function () {
     if (!sim.ToggleRender.checked) {
         return true;
     }
-    for (let i = 0; i < pl.RenderArea.length; ++i) {
-        let renderCoordinate = pl.RenderArea[i];
-        if (renderCoordinate[0] == this.x && renderCoordinate[1] == this.y) {
-            return true;
-        }
-    }
-    return false;
+    let playerDist = tileDistance(this.x, this.y, pl.X, pl.Y);
+    let colDist = tileDistance(this.x, this.y, ba.CollectorX, ba.CollectorY);
+    return (playerDist <= 15 || colDist <= 15);
 }
 ruRunner.prototype.renderUpdateTargetState = function () {
     if (this.targetState === 0 || this.isRendered()) {
