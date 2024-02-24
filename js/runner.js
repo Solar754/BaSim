@@ -66,15 +66,14 @@ ruRunner.prototype.isRendered = function () {
     return false;
 }
 ruRunner.prototype.renderUpdateTargetState = function () {
-    if (this.targetState === 0) {
+    if (this.targetState === 0 || this.isRendered()) {
         return;
     }
-    if (this.cycleTick >= 2 && this.cycleTick <= 6 && !this.isRendered()) {
+    if (this.cycleTick >= 1 && this.cycleTick <= 5) {
         this.targetState++;
         if (this.targetState > 3) {
             this.targetState = 1;
         }
-
     }
 }
 ruRunner.prototype.tick = function () {
@@ -99,6 +98,7 @@ ruRunner.prototype.tick = function () {
         }
     } else {
         if (!this.isDying) {
+            this.renderUpdateTargetState();
             switch (this.cycleTick) {
                 case 1:
                     this.doTick1();
@@ -125,7 +125,6 @@ ruRunner.prototype.tick = function () {
                     this.doTick7To10();
                     break;
             }
-            this.renderUpdateTargetState();
         }
         if (this.isDying) {
             if (this.standStillCounter > 2) {
