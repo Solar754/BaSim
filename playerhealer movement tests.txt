@@ -1,0 +1,151 @@
+1x = 6t
+2x = 7t
+3x = 8t
+
+
+[WORKING IN SIM]
+w4 hjenzen (everyone lost a tick): https://youtu.be/Tg5mzsgnpNE
+HEALER (1x)
+35,7
+43,29:6
+h1,2
+
+COLLECTOR (defender, os call, not an insta, immediately moving to dispenser, nw food, 1t lost at trap)
+34,7
+44,27:5
+36,34:16
+
+player is stalled on 10.2 from arrive delay
+first poison is at 10.8, south of healer
+player ends up standing on single spike and bumping the healer
+
+second poison should be at 12.0, east of healer and player only moves 1 tile NW
+
+
+[WORKING IN SIM]
+3x with 6s lured to wall: https://youtu.be/y9urzSf_Noc
+HEALER - 
+35,7
+45,25:8
+h1,3
+h2,1
+
+COLLECTOR 
+47,26
+
+player arrives 11.4
+food gets used at 12.0, the same tick the 12s spawns
+can put 3 on then use fourth on the 12s
+12s gets psned at 14.4
+6/12 get natural psn at 15.0
+
+
+[WORKING IN SIM]
+w10 2x no lure: https://youtu.be/RyDCJLpdU_4
+HEALER
+35,7
+39,23:7
+h1,1
+h2,20
+
+player arrives at 11.4, but healer is 1 north
+player stands still at 12.0, healer moves 1 south
+6s should be psned at 12.6
+12s should be psned at 14.4
+completely play out the scenario to make sure 12s is correct too
+
+
+[WORKING IN SIM]
+w6 split: https://youtu.be/2Km5k1HCCIU
+HEALER
+35,7
+46,31:4
+h1,5
+
+COLLECTOR
+47,26
+
+First poison should land 9.6, no ticks should be lost
+Second healer should spawn after 5 food
+
+
+[WORKING IN SIM]
+healer spawn at 21
+42,33
+42,35:19
+h1,4
+
+first poison should be applied without delay, at 12.6, because player has been standing still for at least 1 tick
+
+
+[WORKING IN SIM]
+spawns: 16,26
+MAIN
+35,24
+39,21:16
+
+2A
+35,21
+35,24:18
+40,21:26
+
+HEALER
+42,22
+h1,2:26
+h2,2
+h1,2
+
+2nd spawn should be poisoned without delay at 19.8
+
+
+[WORKING IN SIM]
+w7 no lure, need vid
+HEALER
+35,7
+45,25:7
+h1,1
+h2,4
+
+
+[MISC]
+w9
+35,7
+45,25:7
+h1,10
+
+w9
+runner movement: s
+healer spawn: 1
+h1,20
+
+
+issue to keep an eye on: healer leaves adjacent and then returns next tick
+
+
+---------------------------------------------------------
+[WAVE STRATS]
+w1
+35,7
+45,25:5
+h1,1
+h2,1
+
+w4
+35,7
+45,25:6
+h1,2
+h2,5
+h3,4
+h4,7
+
+w6 -- 3(18)-5-3(18)-4, def lure + ignore healer for 6,12,18
+35,7
+45,25:7
+h1,2
+h2,5:23
+h1,1:31
+h3,2
+h3,1:36
+42,35
+h4,4:41
+35,7
