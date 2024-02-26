@@ -24,7 +24,6 @@ const RADIUS = 15;
 function cRunCannonQueue() {
     cUpdateZonePriority();
     if (ba.CannonQueue.length == 0) return;
-
     for (let i = 0; i < ba.CannonQueue.length; i++) {
         let cmd = ba.CannonQueue[i];
         if (cmd.numEggs == 0 || cmd.tick > ba.TickCounter) continue;
@@ -42,7 +41,6 @@ function cRunCannonQueue() {
         }
     }
 }
-
 function cUpdateZonePriority() {
     let penance = ba.Healers.concat(ba.Runners);
     for (let npc of penance) {
@@ -56,7 +54,6 @@ function cUpdateZonePriority() {
         }
     }
 }
-
 function cGetTarget(cmd) {
     let penanceList = (cmd.penance == "h") ? ba.Healers : ba.Runners;
     let cannon = (cmd.cannon == "w") ? cWEST_CANNON : cEAST_CANNON;
@@ -72,17 +69,16 @@ function cGetTarget(cmd) {
         if (lhDist != rhDist)
             return lhDist > rhDist;
 
-        // best zone = smallest x followed by smallest y
+        // best zone = smaller x then smaller y
         let lhZone = lh.CurrentZone;
         let rhZone = rh.CurrentZone;
         if (`${lhZone}` != `${rhZone}`) {
             if (lhZone[0] != rhZone[0]) {
-                return lhZone[1] > rhZone[0];
+                return lhZone[0] > rhZone[0];
             }
             return lhZone[1] > lhZone[1];
         }
 
-        // whichever is higher
         if (lh.ZoneCounter != rh.ZoneCounter)
             return lh.ZoneCounter < rh.ZoneCounter;
 
@@ -90,7 +86,6 @@ function cGetTarget(cmd) {
     });
     return penanceList[0];
 }
-
 // amount of time it takes for an egg to travel
 // 1t before damage is calculated
 function cShootCannon(cmd, x, y) {
@@ -115,12 +110,7 @@ function cShootCannon(cmd, x, y) {
     if (cmd.eggType == "r") {
         travelTime += 1;
     }
-    console.log(tickToSecond(ba.TickCounter), travelTime);
+    console.log(tickToSecond(ba.TickCounter), ": player clicked to shoot : ", travelTime);
     return travelTime;
 }
-
-function actualTileDistance(x1, y1, x2, y2) {
-    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-}
-
 //}

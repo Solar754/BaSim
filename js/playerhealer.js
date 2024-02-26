@@ -241,12 +241,12 @@ function phParseTiles() { // expected: hID,#:tick
     return tiles
 }
 function phFindBestAdjacentTile(x1, y1, targetX, targetY) {
-    // prioritize east > west > north > south
+    // prioritize west > east > south > north
     let validDirectionsFromTarget = [
-        { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },
         { "direction": "west", "tile": [targetX - 1, targetY], "check": mCanMoveEast },
-        { "direction": "north", "tile": [targetX, targetY + 1], "check": mCanMoveSouth },
+        { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },
         { "direction": "south", "tile": [targetX, targetY - 1], "check": mCanMoveNorth },
+        { "direction": "north", "tile": [targetX, targetY + 1], "check": mCanMoveSouth },
     ]
     for (let direction of validDirectionsFromTarget) {
         if (direction.check(...direction["tile"]) && mCanMoveToTile(...direction["tile"])) {

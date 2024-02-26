@@ -62,8 +62,7 @@ heHealer.prototype.tick = function () {
     // healer stands still when it spawns, until player comes into LOS
     // if multiple players in LOS, randomly choose
     if (this.justSpawned && this.foundPlayerTarget()) {
-        this.destinationX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-        this.destinationY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+        [this.destinationX, this.destinationY] = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y);
         this.isTargetingPlayer = true;
         this.justSpawned = false;
     }
@@ -154,21 +153,17 @@ heHealer.prototype.tryTarget = function (type) {
     //          healer attempts to interact
 
     if (type === 'runner') {
-        this.targetX = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
-        this.targetY = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
+        [this.targetX, this.targetY] = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y);
         if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.runnerTarget.x, this.runnerTarget.y, this.x, this.y, 5)) {
             this.isTargetingRunner = false;
             this.lastTarget = 'runner';
             this.sprayTimer = 0;
         }
         else {
-            this.destinationX = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
-            this.destinationY = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
-
+            [this.destinationX, this.destinationY] = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y);
             this.doMovement();
 
-            this.targetX = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[0];
-            this.targetY = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y)[1];
+            [this.targetX, this.targetY] = heFindTargetTile(this.x, this.y, this.runnerTarget.x, this.runnerTarget.y);
             if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.runnerTarget.x, this.runnerTarget.y, this.x, this.y, 5)) {
                 this.isTargetingRunner = false;
                 this.lastTarget = 'runner';
@@ -177,21 +172,18 @@ heHealer.prototype.tryTarget = function (type) {
         }
     }
     else if (type === 'player') {
-        this.targetX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-        this.targetY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+        [this.targetX, this.targetY] = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y);
         if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.playerTarget.X, this.playerTarget.Y, this.x, this.y, 15)) {
             this.isTargetingPlayer = false;
             this.lastTarget = 'player';
             this.sprayTimer = 0;
         }
         else {
-            this.destinationX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-            this.destinationY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+            [this.destinationX, this.destinationY] = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y);
 
             this.doMovement();
 
-            this.targetX = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[0];
-            this.targetY = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y)[1];
+            [this.targetX, this.targetY] = heFindTargetTile(this.x, this.y, this.playerTarget.X, this.playerTarget.Y);
             if (tileDistance(this.x, this.y, this.targetX, this.targetY) === 0 && mHasLineOfSight(this.playerTarget.X, this.playerTarget.Y, this.x, this.y, 15)) {
                 this.isTargetingPlayer = false;
                 this.lastTarget = 'player';
@@ -272,8 +264,8 @@ heHealer.prototype.applyPoisonDmg = function (food) {
         this.psnHitsplat = false;
     }
 }
-heHealer.prototypeprocessEggQueue = function () {
-    console.log(this.eggQueue)
+heHealer.prototype.processEggQueue = function () {
+    this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
@@ -303,12 +295,6 @@ function heCompilePlayerTargets() {
     playerTargets.push({ X: pl.X, Y: pl.Y, Role: "player" });
     playerTargets.push({ X: ba.CollectorX, Y: ba.CollectorY, Role: "collector" });
     return playerTargets;
-}
-
-// jumpDistance = tileDistance = Max(abs(Bx - Ax),abs(By - Ay));
-function tileDistance(x1, y1, x2, y2) {
-    let tileDistance = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
-    return tileDistance;
 }
 
 // Healer targets closest adjacent tile to target, not target tile itself. The target tile is the one
