@@ -29,6 +29,9 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.psnTickCount = 0;
     this.psnHitsplat = false;
 
+    // cannon stuff
+    this.eggQueue = [];
+
     // dying stuff
     this.despawnCountdown = 3;
 }
@@ -48,6 +51,7 @@ heHealer.prototype.foundPlayerTarget = function () {
     return plTarget;
 }
 heHealer.prototype.tick = function () {
+    this.processEggQueue();
     this.applyPoisonDmg(false);
     if (!this.hp) {
         return this.isDying();
@@ -266,6 +270,15 @@ heHealer.prototype.applyPoisonDmg = function (food) {
     }
     else {
         this.psnHitsplat = false;
+    }
+}
+heHealer.prototypeprocessEggQueue = function () {
+    console.log(this.eggQueue)
+    for (let egg of this.eggQueue) {
+        if (egg.stalled == 0) {
+            console.log("egg effect starts now");
+        }
+        --egg.stalled;
     }
 }
 heHealer.prototype.isDying = function () {

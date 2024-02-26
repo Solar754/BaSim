@@ -2,7 +2,7 @@
 * Misc visual assistance
 */
 //{ Overlay - o
-var markedTiles = new function () {
+var oMarkedTiles = new function () {
     this.tiles = [];
     this.storageName = "baTiles";
     this.push = function (xTile, yTile) {

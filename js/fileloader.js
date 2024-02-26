@@ -10,6 +10,7 @@ let files = [
     "playerhealerlogic.js",
     "runner.js",
     "healer.js",
+    "cannon.js",
     "renderer.js",
     "rsrenderer.js",
     "item.js",

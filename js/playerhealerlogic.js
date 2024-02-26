@@ -13,6 +13,16 @@ function isCode(code) {
     return format.test(code) || code.includes("r");
 }
 
+// provided 5(10) as 5,(,) ... will return 5, 10
+function removeSubstringAndReturn(str, startSymbol, endSymbol) {
+    let start = str.indexOf(startSymbol)
+    let end = str.indexOf(endSymbol);
+    let substr = str.substring(start, end + 1);
+    str = str.replace(substr, "");
+    substr = substr.substring(1, substr.length - 1);
+    return [str, substr];
+}
+
 function loParseCode(code) {
     let player = cmd.Team.filter(p => p.Role == "heal")[0];
     if (!player) {
@@ -47,7 +57,6 @@ function loUpdateSpacingPriority(player) {
 
         // restock based on last healer, problem with reserves
         // doesn't quite work
-        // need to work in the "//" somehow.? what about second call
         // w7: r3/2(27)-6-6-1//r5/
         for (let i = 1; i < tiles.length; i++) {
             if (!tiles[i].healerId && !tiles[i].WaitUntil) {
@@ -61,7 +70,7 @@ function loUpdateSpacingPriority(player) {
     }
 
     // wall trap pathing exception for 12s spawn
-    if (ba.TickCounter < 24) {
+    if (ba.TickCounter < 24 && m.mCurrentMap !== mWAVE10) {
         if (player.CurrentDst?.healerId == 2) {
             player.TileIdx -= 1;
             player.CurrentDst = { X: 45, Y: 33, WaitUntil: 22 }
@@ -104,16 +113,6 @@ function loUpdateSpacingPriority(player) {
         }
     }
     return tiles;
-}
-
-// provided 5(10) as 5,(,) ... will return 5, 10
-function removeSubstringAndReturn(str, startSymbol, endSymbol) {
-    let start = str.indexOf(startSymbol)
-    let end = str.indexOf(endSymbol);
-    let substr = str.substring(start, end + 1);
-    str = str.replace(substr, "");
-    substr = substr.substring(1, substr.length - 1);
-    return [str, substr];
 }
 
 // parse from instructions input or player healer textbox

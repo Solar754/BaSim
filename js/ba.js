@@ -92,10 +92,11 @@ var ba = {
     CurrentRunnerId: undefined,
     CurrentHealerId: undefined,
     CurrentPlayerId: undefined,
+    CannonQueue: undefined,
     EastTrapCharges: undefined,
-    WestTrapCharges: undefined
+    WestTrapCharges: undefined,
 }
-function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, runnerMovements, runnerSpawns, HealerSpawns) {
+function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, runnerMovements, runnerSpawns, HealerSpawns, cannonQueue) {
     ba.Runners = [];
     ba.RunnersToRemove = [];
     ba.Runnerspawns = runnerSpawns;
@@ -126,6 +127,7 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
     ba.CurrentHealerId = 1;
     ba.EastTrapCharges = 2;
     ba.WestTrapCharges = 2;
+    ba.CannonQueue = cannonQueue;
 
     pl.RenderDistance = 15;
     pl.RenderArea = [];
@@ -168,6 +170,7 @@ function baTick() {
     if (isDefaultCycle) {
         mDrawLogs();
     }
+    cRunCannonQueue();
     sim.TickCountSpan.innerHTML = ba.TickCounter;
     sim.SecondsCountSpan.innerHTML = tickToSecond(ba.TickCounter);
     simMovementsInputWatcher()

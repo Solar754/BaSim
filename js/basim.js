@@ -7,6 +7,7 @@ const HTML_CANVAS = "basimcanvas";
 const HTML_RUNNER_MOVEMENTS = "runnermovements";
 const HTML_RUNNER_SPAWNS = "runnerspawns";
 const HTML_HEALER_SPAWNS = "healerspawns";
+const HTML_CANNON_SHOTS = "cannonshots";
 const HTML_TOGGLE_HEALERS = "togglehealers";
 const HTML_TOGGLE_RENDER = "togglerender";
 const HTML_TOGGLE_MARKER = "togglemarker";
@@ -53,6 +54,12 @@ function simInit() {
 			e.preventDefault();
 		}
 	};
+	sim.CannonQueue = document.getElementById(HTML_CANNON_SHOTS);
+	sim.CannonQueue.onkeypress = function (e) {
+		if (e.key === " ") {
+			e.preventDefault();
+		}
+	};
 	sim.StartStopButton = document.getElementById(HTML_START_BUTTON);
 	sim.StartStopButton.onclick = simStartStopButtonOnClick;
 	sim.PauseResumeButton = document.getElementById(HTML_PAUSE_BUTTON);
@@ -80,7 +87,7 @@ function simInit() {
 	sim.ClearMarkers = document.getElementById(HTML_CLEAR_MARKERS);
 	sim.ClearMarkers.onclick = simClearMarkersOnClick;
 
-	markedTiles.fetch();
+	oMarkedTiles.fetch();
 
 	sim.SaveState = document.getElementById(HTML_SAVE_BUTTON);
 	sim.SaveState.onclick = simSaveStateOnClick;
@@ -296,6 +303,11 @@ function simStartStopButtonOnClick() {
 			alert("Invalid spawn intervals. Example: 11,21,31");
 			return;
 		}
+		let cannonQueue = simParseCannonInput(sim.CannonQueue);
+		if (cannonQueue === null) {
+			alert("Invalid cannon syntax.\nExample: wrr,1,51 (West Runner Red, 1 egg, tick 51)")
+			return;
+		}
 		simSetRunning(true);
 		simSetPause(false);
 		let maxRunnersAlive = 0;
@@ -360,7 +372,7 @@ function simStartStopButtonOnClick() {
 				totalHealers = 8;
 				break;
 		}
-		baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, movements, runnerSpawns, healerSpawns);
+		baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, movements, runnerSpawns, healerSpawns, cannonQueue);
 		if (m.mCurrentMap === mWAVE10) {
 			plInit(baWAVE10_DEFENDER_SPAWN_X, baWAVE10_DEFENDER_SPAWN_Y);
 		} else {
@@ -413,6 +425,47 @@ function simParseSpawnsInput(mobSpawns) {
 	spawns = spawns.sort((a, b) => { return a - b; });
 	return spawns;
 }
+function simParseCannonInput(eggs) {
+	// TODO allow update while sim is running
+	// expected: wrr,1,51-wrr,1,51 OR wrr,1,51-1,51
+	if (!eggs.value) return [];
+	let cannonCmds = [];
+	let players = eggs.value.split("-");
+	for (let player of players) {
+		let cmds = player.split(",");
+		let id = cannonCmds.length;
+		try {
+			if (cmds.length < 3) {
+				let prev = cannonCmds.length - 1;
+				cannonCmds.push({
+					"id": id,
+					"cannon": cannonCmds[prev].cannon,
+					"penance": cannonCmds[prev].penance,
+					"eggType": cannonCmds[prev].eggType,
+					"numEggs": parseInt(cmds[0]),
+					"tick": parseInt(cmds[1]),
+					"stalled": 0,
+				});
+			}
+			else {
+				let instr = cmds[0].split('');
+				cannonCmds.push({
+					"id": id,
+					"cannon": instr[0],
+					"penance": instr[1],
+					"eggType": instr[2],
+					"numEggs": parseInt(cmds[1]),
+					"tick": parseInt(cmds[2]),
+					"stalled": 0,
+				});
+			}
+		} catch (err) { return null; }
+	}
+	cannonCmds = cannonCmds.sort((lh, rh) => {
+		return lh.tick > rh.tick;
+	});
+	return cannonCmds;
+}
 function simWindowOnKeyDown(e) { // food_drop
 	if (sim.IsRunning && pl.RepairCountdown === 0) {
 		if (e.key === "r") {
@@ -461,7 +514,7 @@ function simCanvasOnMouseDown(e) {
 
 	if (sim.MarkerMode) {
 		if (e.button === 0) {
-			markedTiles.push(xTile, yTile);
+			oMarkedTiles.push(xTile, yTile);
 			simDraw();
 		}
 	}
@@ -501,7 +554,7 @@ function simToggleRenderOnChange(e) {
 	simDraw();
 }
 function simClearMarkersOnClick(e) {
-	markedTiles.clear();
+	oMarkedTiles.clear();
 	simDraw();
 }
 function simToggleTeamOnClick(e) {
@@ -565,7 +618,7 @@ function simDraw() {
 	cmdDrawTeam();
 	mDrawGrid();
 	baDrawOverlays();
-	markedTiles.draw();
+	oMarkedTiles.draw();
 	rPresent();
 }
 var sim = {
@@ -573,6 +626,7 @@ var sim = {
 	MovementsInput: undefined,
 	RunnerSpawns: undefined,
 	HealerSpawns: undefined,
+	CannonQueue: undefined,
 	SaveState: undefined,
 	LoadState: undefined,
 	StartStopButton: undefined,

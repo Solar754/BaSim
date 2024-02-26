@@ -52,6 +52,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.isWave10 = isWave10;
     this.id = id;
     this.chat = "";
+    this.eggQueue = [];
 }
 ruRunner.prototype.isRendered = function () {
     if (!sim.ToggleRender.checked) {
@@ -72,12 +73,22 @@ ruRunner.prototype.renderUpdateTargetState = function () {
         }
     }
 }
+ruRunner.prototype.processEggQueue = function () {
+    console.log(this.eggQueue)
+    for (let egg of this.eggQueue) {
+        if (egg.stalled == 0) {
+            console.log("egg effect starts now");
+        }
+        --egg.stalled;
+    }
+}
 ruRunner.prototype.tick = function () {
     this.chat = "";
     if (++this.cycleTick > 10) {
         this.cycleTick = 1;
     }
     ++this.standStillCounter;
+    this.processEggQueue();
     if (this.despawnCountdown !== -1) {
         if (--this.despawnCountdown === 0) {
             ba.RunnersToRemove.push(this);
