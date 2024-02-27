@@ -57,8 +57,6 @@ function oDrawYellowClick(e) {
     }, DURATION);
 }
 
-// FIXME -- somtimes bugs out if you have a saved state stored and you rewind
-// though fixes on resume
 function oDrawEggs() {
     const EGG_MAP = {
         "r": {
@@ -67,11 +65,11 @@ function oDrawEggs() {
         },
         "g": {
             "src": "green_egg.webp",
-            "x": 5
+            "x": 6
         },
         "b": {
             "src": "blue_egg.webp",
-            "x": 10
+            "x": 12
         }
     }
     let penance = ba.Healers.concat(ba.Runners);
@@ -86,7 +84,7 @@ function oDrawEggs() {
                 let eggImg = document.createElement("img");
                 eggImg.className = "egg";
                 eggImg.src = "css/" + EGG_MAP[egg.egg].src;
-                eggImg.draggable = 'false';
+                eggImg.draggable = false;
                 document.body.appendChild(eggImg);
                 eggImg.style.left = (cannon[0] + EGG_MAP[egg.egg].x) + `px`;
                 eggImg.style.top = cannon[1] + `px`;

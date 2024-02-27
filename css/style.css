@@ -71,7 +71,7 @@ td {
 .egg {
     width: 12px;
     height: 12px;
-    position: fixed;
+    position: absolute;
     pointer-events: none;
     z-index: 1;
 }

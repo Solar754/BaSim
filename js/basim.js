@@ -486,7 +486,8 @@ function simWindowOnKeyDown(e) { // food_drop
 	if (sim.IsRunning && e.key === "s" && document.activeElement.id !== HTML_RUNNER_MOVEMENTS) {
 		simSaveStateOnClick();
 	}
-	else if (e.key === "l") {
+	// FIXME L key press + step forward at the same time can corrupt saves
+	else if (e.key === "l" && !sim.IsSaving) {
 		simLoadStateOnClick();
 	}
 	else if (e.key === " " || e.key === "Space") {
