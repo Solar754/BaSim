@@ -57,6 +57,44 @@ function oDrawYellowClick(e) {
     }, DURATION);
 }
 
+// FIXME -- somtimes bugs out if you have a saved state stored and you rewind
+// though fixes on resume
+function oDrawEggs() {
+    const EGG_MAP = {
+        "r": {
+            "src": "red_egg.webp",
+            "x": 0
+        },
+        "g": {
+            "src": "green_egg.webp",
+            "x": 5
+        },
+        "b": {
+            "src": "blue_egg.webp",
+            "x": 10
+        }
+    }
+    let penance = ba.Healers.concat(ba.Runners);
+    let allEggs = document.getElementsByClassName('egg');
+    while (allEggs.length > 0) {
+        allEggs[0].parentNode.removeChild(allEggs[0]);
+    }
+    for (let p of penance) {
+        for (let egg of p.eggQueue) {
+            let cannon = (egg.cannon == "w") ? cWEST_CANNON_PX : cEAST_CANNON_PX;
+            if (egg.stalled >= 0) {
+                let eggImg = document.createElement("img");
+                eggImg.className = "egg";
+                eggImg.src = "css/" + EGG_MAP[egg.egg].src;
+                eggImg.draggable = 'false';
+                document.body.appendChild(eggImg);
+                eggImg.style.left = (cannon[0] + EGG_MAP[egg.egg].x) + `px`;
+                eggImg.style.top = cannon[1] + `px`;
+            }
+        }
+    }
+}
+
 function oDrawAllRolePaths() {
     let includeNumbers = document.getElementById("rolemarkernumbers").checked;
     simDraw(); // clear canvas

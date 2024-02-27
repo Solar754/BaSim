@@ -68,6 +68,14 @@ td {
     white-space: nowrap;
 }
 
+.egg {
+    width: 12px;
+    height: 12px;
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+}
+
 .ripple {
     width: 11px;
     height: 11px;

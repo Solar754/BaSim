@@ -615,6 +615,7 @@ function simDraw() {
 	mDrawGrid();
 	baDrawOverlays();
 	oMarkedTiles.draw();
+	oDrawEggs();
 	rPresent();
 }
 var sim = {

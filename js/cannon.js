@@ -17,8 +17,10 @@ TODO -- filtering for no east cannon on w10
 ]
 */
 
-const cWEST_CANNON = [21, 26]
-const cEAST_CANNON = [40, 26]
+const cWEST_CANNON = [21, 26];
+const cWEST_CANNON_PX = [255, 442];
+const cEAST_CANNON = [40, 26];
+const cEAST_CANNON_PX = [482, 442];
 const RED_EGG = 3;
 const GREEN_EGG = 1;
 const RADIUS = 15;
@@ -39,7 +41,11 @@ function cRunCannonQueue() {
             --cmd.numEggs;
             cmd.stalled = stallCountdown;
             if (cmd.eggType == "r") --cmd.stalled; // extra tick for red does not delay next shot
-            target.eggQueue.push({ "stalled": stallCountdown, "egg": cmd.eggType });
+            target.eggQueue.push({
+                "stalled": stallCountdown,
+                "egg": cmd.eggType,
+                "cannon": cmd.cannon,
+            });
         }
     }
 }
