@@ -282,7 +282,7 @@ function baDrawEntities() {
         rrFill(ba.Runners[i].x, ba.Runners[i].y);
     }
     for (let i = 0; i < ba.Healers.length; ++i) {
-        if (ba.Healers[i].hp == baHEALER_HEALTH[sim.WaveSelect.value]) {
+        if (!ba.Healers[i].isPsned) {
             rSetDrawColor(11, 199, 11, 150);
         }
         else {

@@ -51,11 +51,11 @@ heHealer.prototype.foundPlayerTarget = function () {
     return plTarget;
 }
 heHealer.prototype.tick = function () {
-    this.processEggQueue();
     this.applyPoisonDmg(false);
     if (!this.hp) {
         return this.isDying();
     }
+    this.processEggQueue();
     this.drawnX = this.x;
     this.drawnY = this.y;
 
@@ -269,9 +269,18 @@ heHealer.prototype.processEggQueue = function () {
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
+            if (egg.egg == "r") {
+                this.hp -= RED_EGG;
+            }
         }
         --egg.stalled;
     }
+
+    // overkill
+    if (this.eggQueue.filter(e => e.egg == "r").length > 1 && this.hp <= 0) {
+        this.isDying();
+    }
+    this.hp = Math.max(this.hp, 0);
 }
 heHealer.prototype.isDying = function () {
     this.despawnCountdown--;

@@ -19,6 +19,8 @@ TODO -- filtering for no east cannon on w10
 
 const cWEST_CANNON = [21, 26]
 const cEAST_CANNON = [40, 26]
+const RED_EGG = 3;
+const GREEN_EGG = 1;
 const RADIUS = 15;
 
 function cRunCannonQueue() {

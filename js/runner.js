@@ -50,6 +50,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.diedThisTick = false; // Hacky solution to 1t longer despawn after urghh if stand still.
     this.runnerRNG = runnerRNG;
     this.isWave10 = isWave10;
+    this.hp = 5;
     this.id = id;
     this.chat = "";
     this.eggQueue = [];
@@ -74,13 +75,29 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.processEggQueue = function () {
+    if (this.hp <= 0) {
+        this.isDying = true;
+        this.standStillCounter = 3;
+        return;
+    }
+
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
+            if (egg.egg == "r") {
+                this.hp -= RED_EGG;
+            }
         }
         --egg.stalled;
     }
+
+    // overkill
+    if (this.eggQueue.filter(e => e.egg == "r").length > 1 && this.hp <= 0) {
+        this.isDying = true;
+        this.standStillCounter = 3;
+    }
+    this.hp = Math.max(this.hp, 0);
 }
 ruRunner.prototype.tick = function () {
     this.chat = "";

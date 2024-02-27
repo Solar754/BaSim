@@ -140,6 +140,9 @@ function simUpdateRunnerTable() {
 		td.innerHTML = runner.targetState;
 		tableRow.appendChild(td);
 		td = document.createElement("td");
+		td.innerHTML = runner.hp + "/5";
+		tableRow.appendChild(td);
+		td = document.createElement("td");
 		td.innerHTML = "(" + runner.x + ", " + runner.y + ")";
 		tableRow.appendChild(td);
 		td = document.createElement("td");
@@ -200,13 +203,6 @@ function simUpdateHealerTable() {
 		td = document.createElement("td");
 		td.innerHTML = "(" + healer.destinationX + ", " + healer.destinationY + ")";
 		tableRow.appendChild(td);
-		//        td = document.createElement("td");
-		//        if (runner.foodTarget !== null) td.innerHTML = "#" + runner.foodTarget.id;
-		//        else td.innerHTML = "None";
-		//        tableRow.appendChild(td);
-		//        td = document.createElement("td");
-		//        td.innerHTML = runner.chat;
-		//        tableRow.appendChild(td);
 		tableBody.appendChild(tableRow);
 	}
 	let previousBody = sim.HealerTable.getElementsByTagName("tbody")[0];
@@ -426,7 +422,7 @@ function simParseSpawnsInput(mobSpawns) {
 	return spawns;
 }
 function simParseCannonInput(eggs) {
-	// TODO allow update while sim is running
+	// TODO allow update while sim is running, make tick optional
 	// expected: wrr,1,51-wrr,1,51 OR wrr,1,51-1,51
 	if (!eggs.value) return [];
 	let cannonCmds = [];

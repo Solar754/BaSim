@@ -7,3 +7,5 @@ ehr,2,15    // lured to cannon, expected: second shot 5t after at 20t, egg lands
 runner eggs
 erb,1,40    // b2 click 23.4, egg effect should start 26.4
 erg,1,53   // dh g2, south 30 spawn, click 31.2, egg effect should start 34.8
+wrr,1,51-1,51 // r2, east 30 spawn, click 30.0, reds land + runner death at 34.8 (overkill)
+wrr,1,51-1,52 // r2, west 30 spawn, second egg lands 35.4 with 36.0 runner death
