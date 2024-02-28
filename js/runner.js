@@ -83,7 +83,7 @@ ruRunner.prototype.processEggQueue = function () {
         return;
     }
 
-    if (this.greenCounter >= 0) {
+    if (this.greenCounter >= 0) { // every 5 ticks
         if (this.greenCounter % 5 == 0) {
             this.hp -= GREEN_EGG;
         }
@@ -118,7 +118,6 @@ ruRunner.prototype.tick = function () {
         this.cycleTick = 1;
     }
     ++this.standStillCounter;
-    this.processEggQueue();
     if (this.despawnCountdown !== -1) {
         if (--this.despawnCountdown === 0) {
             ba.RunnersToRemove.push(this);
@@ -163,6 +162,7 @@ ruRunner.prototype.tick = function () {
                     break;
             }
         }
+        this.processEggQueue();
         if (this.isDying) {
             if (this.standStillCounter > 2) {
                 ++ba.RunnersKilled;

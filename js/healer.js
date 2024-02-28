@@ -266,10 +266,9 @@ heHealer.prototype.applyPoisonDmg = function (food) {
     }
 }
 heHealer.prototype.processEggQueue = function () {
-    if (this.greenCounter >= 0) {
+    if (this.greenCounter >= 0) { // every 30 ticks
         if (this.greenCounter % 30 == 0) {
             this.hp -= GREEN_EGG;
-            console.log(tickToSecond(ba.TickCounter), " DMG")
         }
         --this.greenCounter;
     }

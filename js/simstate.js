@@ -54,7 +54,12 @@ var stateHistory = new function () {
 // populate dummy instance with saved values
 Object.prototype.update = function (obj) {
     Object.keys(obj).forEach((key) => {
-        this[key] = obj[key];
+        try {
+            this[key] = structuredClone(obj[key]);
+        }
+        catch (err) { // mostly HTML elements
+            this[key] = obj[key];
+        }
     });
     return this;
 }
@@ -81,14 +86,7 @@ function buildSaveState() {
 
     // all the other things
     state.sim = {};
-    Object.keys(sim).forEach(key => {
-        let simObj = sim[key];
-        if (simObj instanceof HTMLElement || simObj instanceof NodeList) {
-            state.sim[key] = simObj;
-        } else {
-            state.sim[key] = structuredClone(simObj);
-        }
-    });
+    state.sim.update(sim);
     state.sim.WaveVal = sim.WaveSelect.value;
     state.sim.LevelVal = sim.DefLevelSelect.value;
     state.sim.HealerToggle = sim.ToggleHealers.checked;
