@@ -31,6 +31,7 @@ function heHealer(x = -1, y = -1, id = -1) {
 
     // cannon stuff
     this.eggQueue = [];
+    this.greenCounter = -1;
 
     // dying stuff
     this.despawnCountdown = 3;
@@ -265,12 +266,24 @@ heHealer.prototype.applyPoisonDmg = function (food) {
     }
 }
 heHealer.prototype.processEggQueue = function () {
+    if (this.greenCounter >= 0) {
+        if (this.greenCounter % 30 == 0) {
+            this.hp -= GREEN_EGG;
+            console.log(tickToSecond(ba.TickCounter), " DMG")
+        }
+        --this.greenCounter;
+    }
+
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
             if (egg.egg == "r") {
                 this.hp -= RED_EGG;
+            }
+            else if (egg.egg == "g") {
+                this.hp -= GREEN_EGG;
+                this.greenCounter = 149;
             }
         }
         --egg.stalled;

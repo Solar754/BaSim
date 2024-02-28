@@ -487,7 +487,9 @@ function simWindowOnKeyDown(e) { // food_drop
 		simSaveStateOnClick();
 	}
 	// FIXME L key press + step forward at the same time can corrupt saves
-	else if (e.key === "l" && !sim.IsSaving) {
+	// in general load times have occasionally become long enough to be problematic
+	// though you kinda have to be trying to break things to succeed
+	else if (e.key === "l") {
 		simLoadStateOnClick();
 	}
 	else if (e.key === " " || e.key === "Space") {

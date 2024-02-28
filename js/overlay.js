@@ -71,7 +71,7 @@ function oDrawEggs() {
             "src": "blue_egg.webp",
             "x": 12
         }
-    }
+    };
     let penance = ba.Healers.concat(ba.Runners);
     let allEggs = document.getElementsByClassName('egg');
     while (allEggs.length > 0) {

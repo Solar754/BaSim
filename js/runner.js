@@ -53,7 +53,9 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.hp = 5;
     this.id = id;
     this.chat = "";
+
     this.eggQueue = [];
+    this.greenCounter = -1;
 }
 ruRunner.prototype.isRendered = function () {
     if (!sim.ToggleRender.checked) {
@@ -81,12 +83,23 @@ ruRunner.prototype.processEggQueue = function () {
         return;
     }
 
+    if (this.greenCounter >= 0) {
+        if (this.greenCounter % 5 == 0) {
+            this.hp -= GREEN_EGG;
+        }
+        --this.greenCounter;
+    }
+
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
             if (egg.egg == "r") {
                 this.hp -= RED_EGG;
+            }
+            else if (egg.egg == "g") {
+                this.hp -= GREEN_EGG;
+                this.greenCounter = 24;
             }
         }
         --egg.stalled;
@@ -227,8 +240,10 @@ ruRunner.prototype.tryEatAndCheckTarget = function () {
         if (foodIndex === -1) {
             this.foodTarget = null;
             this.targetState = 0;
+            this.greenCounter = -1;
             return true;
         } else if (this.x === this.foodTarget.x && this.y === this.foodTarget.y) {
+            this.greenCounter = -1;
             if (this.foodTarget.isGood) {
                 this.print("Chomp, chomp.");
                 if (
