@@ -43,7 +43,7 @@ function cRunCannonQueue() {
             if (cmd.eggType == "r") --cmd.stalled; // extra tick for red does not delay next shot
             target.eggQueue.push({
                 "stalled": stallCountdown,
-                "egg": cmd.eggType,
+                "type": cmd.eggType,
                 "cannon": cmd.cannon,
             });
         }

@@ -9,7 +9,8 @@ ehr,2,15    // lured to cannon, expected: second shot 5t after at 20t, egg lands
 21 runner spawn south, drop food ms + nw trap
 erb,1,40	// click 23.4, egg effect should start 26.4
 
-FIXME
+tick 39: tick 1 of death animation
+tick 40: tick 2 of death animation
 
 
 [TEST 2 - GREEN] https://youtu.be/SKxlEPOxPjs?t=64

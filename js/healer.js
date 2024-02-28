@@ -277,10 +277,10 @@ heHealer.prototype.processEggQueue = function () {
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
-            if (egg.egg == "r") {
+            if (egg.type == "r") {
                 this.hp -= RED_EGG;
             }
-            else if (egg.egg == "g") {
+            else if (egg.type == "g") {
                 this.hp -= GREEN_EGG;
                 this.greenCounter = 149;
             }
@@ -289,7 +289,7 @@ heHealer.prototype.processEggQueue = function () {
     }
 
     // overkill
-    if (this.eggQueue.filter(e => e.egg == "r").length > 1 && this.hp <= 0) {
+    if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
         this.isDying();
     }
     this.hp = Math.max(this.hp, 0);

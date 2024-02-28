@@ -422,7 +422,7 @@ function simParseSpawnsInput(mobSpawns) {
 	return spawns;
 }
 function simParseCannonInput(eggs) {
-	// TODO allow update while sim is running, make tick optional
+	// TODO allow update while sim is running
 	// expected: wrr,1,51-wrr,1,51 OR wrr,1,51-1,51
 	if (!eggs.value) return [];
 	let cannonCmds = [];

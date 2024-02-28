@@ -56,6 +56,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 
     this.eggQueue = [];
     this.greenCounter = -1;
+    this.blueCounter = -1;
 }
 ruRunner.prototype.isRendered = function () {
     if (!sim.ToggleRender.checked) {
@@ -77,7 +78,23 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.processEggQueue = function () {
-    if (this.hp <= 0) {
+    // blue prevent death
+    let blueIsQueued = this.eggQueue.filter(e => e.type == 'b')[0];
+    if (blueIsQueued) {
+        if (blueIsQueued.stalled == 0 && this.isDying) { // tick 1 of animation death
+            this.isDying = false;
+            this.despawnCountdown = -1;
+            ++ba.RunnersKilled;
+            --ba.RunnersAlive;
+        }
+        else if (blueIsQueued.stalled == 1 && this.isDying) { // tick 2 of animation death
+            this.isDying = false;
+            this.despawnCountdown = -1;
+            ++ba.RunnersKilled;
+            --ba.RunnersAlive;
+        }
+    }
+    else if (this.hp <= 0) {
         this.isDying = true;
         this.standStillCounter = 3;
         return;
@@ -94,19 +111,27 @@ ruRunner.prototype.processEggQueue = function () {
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log("egg effect starts now");
-            if (egg.egg == "r") {
+            if (this.blueCounter != -1) {
+                --egg.stalled;
+                continue;
+            }
+
+            if (egg.type == "r") {
                 this.hp -= RED_EGG;
             }
-            else if (egg.egg == "g") {
+            else if (egg.type == "g") {
                 this.hp -= GREEN_EGG;
                 this.greenCounter = 24;
+            }
+            else if (egg.type == "b") {
+                this.blueCounter = 10;
             }
         }
         --egg.stalled;
     }
 
     // overkill
-    if (this.eggQueue.filter(e => e.egg == "r").length > 1 && this.hp <= 0) {
+    if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
         this.isDying = true;
         this.standStillCounter = 3;
     }

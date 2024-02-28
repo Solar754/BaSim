@@ -280,6 +280,10 @@ function baDrawEntities() {
     rSetDrawColor(10, 10, 240, 127);
     for (let i = 0; i < ba.Runners.length; ++i) {
         rrFill(ba.Runners[i].x, ba.Runners[i].y);
+        if (ba.Runners[i].greenCounter != -1) {
+            rSetDrawColor(11, 199, 11, 150);
+            rrOutline(ba.Runners[i].x, ba.Runners[i].y);
+        }
     }
     for (let i = 0; i < ba.Healers.length; ++i) {
         if (!ba.Healers[i].isPsned) {

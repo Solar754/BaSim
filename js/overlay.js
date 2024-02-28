@@ -83,10 +83,10 @@ function oDrawEggs() {
             if (egg.stalled >= 0) {
                 let eggImg = document.createElement("img");
                 eggImg.className = "egg";
-                eggImg.src = "css/" + EGG_MAP[egg.egg].src;
+                eggImg.src = "css/" + EGG_MAP[egg.type].src;
                 eggImg.draggable = false;
                 document.body.appendChild(eggImg);
-                eggImg.style.left = (cannon[0] + EGG_MAP[egg.egg].x) + `px`;
+                eggImg.style.left = (cannon[0] + EGG_MAP[egg.type].x) + `px`;
                 eggImg.style.top = cannon[1] + `px`;
             }
         }
