@@ -57,6 +57,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.eggQueue = [];
     this.greenCounter = -1;
     this.blueCounter = -1;
+    this.incrementState = false;
 }
 ruRunner.prototype.isRendered = function () {
     if (!sim.ToggleRender.checked) {
@@ -78,23 +79,7 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.processEggQueue = function () {
-    // blue prevent death
-    let blueIsQueued = this.eggQueue.filter(e => e.type == 'b')[0];
-    if (blueIsQueued) {
-        if (blueIsQueued.stalled == 0 && this.isDying) { // tick 1 of animation death
-            this.isDying = false;
-            this.despawnCountdown = -1;
-            ++ba.RunnersKilled;
-            --ba.RunnersAlive;
-        }
-        else if (blueIsQueued.stalled == 1 && this.isDying) { // tick 2 of animation death
-            this.isDying = false;
-            this.despawnCountdown = -1;
-            ++ba.RunnersKilled;
-            --ba.RunnersAlive;
-        }
-    }
-    else if (this.hp <= 0) {
+    if (this.hp <= 0) {
         this.isDying = true;
         this.standStillCounter = 3;
         return;
@@ -124,6 +109,37 @@ ruRunner.prototype.processEggQueue = function () {
                 this.greenCounter = 24;
             }
             else if (egg.type == "b") {
+                let deathCountdown = this.despawnCountdown;
+                if (this.diedThisTick) --deathCountdown;
+
+                if (this.isDying && this.despawnCountdown == -1) { // tick after chomp, shift by 1
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                }
+                else if (deathCountdown == 2) { // death tick 1, shift by 1
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                }
+                else if (deathCountdown == 1) { // death tick 2, shift by 2
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                }
+                if (this.incrementState) {
+                    ++this.targetState;
+                    if (this.targetState > 3) {
+                        this.targetState = 1;
+                    }
+                    this.incrementState = false;
+                }
+                this.foodTarget = null;
+                this.isDying = false;
+                this.despawnCountdown = -1;
                 this.blueCounter = 10;
             }
         }
@@ -139,6 +155,22 @@ ruRunner.prototype.processEggQueue = function () {
 }
 ruRunner.prototype.tick = function () {
     this.chat = "";
+
+    if (this.blueCounter > 0) { // stalled
+        --this.blueCounter;
+        return;
+    }
+    else if (this.blueCounter == 0) { // TODO which cannon
+        this.destinationX = 40; // cannon
+        this.destinationY = 26;
+        --this.blueCounter;
+    }
+    // sim assumes runner will be dying and doesn't bother to increment state
+    // but required for blue
+    if (this.isDying && this.cycleTick == 1) {
+        this.incrementState = true;
+    }
+
     if (++this.cycleTick > 10) {
         this.cycleTick = 1;
     }
@@ -187,7 +219,6 @@ ruRunner.prototype.tick = function () {
                     break;
             }
         }
-        this.processEggQueue();
         if (this.isDying) {
             if (this.standStillCounter > 2) {
                 ++ba.RunnersKilled;
@@ -204,6 +235,7 @@ ruRunner.prototype.tick = function () {
             }
         }
     }
+    this.processEggQueue();
 }
 ruRunner.prototype.doMovement = function () { // TODO: Doesn't consider diagonal movement block flags
     let startX = this.x;

@@ -32,6 +32,7 @@ function heHealer(x = -1, y = -1, id = -1) {
     // cannon stuff
     this.eggQueue = [];
     this.greenCounter = -1;
+    this.blueCounter = -1;
 
     // dying stuff
     this.despawnCountdown = 3;

@@ -5,25 +5,17 @@ misc healer
 ehr,2,15    // lured to cannon, expected: second shot 5t after at 20t, egg lands 6t after (21t)
 
 
-[TEST 1 - BLUE] b2
-21 runner spawn south, drop food ms + nw trap
-erb,1,40	// click 23.4, egg effect should start 26.4
-
-tick 39: tick 1 of death animation
-tick 40: tick 2 of death animation
-
-
-[TEST 2 - GREEN] https://youtu.be/SKxlEPOxPjs?t=64
+[TEST 1 - GREEN] https://youtu.be/SKxlEPOxPjs?t=64
 41 runner spawn
 wrg,1,51	// click at 30.0, egg effect should start 34.2
 
 
-[TEST 3 - GREEN] https://youtu.be/kERmd61A8Gc?t=69
+[TEST 2 - GREEN] https://youtu.be/kERmd61A8Gc?t=69
 41 runner spawn south
 erg,1,53	// click 31.2, damage should start 34.8
 
 
-[TEST 4 - GREEN] psn reset
+[TEST 3 - GREEN] psn reset
 21 runner spawn south
 erg,1,23
 
@@ -32,11 +24,81 @@ place a food...
 2 south of henke ms: tick psn then eat+cured
 
 
-[TEST 5 - RED] overkill
+[TEST 4 - RED] overkill
 11 runner spawn east
 wrr,1,11-1,11	// click at 6.0, reds land + runner death at 10.8
 
 
-[TEST 6 - RED]
+[TEST 5 - RED]
 1t runner spawn west
 wrr,1,1-1,2	// second egg lands 5.4 with 6.0 runner death
+
+
+[TEST 6 - BLUE] b2 https://youtu.be/xqJH-cJa5j8
+21 runner spawn south, drop food ms + nw trap
+erb,1,40	
+
+click 23.4, egg effect should start 26.4, blue wears off on 32.4
+runner stands still and urghs at 33.0
+
+tick 39: tick 1 of death animation
+tick 40: tick 2 of death animation
+
+
+[TEST 7 - BLUE] cannon targeting
+wave 1, ss-s
+erb,1,21-err,1,27	// first runner gets stunned, red egg should target second runner
+
+
+[TEST 8 - BLUE] new b3 https://youtu.be/_EX67o0M-VA?t=100
+21 runner spawn south
+place food SW, NE, stand N, step off 27.0
+erb,1,46
+
+runner stunned at 30.6 -> wears off 36.6
+36.6 stands still, 37.2 moves to touch cannon wall... targets sw trap food at 38.4, chomps 39.0
+
+
+[TEST 9 - BLUE] old b3 https://www.youtube.com/watch?v=vB-GFSUn2dg&t=95s
+21 runner spawn south
+se -> sw ... after blue place nw food
+erb,1,43
+
+runner stunned at 28.8 -> wears off 34.8
+at 35.4 move 1nw to cannon and stay there -> target nw food at 38.4, chomp chomp at 39.6
+
+
+[TEST 10 - BLUE]
+s-s-s-s (w3)
+nw trap food, stand on food and click off at 41
+erb,1,41
+
+runner should get blued but crash
+
+
+[TEST 11 - BLUE] true tile test, https://www.youtube.com/watch?v=0U9YsSffdEI&t=121s
+21 runner west spawn
+recover the runner, nw trap food
+erb,1,46
+
+egg should take 4t, stun takes effect 30.0, disappears 36.0
+runner stands still, then chomp sw food at 39.6
+runner should be in state 0
+
+
+[TEST 12 - BLUE] late step off: https://youtu.be/XtMcdcMvVCE?t=323
+21 south runner spawn
+nw trap food, step off at 47
+erb,1,46
+
+runner gets blued first tick, still at 30.0 and wears off 36.0 (see TEST 11)
+moves to cannon at 36.6 and then targets sw trap food at 38.4
+
+
+[TEST 13 - BLUE] crash, bad b2
+21 south runner spawn
+NORTH trap food
+erb,1,40
+
+like normal b2... still lands at 26.4?, wears off 32.4
+33.0 targets cannon for 1t before crashing south at 33.6, 1 south of cannon

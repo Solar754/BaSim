@@ -66,8 +66,9 @@ function cGetTarget(cmd) {
     let penanceList = (cmd.penance == "h") ? ba.Healers : ba.Runners;
     let cannon = (cmd.cannon == "w") ? cWEST_CANNON : cEAST_CANNON;
 
+    // remove npcs out of LOS or stunned
     penanceList = penanceList.filter((p) => {
-        return tileDistance(...cannon, p.x, p.y) <= RADIUS;
+        return (tileDistance(...cannon, p.x, p.y) <= RADIUS && p.blueCounter == -1);
     });
     if (penanceList.length == 0) return undefined;
 
