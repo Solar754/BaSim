@@ -1,8 +1,10 @@
 red 2
 wrr,1,51-wrr,1,51 OR wrr,1,51-1,51
 
+misc reds: https://youtu.be/jK53BvDYRFQ
+
 misc healer
-ehr,2,15    // lured to cannon, expected: second shot 5t after at 20t, egg lands 6t after (21t)
+ehr,2,15    // lured to cannon, expected: second shot 5t after (20t), first egg lands 6t after (21t)
 
 [HEALER B9] https://youtu.be/S8axgE7haiQ?t=439
 wave 9, healer spawn 11, toggle team + healer
@@ -22,6 +24,9 @@ h1,1:45
 
 lure healer to cannon, shoot at 38.4 (second death tick), expect regen at 73.2
 ehb,1,65	
+
+1 red faster death: ehb,1,64-ehr,1,116
+2 red overkill: ehb,1,64-ehr,1,116-1,116
 
 healer death psn tick at 40.8, stun starts 41.4, psn splat at 75.0
 
@@ -50,7 +55,7 @@ place a food...
 wrr,1,11-1,11	// click at 6.0, reds land + runner death at 10.8
 
 
-[TEST 5 - RED]
+[TEST 5 - RED] off tick
 1t runner spawn west
 wrr,1,1-1,2	// second egg lands 5.4 with 6.0 runner death
 
@@ -106,7 +111,7 @@ nw trap food, step off at 47
 erb,1,46
 
 runner gets blued first tick, still at 30.0 and wears off 36.0 (see TEST 10)
-moves to cannon at 36.6 and then targets sw trap food at 38.4
+moves to cannon at 36 and then chomps sw trap at 39.0
 
 
 [TEST 12 - BLUE] crash, bad b2

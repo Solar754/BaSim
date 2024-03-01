@@ -277,11 +277,15 @@ function baDrawDetails() {
     rrFillItem(32, 34);
 }
 function baDrawEntities() {
-    rSetDrawColor(10, 10, 240, 127);
     for (let i = 0; i < ba.Runners.length; ++i) {
+        rSetDrawColor(10, 10, 240, 127);
         rrFill(ba.Runners[i].x, ba.Runners[i].y);
         if (ba.Runners[i].greenCounter != -1) {
             rSetDrawColor(11, 199, 11, 150);
+            rrOutline(ba.Runners[i].x, ba.Runners[i].y);
+        }
+        else if (ba.Runners[i].blueCounter != -1) {
+            rSetDrawColor(4, 59, 92, 220);
             rrOutline(ba.Runners[i].x, ba.Runners[i].y);
         }
     }
@@ -297,6 +301,10 @@ function baDrawEntities() {
         if (ba.Healers[i].psnHitsplat) {
             rSetDrawColor(30, 142, 59, 220);
             rrFillItem(ba.Healers[i].x, ba.Healers[i].y);
+        }
+        if (ba.Healers[i].blueCounter != -1) {
+            rSetDrawColor(4, 59, 92, 220);
+            rrOutline(ba.Healers[i].x, ba.Healers[i].y);
         }
     }
     if (ba.CollectorX !== -1) { // draw coll

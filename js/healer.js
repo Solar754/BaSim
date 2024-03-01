@@ -62,7 +62,6 @@ heHealer.prototype.tick = function () {
     }
 
     if (++this.regenTimer % 100 == 0) {
-        console.log(tickToSecond(ba.TickCounter), "REGEN");
         this.hp = Math.min(this.hp + 1, baHEALER_HEALTH[sim.WaveSelect.value]);
         this.zombieState = false;
     }
@@ -306,10 +305,10 @@ heHealer.prototype.processEggQueue = function () {
                 continue;
             }
 
-            if (egg.type == "r") {
+            if (egg.type == "r" && !this.zombieState) {
                 this.hp -= RED_EGG;
             }
-            else if (egg.type == "g") {
+            else if (egg.type == "g" && !this.zombieState) {
                 this.hp -= GREEN_EGG;
                 this.greenCounter = 149;
             }
@@ -330,7 +329,7 @@ heHealer.prototype.processEggQueue = function () {
     }
 
     // overkill
-    if (!this.zombieState) {
+    if (this.blueCounter == -1) {
         if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
             this.processDeath();
         }

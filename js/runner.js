@@ -79,17 +79,17 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.tick = function () {
-    if (this.blueCounter >= 0) {
-        --this.blueCounter;
-        return;
-    }
     // if the tick after chomp aligns with cycleTick == 1
     if (this.isDying && this.despawnCountdown == -1 &&
         this.cycleTick == 1 && this.chat == "") {
         this.incrementState = true;
     }
-
     this.chat = "";
+    if (this.blueCounter >= 0) {
+        --this.blueCounter;
+        return;
+    }
+
     if (++this.cycleTick > 10) {
         this.cycleTick = 1;
     }
@@ -442,6 +442,10 @@ ruRunner.prototype.processEggQueue = function () {
         ++ba.RunnersKilled;
         --ba.RunnersAlive;
         this.print("Urghhh!");
+    }
+    else if (this.hp <= 0) { // die next tick
+        this.isDying = true;
+        this.standStillCounter = 3;
     }
     this.hp = Math.max(this.hp, 0);
 }
