@@ -33,8 +33,11 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.eggQueue = [];
     this.greenCounter = -1;
     this.blueCounter = -1;
+    this.zombieState = false; // 0 hp but still alive
+    this.regenTimer = -1;
 
     // dying stuff
+    this.isDying = false;
     this.despawnCountdown = 3;
 }
 heHealer.prototype.foundPlayerTarget = function () {
@@ -53,13 +56,31 @@ heHealer.prototype.foundPlayerTarget = function () {
     return plTarget;
 }
 heHealer.prototype.tick = function () {
-    this.applyPoisonDmg(false);
-    if (!this.hp) {
-        return this.isDying();
+    if (this.blueCounter >= 0) {
+        --this.blueCounter;
+        return;
     }
+
+    if (++this.regenTimer % 100 == 0) {
+        console.log(tickToSecond(ba.TickCounter), "REGEN");
+        this.hp = Math.min(this.hp + 1, baHEALER_HEALTH[sim.WaveSelect.value]);
+        this.zombieState = false;
+    }
+
+    this.applyPoisonDmg(false);
+    this.processDeath();
     this.processEggQueue();
+
     this.drawnX = this.x;
     this.drawnY = this.y;
+
+    if (this.isDying) {
+        return;
+    }
+    else if (this.zombieState) {
+        this.doMovement();
+        return;
+    }
 
     // healer stands still when it spawns, until player comes into LOS
     // if multiple players in LOS, randomly choose
@@ -229,7 +250,7 @@ heHealer.prototype.doMovement = function () {
 }
 heHealer.prototype.applyPoisonDmg = function (food) {
     let startTimer = (ba.TickCounter - this.spawnTick >= 5);
-    if (food) {
+    if (food && !this.zombieState) {
         this.hp = Math.max(0, this.hp - baPSN_FOOD_DMG);
         this.naturalPsn = 4;
         this.psnTickCount = 0;
@@ -246,10 +267,12 @@ heHealer.prototype.applyPoisonDmg = function (food) {
     }
     else if (this.isPsned && startTimer) {
         if (ba.TickCounter - this.lastPsnTick >= 5) {
-            this.hp = Math.max(0, this.hp - this.naturalPsn);
+            if (!this.zombieState) {
+                this.hp = Math.max(0, this.hp - this.naturalPsn);
+                this.psnHitsplat = true;
+            }
             this.lastPsnTick = ba.TickCounter;
             this.psnTickCount++;
-            this.psnHitsplat = true;
         }
         else {
             this.psnHitsplat = false;
@@ -278,6 +301,11 @@ heHealer.prototype.processEggQueue = function () {
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
+            if (this.blueCounter != -1) {
+                --egg.stalled;
+                continue;
+            }
+
             if (egg.type == "r") {
                 this.hp -= RED_EGG;
             }
@@ -285,17 +313,35 @@ heHealer.prototype.processEggQueue = function () {
                 this.hp -= GREEN_EGG;
                 this.greenCounter = 149;
             }
+            else if (egg.type == "b") {
+                this.blueCounter = 9;
+                if (this.isDying) {
+                    this.isDying = false;
+                    this.zombieState = true;
+                    [this.destinationX, this.destinationY] = (egg.cannon == 'w') ? cWEST_CANNON : cEAST_CANNON;
+                    if (this.despawnCountdown == 1) { // death tick 2 = +.6 regen
+                        --this.regenTimer;
+                    }
+                    this.despawnCountdown = 3;
+                }
+            }
         }
         --egg.stalled;
     }
 
     // overkill
-    if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
-        this.isDying();
+    if (!this.zombieState) {
+        if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
+            this.processDeath();
+        }
     }
     this.hp = Math.max(this.hp, 0);
 }
-heHealer.prototype.isDying = function () {
+heHealer.prototype.processDeath = function () {
+    if (this.hp > 0 || this.zombieState) {
+        return;
+    }
+    this.isDying = true;
     this.despawnCountdown--;
     if (this.despawnCountdown == 2) {
         ba.HealersAlive--;

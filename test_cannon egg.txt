@@ -4,7 +4,28 @@ wrr,1,51-wrr,1,51 OR wrr,1,51-1,51
 misc healer
 ehr,2,15    // lured to cannon, expected: second shot 5t after at 20t, egg lands 6t after (21t)
 
+[HEALER B9] https://youtu.be/S8axgE7haiQ?t=439
+wave 9, healer spawn 11, toggle team + healer
+collector
+47,26
+40,25:56
 
+healer - 9(27)
+35,7
+35,7
+35,7
+35,7
+45,25
+h1,8
+h1,1:45
+45,33
+
+lure healer to cannon, shoot at 38.4 (second death tick), expect regen at 73.2
+ehb,1,65	
+
+healer death psn tick at 40.8, stun starts 41.4, psn splat at 75.0
+
+----------------------------------------------------------------------------
 [TEST 1 - GREEN] https://youtu.be/SKxlEPOxPjs?t=64
 41 runner spawn
 wrg,1,51	// click at 30.0, egg effect should start 34.2

@@ -57,7 +57,6 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.eggQueue = [];
     this.greenCounter = -1;
     this.blueCounter = -1;
-    this.aggroCannon = [];
     this.incrementState = false; // sim assumes runner will be dying and doesn't increment
 }
 ruRunner.prototype.isRendered = function () {
@@ -80,19 +79,17 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.tick = function () {
-    // the tick after chomp aligns with cycleTick=1
+    if (this.blueCounter >= 0) {
+        --this.blueCounter;
+        return;
+    }
+    // if the tick after chomp aligns with cycleTick == 1
     if (this.isDying && this.despawnCountdown == -1 &&
         this.cycleTick == 1 && this.chat == "") {
         this.incrementState = true;
     }
 
     this.chat = "";
-
-    if (this.blueCounter >= 0) {
-        --this.blueCounter;
-        return;
-    }
-
     if (++this.cycleTick > 10) {
         this.cycleTick = 1;
     }
@@ -441,7 +438,10 @@ ruRunner.prototype.processEggQueue = function () {
     // overkill
     if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
         this.isDying = true;
-        this.standStillCounter = 3;
+        this.despawnCountdown = 2;
+        ++ba.RunnersKilled;
+        --ba.RunnersAlive;
+        this.print("Urghhh!");
     }
     this.hp = Math.max(this.hp, 0);
 }
