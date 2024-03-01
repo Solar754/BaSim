@@ -248,6 +248,15 @@ heHealer.prototype.doMovement = function () {
     }
 }
 heHealer.prototype.applyPoisonDmg = function (food) {
+    if (this.psnHitsplat) this.psnHitsplat = false;
+    if (this.greenCounter >= 0) { // every 30 ticks
+        if (this.greenCounter % 30 == 0) {
+            this.hp -= GREEN_EGG;
+            this.psnHitsplat = true;
+        }
+        --this.greenCounter;
+    }
+
     let startTimer = (ba.TickCounter - this.spawnTick >= 5);
     if (food && !this.zombieState) {
         this.hp = Math.max(0, this.hp - baPSN_FOOD_DMG);
@@ -284,18 +293,8 @@ heHealer.prototype.applyPoisonDmg = function (food) {
             this.isPsned = false;
         }
     }
-    else {
-        this.psnHitsplat = false;
-    }
 }
 heHealer.prototype.processEggQueue = function () {
-    if (this.greenCounter >= 0) { // every 30 ticks
-        if (this.greenCounter % 30 == 0) {
-            this.hp -= GREEN_EGG;
-        }
-        --this.greenCounter;
-    }
-
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
@@ -311,6 +310,7 @@ heHealer.prototype.processEggQueue = function () {
             else if (egg.type == "g" && !this.zombieState) {
                 this.hp -= GREEN_EGG;
                 this.greenCounter = 149;
+                this.psnHitsplat = true;
             }
             else if (egg.type == "b") {
                 this.blueCounter = 9;

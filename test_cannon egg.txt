@@ -1,3 +1,10 @@
+[Cannon priority test]
+w2 s-s-s, nw food
+err,1,42
+
+cannon should target the 24 at cave not the runner by trap
+
+----------------------------------------------------------------------------
 red 2
 wrr,1,51-wrr,1,51 OR wrr,1,51-1,51
 

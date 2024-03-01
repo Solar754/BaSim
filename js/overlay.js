@@ -145,7 +145,21 @@ Runner/healer spawns
     Reserves will only come out if eligible and if time is specified.
 
     Example: 11,21,31
-    First spawn will be when tick counter = 11, then 21, etc....
+    First spawn will be when tick counter = 11, then 21, then 31
+
+
+Egg syntax
+    Input eggs to shoot using certain specifiers, in the format
+    <cannon=e|w><penance=r|h><egg=r|g|b>,num eggs,tick. An egg will appear next to
+    the appropriate hopper on the 'click' and disappear the tick the egg effect is applied.
+
+    Example: wrr,2,51 (West Runner Red, 2 eggs, tick 51)
+    means the west cannon will try to target a runner and shoot 2 red eggs, as if the player clicked
+    to shoot on 51. The second red will be shot after cooldown (after first egg lands).
+
+    Red 2: wrr,1,51-wrr,1,51 means two separate players will shoot. Writing it as 
+    wrr,1,51-1,51 is also valid syntax, where the previous specifiers (wrr) apply 
+    to the next player's shots.
 
 
 General teammate syntax

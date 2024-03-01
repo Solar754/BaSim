@@ -280,11 +280,11 @@ function baDrawEntities() {
     for (let i = 0; i < ba.Runners.length; ++i) {
         rSetDrawColor(10, 10, 240, 127);
         rrFill(ba.Runners[i].x, ba.Runners[i].y);
-        if (ba.Runners[i].greenCounter != -1) {
-            rSetDrawColor(11, 199, 11, 150);
-            rrOutline(ba.Runners[i].x, ba.Runners[i].y);
+        if (ba.Runners[i].psnHitsplat) {
+            rSetDrawColor(30, 142, 59, 220);
+            rrFillItem(ba.Runners[i].x, ba.Runners[i].y);
         }
-        else if (ba.Runners[i].blueCounter != -1) {
+        if (ba.Runners[i].blueCounter != -1) {
             rSetDrawColor(4, 59, 92, 220);
             rrOutline(ba.Runners[i].x, ba.Runners[i].y);
         }

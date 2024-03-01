@@ -30,11 +30,16 @@ function cRunCannonQueue() {
     if (ba.CannonQueue.length == 0) return;
     for (let i = 0; i < ba.CannonQueue.length; i++) {
         let cmd = ba.CannonQueue[i];
+        if (m.mCurrentMap == mWAVE10) { // always west
+            cmd.cannon = 'w';
+        }
+
         if (cmd.numEggs == 0 || cmd.tick > ba.TickCounter) continue;
         if (cmd.stalled > 0) {
             --cmd.stalled;
             continue;
         }
+
         let target = cGetTarget(cmd);
         if (target) {
             let stallCountdown = cShootCannon(cmd, target.x, target.y);
@@ -66,9 +71,9 @@ function cGetTarget(cmd) {
     let penanceList = (cmd.penance == "h") ? ba.Healers : ba.Runners;
     let cannon = (cmd.cannon == "w") ? cWEST_CANNON : cEAST_CANNON;
 
-    // remove npcs out of LOS or stunned
+    // remove npcs out of LOS or stunned or dying (TODO maybe 1t too early for healers)
     penanceList = penanceList.filter((p) => {
-        return (tileDistance(...cannon, p.x, p.y) <= RADIUS && p.blueCounter == -1);
+        return (tileDistance(...cannon, p.x, p.y) <= RADIUS && p.blueCounter == -1 && !p.isDying);
     });
     if (penanceList.length == 0) return undefined;
 

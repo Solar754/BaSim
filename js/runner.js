@@ -56,6 +56,7 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
 
     this.eggQueue = [];
     this.greenCounter = -1;
+    this.psnHitsplat = false;
     this.blueCounter = -1;
     this.incrementState = false; // sim assumes runner will be dying and doesn't increment
 }
@@ -373,9 +374,11 @@ ruRunner.prototype.processEggQueue = function () {
         return;
     }
 
+    if (this.psnHitsplat) this.psnHitsplat = false;
     if (this.greenCounter >= 0) { // every 5 ticks
         if (this.greenCounter % 5 == 0) {
             this.hp -= GREEN_EGG;
+            this.psnHitsplat = true;
         }
         --this.greenCounter;
     }
@@ -395,6 +398,7 @@ ruRunner.prototype.processEggQueue = function () {
             else if (egg.type == "g") {
                 this.hp -= GREEN_EGG;
                 this.greenCounter = 24;
+                this.psnHitsplat = true;
             }
             else if (egg.type == "b") {
                 let deathCountdown = this.despawnCountdown;
