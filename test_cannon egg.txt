@@ -57,10 +57,11 @@ erb,1,46
 
 runner stunned at 30.6 -> wears off 36.6
 36.6 stands still, 37.2 moves to touch cannon wall... targets sw trap food at 38.4, chomps 39.0
+should be in state 1 when stalled
 
 
 [TEST 9 - BLUE] old b3 https://www.youtube.com/watch?v=vB-GFSUn2dg&t=95s
-21 runner spawn south
+21 runner spawn south, col shoot animation start 25.8
 se -> sw ... after blue place nw food
 erb,1,43
 
@@ -101,4 +102,5 @@ NORTH trap food
 erb,1,40
 
 like normal b2... still lands at 26.4?, wears off 32.4
-33.0 targets cannon for 1t before crashing south at 33.6, 1 south of cannon
+33.0 moves to target cannon for 1t before crashing south at 33.6, 1 south of cannon
+

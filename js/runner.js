@@ -57,7 +57,8 @@ function ruRunner(x = -1, y = -1, runnerRNG = -1, isWave10 = -1, id = -1) { // T
     this.eggQueue = [];
     this.greenCounter = -1;
     this.blueCounter = -1;
-    this.incrementState = false;
+    this.aggroCannon = [];
+    this.incrementState = false; // sim assumes runner will be dying and doesn't increment
 }
 ruRunner.prototype.isRendered = function () {
     if (!sim.ToggleRender.checked) {
@@ -78,81 +79,6 @@ ruRunner.prototype.renderUpdateTargetState = function () {
         }
     }
 }
-ruRunner.prototype.processEggQueue = function () {
-    if (this.hp <= 0) {
-        this.isDying = true;
-        this.standStillCounter = 3;
-        return;
-    }
-
-    if (this.greenCounter >= 0) { // every 5 ticks
-        if (this.greenCounter % 5 == 0) {
-            this.hp -= GREEN_EGG;
-        }
-        --this.greenCounter;
-    }
-
-    this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
-    for (let egg of this.eggQueue) {
-        if (egg.stalled == 0) {
-            console.log("egg effect starts now");
-            if (this.blueCounter != -1) {
-                --egg.stalled;
-                continue;
-            }
-
-            if (egg.type == "r") {
-                this.hp -= RED_EGG;
-            }
-            else if (egg.type == "g") {
-                this.hp -= GREEN_EGG;
-                this.greenCounter = 24;
-            }
-            else if (egg.type == "b") {
-                let deathCountdown = this.despawnCountdown;
-                if (this.diedThisTick) --deathCountdown;
-
-                if (this.isDying && this.despawnCountdown == -1) { // tick after chomp, shift by 1
-                    if (--this.cycleTick < 1) {
-                        this.cycleTick = 10;
-                    }
-                }
-                else if (deathCountdown == 2) { // death tick 1, shift by 1
-                    if (--this.cycleTick < 1) {
-                        this.cycleTick = 10;
-                    }
-                }
-                else if (deathCountdown == 1) { // death tick 2, shift by 2
-                    if (--this.cycleTick < 1) {
-                        this.cycleTick = 10;
-                    }
-                    if (--this.cycleTick < 1) {
-                        this.cycleTick = 10;
-                    }
-                }
-                if (this.incrementState) {
-                    ++this.targetState;
-                    if (this.targetState > 3) {
-                        this.targetState = 1;
-                    }
-                    this.incrementState = false;
-                }
-                this.foodTarget = null;
-                this.isDying = false;
-                this.despawnCountdown = -1;
-                this.blueCounter = 10;
-            }
-        }
-        --egg.stalled;
-    }
-
-    // overkill
-    if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
-        this.isDying = true;
-        this.standStillCounter = 3;
-    }
-    this.hp = Math.max(this.hp, 0);
-}
 ruRunner.prototype.tick = function () {
     this.chat = "";
 
@@ -160,14 +86,11 @@ ruRunner.prototype.tick = function () {
         --this.blueCounter;
         return;
     }
-    else if (this.blueCounter == 0) { // TODO which cannon
-        this.destinationX = 40; // cannon
-        this.destinationY = 26;
+    else if (this.blueCounter == 0) {
+        [this.destinationX, this.destinationY] = this.aggroCannon;
         --this.blueCounter;
     }
-    // sim assumes runner will be dying and doesn't bother to increment state
-    // but required for blue
-    if (this.isDying && this.cycleTick == 1) {
+    if (this.isDying && this.despawnCountdown == -1 && this.cycleTick == 1) {
         this.incrementState = true;
     }
 
@@ -446,6 +369,82 @@ ruRunner.prototype.doTick7To10 = function () {
     if (!ateOrTargetGone) {
         this.doMovement();
     }
+}
+ruRunner.prototype.processEggQueue = function () {
+    if (this.hp <= 0) {
+        this.isDying = true;
+        this.standStillCounter = 3;
+        return;
+    }
+
+    if (this.greenCounter >= 0) { // every 5 ticks
+        if (this.greenCounter % 5 == 0) {
+            this.hp -= GREEN_EGG;
+        }
+        --this.greenCounter;
+    }
+
+    this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
+    for (let egg of this.eggQueue) {
+        if (egg.stalled == 0) {
+            console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
+            if (this.blueCounter != -1) {
+                --egg.stalled;
+                continue;
+            }
+
+            if (egg.type == "r") {
+                this.hp -= RED_EGG;
+            }
+            else if (egg.type == "g") {
+                this.hp -= GREEN_EGG;
+                this.greenCounter = 24;
+            }
+            else if (egg.type == "b") {
+                let deathCountdown = this.despawnCountdown;
+                if (this.diedThisTick) --deathCountdown;
+
+                if (this.isDying && this.despawnCountdown == -1) { // tick after chomp, shift by 1
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                }
+                else if (deathCountdown == 2) { // death tick 1, shift by 1
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                }
+                else if (deathCountdown == 1) { // death tick 2, shift by 2
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                    if (--this.cycleTick < 1) {
+                        this.cycleTick = 10;
+                    }
+                }
+                if (this.incrementState) {
+                    ++this.targetState;
+                    if (this.targetState > 3) {
+                        this.targetState = 1;
+                    }
+                    this.incrementState = false;
+                }
+                this.foodTarget = null;
+                this.isDying = false;
+                this.despawnCountdown = -1;
+                this.blueCounter = 10;
+                this.aggroCannon = (egg.cannon == 'w') ? cWEST_CANNON : cEAST_CANNON;
+            }
+        }
+        --egg.stalled;
+    }
+
+    // overkill
+    if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
+        this.isDying = true;
+        this.standStillCounter = 3;
+    }
+    this.hp = Math.max(this.hp, 0);
 }
 ruRunner.prototype.print = function (string) {
     console.log(ba.TickCounter + ": Runner " + this.id + ": " + string);

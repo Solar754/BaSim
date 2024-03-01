@@ -277,7 +277,7 @@ heHealer.prototype.processEggQueue = function () {
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
-            console.log("egg effect starts now");
+            console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
             if (egg.type == "r") {
                 this.hp -= RED_EGG;
             }
