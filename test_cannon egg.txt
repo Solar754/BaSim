@@ -69,15 +69,7 @@ runner stunned at 28.8 -> wears off 34.8
 at 35.4 move 1nw to cannon and stay there -> target nw food at 38.4, chomp chomp at 39.6
 
 
-[TEST 10 - BLUE]
-s-s-s-s (w3)
-nw trap food, stand on food and click off at 41
-erb,1,41
-
-runner should get blued but crash
-
-
-[TEST 11 - BLUE] true tile test, https://www.youtube.com/watch?v=0U9YsSffdEI&t=121s
+[TEST 10 - BLUE] true tile test, https://www.youtube.com/watch?v=0U9YsSffdEI&t=121s
 21 runner west spawn
 recover the runner, nw trap food
 erb,1,46
@@ -87,16 +79,16 @@ runner stands still, then chomp sw food at 39.6
 runner should be in state 0
 
 
-[TEST 12 - BLUE] late step off: https://youtu.be/XtMcdcMvVCE?t=323
+[TEST 11 - BLUE] late step off, blued first tick: https://youtu.be/XtMcdcMvVCE?t=323
 21 south runner spawn
 nw trap food, step off at 47
 erb,1,46
 
-runner gets blued first tick, still at 30.0 and wears off 36.0 (see TEST 11)
+runner gets blued first tick, still at 30.0 and wears off 36.0 (see TEST 10)
 moves to cannon at 36.6 and then targets sw trap food at 38.4
 
 
-[TEST 13 - BLUE] crash, bad b2
+[TEST 12 - BLUE] crash, bad b2
 21 south runner spawn
 NORTH trap food
 erb,1,40
@@ -104,3 +96,19 @@ erb,1,40
 like normal b2... still lands at 26.4?, wears off 32.4
 33.0 moves to target cannon for 1t before crashing south at 33.6, 1 south of cannon
 
+
+[TEST 13 - BLUE] expects no state change: https://streamable.com/hg8fl1
+e-w runners, 2x NW -> 1 W, shir ms, hold west then click off 38 (22.2)
+erb,1,38
+
+moves to cannon at 32.4, target nw food at 32.4, chomp at 33.6
+
+if chomp chomp =  tick 1, do NOT increment state [test 13]
+if chomp chomp = tick 10, then tick after = tick 1, increment state [test 14]
+
+
+[TEST 14 - BLUE] expects state change
+21 south runner spawn, hold and step off 47
+erb,1,47
+
+moves to cannon and chomps 39.6

@@ -80,18 +80,17 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.tick = function () {
+    // the tick after chomp aligns with cycleTick=1
+    if (this.isDying && this.despawnCountdown == -1 &&
+        this.cycleTick == 1 && this.chat == "") {
+        this.incrementState = true;
+    }
+
     this.chat = "";
 
-    if (this.blueCounter > 0) { // stalled
+    if (this.blueCounter >= 0) {
         --this.blueCounter;
         return;
-    }
-    else if (this.blueCounter == 0) {
-        [this.destinationX, this.destinationY] = this.aggroCannon;
-        --this.blueCounter;
-    }
-    if (this.isDying && this.despawnCountdown == -1 && this.cycleTick == 1) {
-        this.incrementState = true;
     }
 
     if (++this.cycleTick > 10) {
@@ -432,8 +431,8 @@ ruRunner.prototype.processEggQueue = function () {
                 this.foodTarget = null;
                 this.isDying = false;
                 this.despawnCountdown = -1;
-                this.blueCounter = 10;
-                this.aggroCannon = (egg.cannon == 'w') ? cWEST_CANNON : cEAST_CANNON;
+                this.blueCounter = 9;
+                [this.destinationX, this.destinationY] = (egg.cannon == 'w') ? cWEST_CANNON : cEAST_CANNON;
             }
         }
         --egg.stalled;
