@@ -272,9 +272,6 @@ heHealer.prototype.applyPoisonDmg = function (food) {
                 this.spawnTick = ba.TickCounter;
             }
         }
-        if (!this.hp) { // manual psn +1t death
-            this.despawnCountdown += 1;
-        }
         this.psnHitsplat = true;
     }
     else if (this.isPsned && startTimer) {

@@ -283,7 +283,7 @@ function baDrawEntities() {
         addColor(npc.x, npc.y, rrFill, HEALER_CLR);
         if (npc.isPsned)
             addColor(npc.x, npc.y, rrFill, HEALER_PSND_CLR);
-        if (npc.hp == 0)
+        if (npc.isDying)
             addColor(npc.x, npc.y, rrFill, HEALER_DEAD_CLR);
         if (npc.psnHitsplat)
             addColor(npc.x, npc.y, rrFillItem, PSN_HIT_CLR);
