@@ -183,7 +183,7 @@ Egg syntax
 
     Example: wrr,2,51 (West Runner Red, 2 eggs, tick 51)
     means the west cannon will try to target a runner and shoot 2 red eggs, as if the player clicked
-    to shoot on 51. The second red will be shot after cooldown (after first egg lands).
+    to shoot on 51. The second red will be shot after cooldown.
 
     Red 2: wrr,1,51-wrr,1,51 means two separate players will shoot. Writing it as 
     wrr,1,51-1,51 is also valid syntax, and the previous specifiers (wrr) will apply 

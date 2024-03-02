@@ -76,7 +76,7 @@ function cGetTarget(cmd) {
             if (lhZone[0] != rhZone[0]) {
                 return lhZone[0] > rhZone[0];
             }
-            return lhZone[1] > lhZone[1];
+            return lhZone[1] > rhZone[1];
         }
 
         if (lh.ZoneCounter != rh.ZoneCounter)
