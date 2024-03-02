@@ -12,6 +12,7 @@ const RUNNER_DEAD_CLR = [1, 1, 39, 150];
 const HEALER_CLR = [11, 199, 11, 150];
 const HEALER_DEAD_CLR = [1, 39, 1, 150];
 const HEALER_PSND_CLR = [116, 169, 46, 170];
+const RED_EGG_CLR = [240, 10, 10, 220];
 const BLUE_EGG_CLR = [4, 59, 92, 220];
 const PSN_HIT_CLR = [30, 142, 59, 220];
 const BLACK_CLR = [0, 0, 0, 255];
@@ -108,6 +109,9 @@ function oDrawEggs() {
                 eggImg.style.left = (cannon[0] + EGG_MAP[egg.type].x) + `px`;
                 eggImg.style.top = cannon[1] + `px`;
             }
+            else if (egg.stalled == -1 && egg.type == "r") {
+                addColor(p.x, p.y, rrOutline, RED_EGG_CLR);
+            }
         }
     }
 }
@@ -182,7 +186,7 @@ Egg syntax
     to shoot on 51. The second red will be shot after cooldown (after first egg lands).
 
     Red 2: wrr,1,51-wrr,1,51 means two separate players will shoot. Writing it as 
-    wrr,1,51-1,51 is also valid syntax, where the previous specifiers (wrr) apply 
+    wrr,1,51-1,51 is also valid syntax, and the previous specifiers (wrr) will apply 
     to the next player's shots.
 
 
