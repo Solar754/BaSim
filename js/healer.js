@@ -248,6 +248,10 @@ heHealer.prototype.doMovement = function () {
     }
 }
 heHealer.prototype.applyPoisonDmg = function (food) {
+    if (this.isDying) {
+        return;
+    }
+
     if (this.psnHitsplat) this.psnHitsplat = false;
     if (this.greenCounter >= 0) { // every 30 ticks
         if (this.greenCounter % 30 == 0) {
@@ -282,9 +286,6 @@ heHealer.prototype.applyPoisonDmg = function (food) {
             this.lastPsnTick = ba.TickCounter;
             this.psnTickCount++;
         }
-        else {
-            this.psnHitsplat = false;
-        }
         if (this.psnTickCount == 5) {
             this.naturalPsn--;
             this.psnTickCount = 0;
@@ -299,11 +300,6 @@ heHealer.prototype.processEggQueue = function () {
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
-            if (this.blueCounter != -1) {
-                --egg.stalled;
-                continue;
-            }
-
             if (egg.type == "r" && !this.zombieState) {
                 this.hp -= RED_EGG;
             }
@@ -314,6 +310,7 @@ heHealer.prototype.processEggQueue = function () {
             }
             else if (egg.type == "b") {
                 this.blueCounter = 9;
+                this.eggQueue = [];
                 if (this.isDying) {
                     this.isDying = false;
                     this.zombieState = true;

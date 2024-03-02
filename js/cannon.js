@@ -3,20 +3,6 @@
 * Track npc priority
 */
 //{ Cannon - c
-
-/*
-TODO -- filtering for no east cannon on w10
-
-[
-{"cannon": cannonCmds[prev].cannon,
-"penance": cannonCmds[prev].penance,
-"eggType": cannonCmds[prev].eggType,
-"numEggs": parseInt(cmds[0]),
-"tick": parseInt(cmds[1]),
-"stalled": 0}
-]
-*/
-
 const cWEST_CANNON = [21, 26];
 const cWEST_CANNON_PX = [252, 442];
 const cEAST_CANNON = [40, 26];

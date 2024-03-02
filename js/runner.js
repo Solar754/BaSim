@@ -387,11 +387,6 @@ ruRunner.prototype.processEggQueue = function () {
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
             console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
-            if (this.blueCounter != -1) {
-                --egg.stalled;
-                continue;
-            }
-
             if (egg.type == "r") {
                 this.hp -= RED_EGG;
             }
@@ -434,6 +429,7 @@ ruRunner.prototype.processEggQueue = function () {
                 this.despawnCountdown = -1;
                 this.blueCounter = 9;
                 [this.destinationX, this.destinationY] = (egg.cannon == 'w') ? cWEST_CANNON : cEAST_CANNON;
+                this.eggQueue = [];
             }
         }
         --egg.stalled;

@@ -2,6 +2,26 @@
 * Misc visual assistance
 */
 //{ Overlay - o
+const MAIN_CLR = [240, 10, 10, 220];
+const SECOND_CLR = [200, 50, 50, 220];
+const PLAYER_HEAL_CLR = [10, 240, 10, 220];
+const COLLECTOR_CLR = [240, 240, 10, 200];
+const DEFENDER_CLR = [10, 10, 240, 220];
+const RUNNER_CLR = [10, 10, 240, 127];
+const RUNNER_DEAD_CLR = [1, 1, 39, 150];
+const HEALER_CLR = [11, 199, 11, 150];
+const HEALER_DEAD_CLR = [1, 39, 1, 150];
+const HEALER_PSND_CLR = [116, 169, 46, 170];
+const BLUE_EGG_CLR = [4, 59, 92, 220];
+const PSN_HIT_CLR = [30, 142, 59, 220];
+const BLACK_CLR = [0, 0, 0, 255];
+const TRANSPARENT_CLR = [0, 0, 0, 0];
+
+function addColor(x, y, rrFunc, color) {
+    rSetDrawColor(...color);
+    rrFunc(x, y);
+}
+
 var oMarkedTiles = new function () {
     this.tiles = [];
     this.storageName = "baTiles";
@@ -21,11 +41,10 @@ var oMarkedTiles = new function () {
     };
     this.draw = function () {
         let markedTilesArr = [...this.tiles].map(JSON.parse);
-        rSetDrawColor(0, 0, 0, 255);
         for (let i of markedTilesArr) {
             let xTile = i[0].toString();
             let yTile = i[1].toString();
-            rrOutline(xTile, yTile);
+            addColor(xTile, yTile, rrOutline, BLACK_CLR);
         }
     };
     this.clear = function () {
@@ -94,14 +113,19 @@ function oDrawEggs() {
 }
 
 function oDrawAllRolePaths() {
-    let includeNumbers = document.getElementById("rolemarkernumbers").checked;
+    let opacity = 90;
+    let colorMap = {
+        "main": MAIN_CLR.slice(0, 3).concat([opacity]),
+        "second": SECOND_CLR.slice(0, 3).concat([opacity]),
+        "heal": PLAYER_HEAL_CLR.slice(0, 3).concat([opacity]),
+        "col": COLLECTOR_CLR.slice(0, 3).concat([opacity]),
+    }
     simDraw(); // clear canvas
+    let includeNumbers = document.getElementById("rolemarkernumbers").checked;
     for (let role of cmdROLE_NAMES) {
         let tiles = cmdParseTiles(role);
-        let color = cmd[role + `Color`];
-        rSetDrawColor(...color.slice(0, 3), 90);
         for (let i = 0; i < tiles.length; i++) {
-            rrFill(tiles[i].X, tiles[i].Y);
+            addColor(tiles[i].X, tiles[i].Y, rrFill, colorMap[role])
             if (includeNumbers) {
                 rrText(tiles[i].X, tiles[i].Y, i + 1);
             }
@@ -239,7 +263,6 @@ Trivial code convert tool (on the right)
     }
     else {
         canvasElement.style.display = "none";
-
         if (instructionsExist) {
             document.querySelectorAll('.instructions').forEach(e => e.style.display = "inline-grid");
         }

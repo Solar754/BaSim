@@ -3,14 +3,10 @@
 */
 //{ Team Controller - cmd
 const cmdROLE_NAMES = ["main", "second", "heal", "col"];
-
 var cmd = {
     Team: [],
-    mainColor: [240, 10, 10, 220],
-    secondColor: [200, 50, 50, 220],
-    healColor: [10, 240, 10, 220],
-    colColor: [240, 240, 10, 200],
-}
+};
+
 function cmdTeammate(x, y, color, role = cmdROLE_NAMES[0]) {
     this.X = x;
     this.Y = y;
@@ -63,10 +59,8 @@ cmdTeammate.prototype.pathfind = function () {
 }
 cmdTeammate.prototype.draw = function () {
     if (this.X >= 0) {
-        rSetDrawColor(...this.Color);
-        rrFill(this.X, this.Y);
-        rSetDrawColor(0, 0, 0, 200);
-        rrOutline(this.X, this.Y);
+        addColor(this.X, this.Y, rrFill, this.Color);
+        addColor(this.X, this.Y, rrOutline, BLACK_CLR);
     }
 }
 function cmdInit() {
@@ -74,44 +68,44 @@ function cmdInit() {
         cmd.Team.push(new cmdTeammate(
             baWAVE10_MAIN_SPAWN_X,
             baWAVE10_MAIN_SPAWN_Y,
-            cmd.mainColor, "main"
+            MAIN_CLR, "main"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE10_2A_SPAWN_X,
             baWAVE10_2A_SPAWN_Y,
-            cmd.secondColor, "second"
+            SECOND_CLR, "second"
         ));
         cmd.Team.push(new phPlayerHealer(
             baWAVE10_PLAYER_HEALER_SPAWN_X,
             baWAVE10_PLAYER_HEALER_SPAWN_Y,
-            cmd.healColor, "heal"
+            PLAYER_HEAL_CLR, "heal"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE10_COLLECTOR_SPAWN_X,
             baWAVE10_COLLECTOR_SPAWN_Y,
-            cmd.colColor, "col"
+            COLLECTOR_CLR, "col"
         ));
     }
     else {
         cmd.Team.push(new cmdTeammate(
             baWAVE1_MAIN_SPAWN_X,
             baWAVE1_MAIN_SPAWN_Y,
-            cmd.mainColor, "main"
+            MAIN_CLR, "main"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE1_2A_SPAWN_X,
             baWAVE1_2A_SPAWN_Y,
-            cmd.secondColor, "second"
+            SECOND_CLR, "second"
         ));
         cmd.Team.push(new phPlayerHealer(
             baWAVE1_PLAYER_HEALER_SPAWN_X,
             baWAVE1_PLAYER_HEALER_SPAWN_Y,
-            cmd.healColor, "heal"
+            PLAYER_HEAL_CLR, "heal"
         ));
         cmd.Team.push(new cmdTeammate(
             baWAVE1_COLLECTOR_SPAWN_X,
             baWAVE1_COLLECTOR_SPAWN_Y,
-            cmd.colColor, "col"
+            COLLECTOR_CLR, "col"
         ));
     }
 }

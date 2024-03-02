@@ -199,34 +199,25 @@ function baSpawnHealer() {
     ++ba.HealersAlive;
     ++ba.HealerSpawnsIndex;
 }
-function baDrawOverlays() {
+function baDrawOverlays() { // spawns, dispensers
     if (m.mCurrentMap !== mWAVE_1_TO_9 && m.mCurrentMap !== mWAVE10) {
         return;
     }
-    rSetDrawColor(240, 10, 10, 220);
     if (m.mCurrentMap === mWAVE_1_TO_9) {
-        rrOutline(18, 37);
+        addColor(18, 37, rrOutline, MAIN_CLR);
+        addColor(24, 39, rrOutline, MAIN_CLR);
+        addColor(36, 39, rrOutline, DEFENDER_CLR);
+        addColor(42, 37, rrOutline, PLAYER_HEAL_CLR);
     } else {
-        rrOutline(18, 38);
+        addColor(18, 38, rrOutline, MAIN_CLR);
+        addColor(24, 39, rrOutline, MAIN_CLR);
+        addColor(42, 38, rrOutline, DEFENDER_CLR);
+        addColor(36, 39, rrOutline, PLAYER_HEAL_CLR);
     }
-    rrOutline(24, 39);
-    rrFill(33, 6);
-    rSetDrawColor(10, 10, 240, 220);
-    if (m.mCurrentMap === mWAVE_1_TO_9) {
-        rrOutline(36, 39);
-    } else {
-        rrOutline(42, 38);
-    }
-    rrFill(34, 6);
-    rSetDrawColor(10, 240, 10, 220);
-    if (m.mCurrentMap === mWAVE_1_TO_9) {
-        rrOutline(42, 37);
-    } else {
-        rrOutline(36, 39);
-    }
-    rrFill(35, 6);
-    rSetDrawColor(240, 240, 10, 220);
-    rrFill(36, 6);
+    addColor(33, 6, rrFill, MAIN_CLR);
+    addColor(34, 6, rrFill, DEFENDER_CLR);
+    addColor(35, 6, rrFill, PLAYER_HEAL_CLR);
+    addColor(36, 6, rrFill, COLLECTOR_CLR);
 }
 function baDrawDetails() {
     if (m.mCurrentMap !== mWAVE_1_TO_9 && m.mCurrentMap !== mWAVE10) {
@@ -278,38 +269,29 @@ function baDrawDetails() {
 }
 function baDrawEntities() {
     for (let i = 0; i < ba.Runners.length; ++i) {
-        rSetDrawColor(10, 10, 240, 127);
-        rrFill(ba.Runners[i].x, ba.Runners[i].y);
-        if (ba.Runners[i].psnHitsplat) {
-            rSetDrawColor(30, 142, 59, 220);
-            rrFillItem(ba.Runners[i].x, ba.Runners[i].y);
-        }
-        if (ba.Runners[i].blueCounter != -1) {
-            rSetDrawColor(4, 59, 92, 220);
-            rrOutline(ba.Runners[i].x, ba.Runners[i].y);
-        }
+        let npc = ba.Runners[i];
+        addColor(npc.x, npc.y, rrFill, RUNNER_CLR);
+        if (npc.hp == 0)
+            addColor(npc.x, npc.y, rrFill, RUNNER_DEAD_CLR);
+        if (npc.psnHitsplat)
+            addColor(npc.x, npc.y, rrFillItem, PSN_HIT_CLR);
+        if (npc.blueCounter != -1)
+            addColor(npc.x, npc.y, rrOutline, BLUE_EGG_CLR);
     }
     for (let i = 0; i < ba.Healers.length; ++i) {
-        if (!ba.Healers[i].isPsned) {
-            rSetDrawColor(11, 199, 11, 150);
-        }
-        else {
-            rSetDrawColor(116, 169, 46, 170);
-        }
-        rrFill(ba.Healers[i].x, ba.Healers[i].y);
-
-        if (ba.Healers[i].psnHitsplat) {
-            rSetDrawColor(30, 142, 59, 220);
-            rrFillItem(ba.Healers[i].x, ba.Healers[i].y);
-        }
-        if (ba.Healers[i].blueCounter != -1) {
-            rSetDrawColor(4, 59, 92, 220);
-            rrOutline(ba.Healers[i].x, ba.Healers[i].y);
-        }
+        let npc = ba.Healers[i];
+        addColor(npc.x, npc.y, rrFill, HEALER_CLR);
+        if (npc.isPsned)
+            addColor(npc.x, npc.y, rrFill, HEALER_PSND_CLR);
+        if (npc.hp == 0)
+            addColor(npc.x, npc.y, rrFill, HEALER_DEAD_CLR);
+        if (npc.psnHitsplat)
+            addColor(npc.x, npc.y, rrFillItem, PSN_HIT_CLR);
+        if (npc.blueCounter != -1)
+            addColor(npc.x, npc.y, rrOutline, BLUE_EGG_CLR);
     }
     if (ba.CollectorX !== -1) { // draw coll
-        rSetDrawColor(240, 240, 10, 200);
-        rrFill(ba.CollectorX, ba.CollectorY);
+        addColor(ba.CollectorX, ba.CollectorY, rrFill, COLLECTOR_CLR);
     }
 }
 function baIsNearWestTrap(x, y) {

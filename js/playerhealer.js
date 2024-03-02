@@ -197,10 +197,8 @@ phPlayerHealer.prototype.findTarget = function () {
 }
 phPlayerHealer.prototype.draw = function () {
     if (this.X >= 0) {
-        rSetDrawColor(...this.Color);
-        rrFill(this.X, this.Y);
-        rSetDrawColor(0, 0, 0, 200);
-        rrOutline(this.X, this.Y);
+        addColor(this.X, this.Y, rrFill, this.Color);
+        addColor(this.X, this.Y, rrOutline, BLACK_CLR);
     }
 }
 function phParseTiles() { // expected: hID,#:tick
