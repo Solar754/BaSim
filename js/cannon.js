@@ -53,27 +53,6 @@ function cUpdateZonePriority() {
         }
     }
 }
-function penanceCompare(lh, rh) { // returns true if swap needed
-    let lhDist = actualTileDistance(...cannon, lh.x, lh.y);
-    let rhDist = actualTileDistance(...cannon, rh.x, rh.y);
-    if (lhDist != rhDist)
-        return lhDist > rhDist;
-
-    // best zone = smaller x then smaller y
-    let lhZone = lh.CurrentZone;
-    let rhZone = rh.CurrentZone;
-    if (`${lhZone}` != `${rhZone}`) {
-        if (lhZone[0] != rhZone[0]) {
-            return lhZone[0] > rhZone[0];
-        }
-        return lhZone[1] > lhZone[1];
-    }
-
-    if (lh.ZoneCounter != rh.ZoneCounter)
-        return lh.ZoneCounter < rh.ZoneCounter;
-
-    return lh.id > rh.id;
-}
 function cGetTarget(cmd) {
     let penanceList = (cmd.penance == "h") ? ba.Healers : ba.Runners;
     let cannon = (cmd.cannon == "w") ? cWEST_CANNON : cEAST_CANNON;
@@ -84,6 +63,27 @@ function cGetTarget(cmd) {
     });
     if (penanceList.length == 0) return undefined;
 
+    function penanceCompare(lh, rh) { // returns true if swap needed
+        let lhDist = actualTileDistance(...cannon, lh.x, lh.y);
+        let rhDist = actualTileDistance(...cannon, rh.x, rh.y);
+        if (lhDist != rhDist)
+            return lhDist > rhDist;
+
+        // best zone = smaller x then smaller y
+        let lhZone = lh.CurrentZone;
+        let rhZone = rh.CurrentZone;
+        if (`${lhZone}` != `${rhZone}`) {
+            if (lhZone[0] != rhZone[0]) {
+                return lhZone[0] > rhZone[0];
+            }
+            return lhZone[1] > lhZone[1];
+        }
+
+        if (lh.ZoneCounter != rh.ZoneCounter)
+            return lh.ZoneCounter < rh.ZoneCounter;
+
+        return lh.id > rh.id;
+    }
     for (let i = 0; i < penanceList.length - 1; i++) {
         let swapped = false;
         for (let j = 0; j < penanceList.length - i - 1; j++) {
