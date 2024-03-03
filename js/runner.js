@@ -80,6 +80,7 @@ ruRunner.prototype.renderUpdateTargetState = function () {
     }
 }
 ruRunner.prototype.tick = function () {
+    this.psnHitsplat = false;
     // if the tick after chomp aligns with cycleTick == 1
     if (this.isDying && this.despawnCountdown == -1 &&
         this.cycleTick == 1 && this.chat == "") {
@@ -374,7 +375,6 @@ ruRunner.prototype.processEggQueue = function () {
         return;
     }
 
-    if (this.psnHitsplat) this.psnHitsplat = false;
     if (this.greenCounter >= 0) { // every 5 ticks
         if (this.greenCounter % 5 == 0) {
             this.hp -= GREEN_EGG;
@@ -386,7 +386,7 @@ ruRunner.prototype.processEggQueue = function () {
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
-            console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
+            console.log(tickToSecond(ba.TickCounter) + ": Egg effect started");
             if (egg.type == "r") {
                 this.hp -= RED_EGG;
             }

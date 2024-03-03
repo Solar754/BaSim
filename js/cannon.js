@@ -108,7 +108,7 @@ function cShootCannon(cmd, x, y) {
     let targetDistance = tileDistance(...cannon, x, y);
 
     if (targetDistance > RADIUS) {
-        console.log(tickToSecond(ba.TickCounter), ": No targets in range");
+        console.log(tickToSecond(ba.TickCounter) + ": No targets in range");
         return undefined;
     }
     else if (targetDistance > 9) {
@@ -124,7 +124,7 @@ function cShootCannon(cmd, x, y) {
     if (cmd.eggType == "r") {
         travelTime += 1;
     }
-    console.log(tickToSecond(ba.TickCounter), ": player clicked to shoot : ", travelTime);
+    console.log(tickToSecond(ba.TickCounter) + ": player clicked to shoot", travelTime);
     return travelTime;
 }
 //}

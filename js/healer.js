@@ -56,6 +56,7 @@ heHealer.prototype.foundPlayerTarget = function () {
     return plTarget;
 }
 heHealer.prototype.tick = function () {
+    this.psnHitsplat = false;
     if (this.blueCounter >= 0) {
         --this.blueCounter;
         return;
@@ -252,8 +253,7 @@ heHealer.prototype.applyPoisonDmg = function (food) {
         return;
     }
 
-    if (this.psnHitsplat) this.psnHitsplat = false;
-    if (this.greenCounter >= 0) { // every 30 ticks
+    if (this.greenCounter >= 0 && !food) { // every 30 ticks
         if (this.greenCounter % 30 == 0) {
             this.hp -= GREEN_EGG;
             this.psnHitsplat = true;
@@ -296,7 +296,7 @@ heHealer.prototype.processEggQueue = function () {
     this.eggQueue = this.eggQueue.filter(e => e.stalled >= 0);
     for (let egg of this.eggQueue) {
         if (egg.stalled == 0) {
-            console.log(tickToSecond(ba.TickCounter), ": Egg effect started");
+            console.log(tickToSecond(ba.TickCounter) + ": Egg effect started");
             if (egg.type == "r" && !this.zombieState) {
                 this.hp -= RED_EGG;
             }

@@ -271,7 +271,7 @@ function baDrawEntities() {
     for (let i = 0; i < ba.Runners.length; ++i) {
         let npc = ba.Runners[i];
         addColor(npc.x, npc.y, rrFill, RUNNER_CLR);
-        if (npc.hp == 0)
+        if (npc.hp == 0 && npc.despawnCountdown != -1)
             addColor(npc.x, npc.y, rrFill, RUNNER_DEAD_CLR);
         if (npc.psnHitsplat)
             addColor(npc.x, npc.y, rrFillItem, PSN_HIT_CLR);
