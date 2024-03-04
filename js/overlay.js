@@ -13,6 +13,7 @@ const HEALER_CLR = [11, 199, 11, 150];
 const HEALER_DEAD_CLR = [1, 39, 1, 150];
 const HEALER_PSND_CLR = [116, 169, 46, 170];
 const RED_EGG_CLR = [240, 10, 10, 220];
+const GREEN_EGG_CLR = [10, 240, 10, 220];
 const BLUE_EGG_CLR = [4, 59, 92, 220];
 const PSN_HIT_CLR = [30, 142, 59, 220];
 const BLACK_CLR = [0, 0, 0, 255];
@@ -111,6 +112,9 @@ function oDrawEggs() {
             }
             else if (egg.stalled == -1 && egg.type == "r") {
                 addColor(p.x, p.y, rrOutline, RED_EGG_CLR);
+            }
+            else if (egg.stalled == -1 && egg.type == "g") {
+                addColor(p.x, p.y, rrOutline, GREEN_EGG_CLR);
             }
         }
     }
