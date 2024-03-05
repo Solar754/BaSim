@@ -324,7 +324,7 @@ heHealer.prototype.processEggQueue = function () {
 
     // overkill
     if (this.blueCounter == -1) {
-        if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
+        if (this.eggQueue.filter(e => { return (e.type == "r" && e.stalled == -1) }).length > 1 && this.hp <= 0) {
             this.processDeath();
         }
     }

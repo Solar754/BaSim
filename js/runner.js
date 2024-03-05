@@ -436,7 +436,7 @@ ruRunner.prototype.processEggQueue = function () {
     }
 
     // overkill
-    if (this.eggQueue.filter(e => e.type == "r").length > 1 && this.hp <= 0) {
+    if (this.eggQueue.filter(e => { return (e.type == "r" && e.stalled == -1) }).length > 1 && this.hp <= 0) {
         this.isDying = true;
         this.despawnCountdown = 2;
         ++ba.RunnersKilled;
