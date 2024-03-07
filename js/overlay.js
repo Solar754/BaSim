@@ -72,7 +72,11 @@ var oMarkedTiles = new function () {
         let markedTilesArr = [...this.tiles].map(JSON.parse);
 
         if (tileFilter !== "all") { // expects hex
-            markedTilesArr = markedTilesArr.filter(t => t[3] == tileFilter);
+            markedTilesArr = markedTilesArr.filter((t) => {
+                if (t[3]) {
+                    return t[3] == tileFilter;
+                }
+            });
         }
 
         for (let tile of markedTilesArr) {
