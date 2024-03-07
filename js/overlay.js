@@ -99,7 +99,7 @@ var oMarkedTiles = new function () {
     };
     this.updateHTMLColorList = function () {
         let markedTilesArr = [...this.tiles].map(JSON.parse);
-        markedTilesArr = [...new Set(markedTilesArr.map(item => item[3]))];
+        markedTilesArr = [...new Set(markedTilesArr.map(item => (item[3] || this.currentColorHex)))];
 
         let colorListParent = document.getElementsByClassName("currenttilecolors");
         for (let parent of colorListParent) {
