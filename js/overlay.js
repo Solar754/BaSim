@@ -270,7 +270,15 @@ function oInstructions() {
     instructionsElement.style.resize = "none";
     instructionsElement.style.width = rr.CanvasWidth + "px";
     instructionsElement.style.height = rr.CanvasHeight + "px";
-    instructionsElement.innerHTML = `Runner movements
+    instructionsElement.innerHTML = `Exporting tile markers
+    The default tile marker color is black, but this can be changed in the options.
+        1) Toggle markers on and click tiles on the canvas
+        2) Under options, go to export and choose to either export all marked tiles or a specific color
+        3) The tiles will be copied to your clipboard in the format that RuneLite expects
+        4) Open RuneLite, right click the globe by the minimap, and choose import
+
+
+Runner movements
     Control runner random e/w/s movement. Can be updated while sim is running.
 
     Example: ws-s
