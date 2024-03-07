@@ -85,11 +85,9 @@ function simInit() {
 
 	let MarkerEvent = document.getElementById(HTML_TOGGLE_MARKER);
 	MarkerEvent.onchange = (e) => { sim.MarkerMode = MarkerEvent.checked; }
-	sim.MarkerOptions = document.getElementById(HTML_MARKER_OPTIONS);
-	sim.MarkerOptions.value = "";
-	sim.MarkerOptions.onchange = simMarkerOptsOnClick;
 	let colorPicker = document.getElementById(HTML_MARKER_COLOR);
 	colorPicker.oninput = oUpdateMarkerColor;
+	oMarkerOptsOnClick();
 
 	sim.SaveState = document.getElementById(HTML_SAVE_BUTTON);
 	sim.SaveState.onclick = simSaveStateOnClick;
@@ -550,21 +548,6 @@ function simToggleHealersOnChange(e) {
 }
 function simToggleRenderOnChange(e) {
 	simDraw();
-}
-function simMarkerOptsOnClick(e) {
-	let selected = e.target.options[e.target.selectedIndex];
-	if (selected.value == "colormarkers") {
-		let colorPicker = document.getElementById("markercolorpicker");
-		colorPicker.click();
-	}
-	else if (selected.value == "clearmarkers") {
-		oMarkedTiles.clear();
-		simDraw();
-	}
-	else if (selected.getAttribute("name") == "export") {
-		oMarkedTiles.export(selected.value);
-	}
-	e.target.value = "";
 }
 function simToggleTeamOnClick(e) {
 	if (sim.SpawnTeam.checked) {

@@ -72,11 +72,7 @@ var oMarkedTiles = new function () {
         let markedTilesArr = [...this.tiles].map(JSON.parse);
 
         if (tileFilter !== "all") { // expects hex
-            markedTilesArr = markedTilesArr.filter((t) => {
-                if (t[3]) {
-                    return t[3] == tileFilter;
-                }
-            });
+            markedTilesArr = markedTilesArr.filter(t => t[3] == tileFilter);
         }
 
         for (let tile of markedTilesArr) {
@@ -95,7 +91,7 @@ var oMarkedTiles = new function () {
         runeliteTiles = JSON.stringify(runeliteTiles);
         navigator.clipboard.writeText(runeliteTiles);
         console.log(runeliteTiles);
-        alert("Tiles copied to clipboard\n" + runeliteTiles);
+        alert("Tiles copied to clipboard    -   " + runeliteTiles);
     };
     this.clear = function () {
         this.tiles = [];
@@ -105,39 +101,63 @@ var oMarkedTiles = new function () {
         let markedTilesArr = [...this.tiles].map(JSON.parse);
         markedTilesArr = [...new Set(markedTilesArr.map(item => (item[3] || this.currentColorHex)))];
 
-        let colorListParent = document.getElementsByClassName("currenttilecolors");
-        for (let parent of colorListParent) {
-            let children = parent.childNodes;
-            while (children.length > 0) {
-                children[0].parentNode.removeChild(children[0]);
+        let parent = document.getElementById("exportsubmenu");
+        let children = parent.childNodes;
+        while (children.length > 0) {
+            children[0].parentNode.removeChild(children[0]);
+        }
+
+        let allTilesSpan = document.createElement("span");
+        allTilesSpan.setAttribute("name", parent.getAttribute("label"));
+        allTilesSpan.innerHTML = "[All] ";
+        allTilesSpan.value = "all";
+        parent.append(allTilesSpan);
+        allTilesSpan.onclick = function (e) {
+            oMarkedTiles.export(allTilesSpan.value);
+        }
+
+        for (let color of markedTilesArr) {
+            let newHTMLSpan = document.createElement("span");
+            newHTMLSpan.setAttribute("name", parent.getAttribute("label"));
+            newHTMLSpan.value = color;
+            newHTMLSpan.onclick = function (e) {
+                oMarkedTiles.export(newHTMLSpan.value);
             }
 
-            let newHTMLColor = document.createElement("option");
-            newHTMLColor.setAttribute("name", parent.getAttribute("label"));
-            newHTMLColor.innerHTML = "all";
-            newHTMLColor.value = "all";
-            parent.appendChild(newHTMLColor);
+            let newHTMLColor = document.createElement("input");
+            newHTMLColor.classList.add("colorpicker");
+            newHTMLColor.type = "color";
+            newHTMLColor.disabled = true;
+            newHTMLColor.value = color;
 
-            for (let color of markedTilesArr) {
-                let newHTMLColor = document.createElement("option");
-                newHTMLColor.setAttribute("name", parent.getAttribute("label"));
-                newHTMLColor.style.backgroundColor = color;
-                newHTMLColor.value = color;
-                parent.appendChild(newHTMLColor);
-            }
+            parent.appendChild(newHTMLSpan);
+            newHTMLSpan.appendChild(newHTMLColor);
         }
     }
 };
 
-function oUpdateMarkerColor(e) {
-    let menuOption = document.getElementById("selectedmarkercolor");
-    menuOption.style.backgroundColor = e.target.value;
+function oMarkerOptsOnClick(e) {
+    let markerColor = document.getElementById("markercolor");
+    markerColor.onclick = function (e) {
+        let colorPicker = document.getElementById("markercolorpicker");
+        colorPicker.click();
+    }
+    let markerClear = document.getElementById("markerclear");
+    markerClear.onclick = function (e) {
+        oMarkedTiles.clear();
+        simDraw();
+    }
+}
 
-    let rgb = menuOption.style.backgroundColor.replace(/[^\d,]/g, '');
-    rgb = rgb.split(',').map(Number);
-    rgb.push(255); // alpha
-    oMarkedTiles.currentColorRGB = rgb;
+function oUpdateMarkerColor(e) {
+    const hexToRgb = hex =>
+        hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+            , (m, r, g, b) => '#' + r + r + g + g + b + b)
+            .substring(1).match(/.{2}/g)
+            .map(x => parseInt(x, 16));
     oMarkedTiles.currentColorHex = e.target.value;
+    oMarkedTiles.currentColorRGB = hexToRgb(e.target.value);
+    oMarkedTiles.currentColorRGB.push(255);
 }
 
 function oDrawYellowClick(e) {

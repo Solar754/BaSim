@@ -34,10 +34,6 @@ td {
     border-collapse: collapse;
 }
 
-#teammatetable {
-    margin-left: 10px;
-}
-
 th,
 td {
     padding: 2px 4px;
@@ -94,3 +90,63 @@ td {
 }
 
 @keyframes ripple-effect {}
+
+/* Tile marker options menu */
+input[disabled] {
+    pointer-events: none;
+}
+
+.colorpicker {
+    height: 22px;
+    width: 22px;
+    border: none;
+    background-color: transparent;
+    vertical-align: middle;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    color: var(--text);
+    background-color: var(--background);
+    border: 1px solid var(--text);
+    min-width: 86px;
+    overflow: auto;
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown-content>span {
+    color: var(--text);
+    background-color: var(--background);
+    padding: 3px 5px;
+    margin: 5px 5px;
+    border-radius: 5px;
+    display: block;
+    cursor: default;
+}
+
+.dropdown span:hover {
+    background-color: #88828286;
+}
+
+.submenu {
+    display: none;
+}
+
+#markerexport:hover div {
+    display: block;
+}
+
+#markeroptions:hover+#markerdropdown {
+    display: block;
+}
+
+#markerdropdown:hover {
+    display: block;
+}

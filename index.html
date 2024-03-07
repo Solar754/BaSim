@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html data-theme="light">
 <title>Ba simulator</title>
 <link rel="stylesheet" href="css/style.css">
 <script src="js/basim.js"></script>
@@ -37,13 +38,19 @@
             <label for="togglerender">Render</label>
             <input type="checkbox" id="togglemarker">
             <label for="togglemarker">Marker</label>
-            <select id="markeroptions">
-                <option value="" style="display: none;">Options</option>
-                <option id="selectedmarkercolor" value="colormarkers" style="background-color: black;">color</option>
-                <option value="clearmarkers">clear</option>
-                <optgroup label="export" class="currenttilecolors"></optgroup>
-            </select>
-            <input id="markercolorpicker" type="color" style="display: none;"></input><br>
+            <div class="dropdown">
+                <button id="markeroptions">Options</button>
+                <div id="markerdropdown" class="dropdown-content">
+                    <span id="markercolor">
+                        color <input class="colorpicker" id="markercolorpicker" type="color"></input>
+                    </span>
+                    <span id="markerclear">clear</span>
+                    <span id="markerexport">
+                        export <small>&#9660;</small>
+                        <div class="submenu" label="export" id="exportsubmenu"></div>
+                    </span>
+                </div>
+            </div><br>
             <button id="wavestart"></button>
             <button id="wavepause" style="display: none;"></button>
             <button id="wavestepback" style="display: none;">Step Backward</button>
@@ -159,3 +166,5 @@
         </div>
     </div>
 </div>
+
+</html>
