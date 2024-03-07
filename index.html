@@ -37,7 +37,13 @@
             <label for="togglerender">Render</label>
             <input type="checkbox" id="togglemarker">
             <label for="togglemarker">Marker</label>
-            <button id="clearmarkers">Clear</button><br>
+            <select id="markeroptions">
+                <option value="" style="display: none;">Options</option>
+                <option id="selectedmarkercolor" value="colormarkers" style="background-color: black;">color</option>
+                <option value="clearmarkers">clear</option>
+                <optgroup label="export" class="currenttilecolors"></optgroup>
+            </select>
+            <input id="markercolorpicker" type="color" style="display: none;"></input><br>
             <button id="wavestart"></button>
             <button id="wavepause" style="display: none;"></button>
             <button id="wavestepback" style="display: none;">Step Backward</button>

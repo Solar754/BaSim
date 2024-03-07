@@ -26,34 +26,115 @@ function addColor(x, y, rrFunc, color) {
 
 var oMarkedTiles = new function () {
     this.tiles = [];
-    this.storageName = "baTiles";
+    this.currentColorRGB = [0, 0, 0, 255];
+    this.currentColorHex = "#000000";
+    this.storageNameW1_9 = "baTiles";
+    this.storageNameW10 = "baTilesW10";
+    this.getStorageName = function () {
+        if (m.mCurrentMap == mWAVE10) {
+            return this.storageNameW10;
+        }
+        return this.storageNameW1_9;
+    };
     this.push = function (xTile, yTile) {
-        let strTileTuple = JSON.stringify([xTile, yTile]);
+        let strTileTuple = JSON.stringify([xTile, yTile, this.currentColorRGB, this.currentColorHex]);
         if (this.tiles.includes(strTileTuple)) {
             this.tiles = this.tiles.filter(e => e !== strTileTuple);
         } else {
             this.tiles.push(strTileTuple);
         }
-        localStorage.setItem(this.storageName, JSON.stringify(this.tiles));
+        localStorage.setItem(this.getStorageName(), JSON.stringify(this.tiles));
     };
     this.fetch = function () {
-        this.tiles = localStorage.getItem(this.storageName);
+        this.tiles = localStorage.getItem(this.getStorageName());
         if (this.tiles == null) this.tiles = [];
         else this.tiles = JSON.parse(this.tiles);
+        return this.tiles;
     };
     this.draw = function () {
+        this.fetch();
         let markedTilesArr = [...this.tiles].map(JSON.parse);
         for (let i of markedTilesArr) {
             let xTile = i[0].toString();
             let yTile = i[1].toString();
-            addColor(xTile, yTile, rrOutline, BLACK_CLR);
+            let tileColor = BLACK_CLR;
+            if (i[2]) { // rgb
+                tileColor = i[2];
+            }
+            addColor(xTile, yTile, rrOutline, tileColor);
         }
+        this.updateHTMLColorList();
+    };
+    this.export = function (tileFilter) {
+        this.fetch();
+        let runeliteTiles = [];
+        let region = (m.mCurrentMap == mWAVE10) ? 7508 : 7509;
+        let markedTilesArr = [...this.tiles].map(JSON.parse);
+
+        if (tileFilter !== "all") { // expects hex
+            markedTilesArr = markedTilesArr.filter(t => t[3] == tileFilter);
+        }
+
+        for (let tile of markedTilesArr) {
+            let tileColor = "#000000";
+            if (tile[3]) { // hex
+                tileColor = tile[3];
+            }
+            runeliteTiles.push({
+                "regionId": region,
+                "regionX": tile[0],
+                "regionY": tile[1] + 8,
+                "z": 0,
+                "color": "#ff" + tileColor.slice(1) // RL alpha
+            })
+        }
+        runeliteTiles = JSON.stringify(runeliteTiles);
+        navigator.clipboard.writeText(runeliteTiles);
+        console.log(runeliteTiles);
+        alert("Tiles copied to clipboard\n" + runeliteTiles);
     };
     this.clear = function () {
         this.tiles = [];
-        localStorage.removeItem(this.storageName);
+        localStorage.removeItem(this.getStorageName());
     };
+    this.updateHTMLColorList = function () {
+        let markedTilesArr = [...this.tiles].map(JSON.parse);
+        markedTilesArr = [...new Set(markedTilesArr.map(item => item[3]))];
+
+        let colorListParent = document.getElementsByClassName("currenttilecolors");
+        for (let parent of colorListParent) {
+            let children = parent.childNodes;
+            while (children.length > 0) {
+                children[0].parentNode.removeChild(children[0]);
+            }
+
+            let newHTMLColor = document.createElement("option");
+            newHTMLColor.setAttribute("name", parent.getAttribute("label"));
+            newHTMLColor.innerHTML = "all";
+            newHTMLColor.value = "all";
+            parent.appendChild(newHTMLColor);
+
+            for (let color of markedTilesArr) {
+                let newHTMLColor = document.createElement("option");
+                newHTMLColor.setAttribute("name", parent.getAttribute("label"));
+                newHTMLColor.style.backgroundColor = color;
+                newHTMLColor.value = color;
+                parent.appendChild(newHTMLColor);
+            }
+        }
+    }
 };
+
+function oUpdateMarkerColor(e) {
+    let menuOption = document.getElementById("selectedmarkercolor");
+    menuOption.style.backgroundColor = e.target.value;
+
+    let rgb = menuOption.style.backgroundColor.replace(/[^\d,]/g, '');
+    rgb = rgb.split(',').map(Number);
+    rgb.push(255); // alpha
+    oMarkedTiles.currentColorRGB = rgb;
+    oMarkedTiles.currentColorHex = e.target.value;
+}
 
 function oDrawYellowClick(e) {
     const DURATION = 540; // ms

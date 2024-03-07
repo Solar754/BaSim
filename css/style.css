@@ -34,6 +34,10 @@ td {
     border-collapse: collapse;
 }
 
+#teammatetable {
+    margin-left: 10px;
+}
+
 th,
 td {
     padding: 2px 4px;
