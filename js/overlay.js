@@ -37,10 +37,11 @@ var oMarkedTiles = new function () {
         return this.storageNameW1_9;
     };
     this.push = function (xTile, yTile) {
-        let strTileTuple = JSON.stringify([xTile, yTile, this.currentColorRGB, this.currentColorHex]);
-        if (this.tiles.includes(strTileTuple)) {
-            this.tiles = this.tiles.filter(e => e !== strTileTuple);
+        let tileExists = this.tiles.filter(e => (e.includes(`[${xTile},${yTile},`)));
+        if (tileExists.length > 0) {
+            this.tiles = this.tiles.filter(e => e !== tileExists[0]);
         } else {
+            let strTileTuple = JSON.stringify([xTile, yTile, this.currentColorRGB, this.currentColorHex]);
             this.tiles.push(strTileTuple);
         }
         localStorage.setItem(this.getStorageName(), JSON.stringify(this.tiles));
@@ -111,7 +112,7 @@ var oMarkedTiles = new function () {
         allTilesSpan.setAttribute("name", parent.getAttribute("label"));
         allTilesSpan.innerHTML = "[All] ";
         allTilesSpan.value = "all";
-        parent.append(allTilesSpan);
+        parent.appendChild(allTilesSpan);
         allTilesSpan.onclick = function (e) {
             oMarkedTiles.export(allTilesSpan.value);
         }

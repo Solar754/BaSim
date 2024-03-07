@@ -11,7 +11,6 @@ const HTML_CANNON_SHOTS = "cannonshots";
 const HTML_TOGGLE_HEALERS = "togglehealers";
 const HTML_TOGGLE_RENDER = "togglerender";
 const HTML_TOGGLE_MARKER = "togglemarker";
-const HTML_MARKER_OPTIONS = "markeroptions";
 const HTML_MARKER_COLOR = "markercolorpicker";
 const HTML_SAVE_BUTTON = "savestate";
 const HTML_LOAD_BUTTON = "loadstate";
@@ -640,7 +639,6 @@ var sim = {
 	ToggleHealers: undefined,
 	ToggleRender: undefined,
 	MarkerMode: false,
-	MarkerOptions: undefined,
 	SpawnTeam: undefined,
 	AllRoleMarkers: undefined
 }
