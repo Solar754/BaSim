@@ -275,7 +275,7 @@ function oInstructions() {
         1) Toggle markers on and click tiles on the canvas
         2) Under options, go to export and choose to either export all marked tiles or a specific color
         3) The tiles will be copied to your clipboard in the format that RuneLite expects
-        4) Open RuneLite, right click the globe by the minimap, and choose import
+        4) Open RuneLite, right click the globe by the minimap, choose import
 
 
 Runner movements
