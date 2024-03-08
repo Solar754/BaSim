@@ -19,6 +19,6 @@ let files = [
 ];
 for (let file of files) {
     let new_script = document.createElement('script');
-    new_script.setAttribute('src', './js/' + file);
+    new_script.setAttribute('src', 'js/' + file);
     document.head.appendChild(new_script);
 }

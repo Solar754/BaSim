@@ -273,7 +273,7 @@ function oInstructions() {
     instructionsElement.innerHTML = `Exporting tile markers
     The default tile marker color is black, but this can be changed in the options.
         1) Toggle markers on and click tiles on the canvas
-        2) Under options, go to export and choose to either export all marked tiles or a specific color
+        2) In options go to export, choose to either export all marked tiles or a specific color
         3) The tiles will be copied to your clipboard in the format that RuneLite expects
         4) Open RuneLite, right click the globe by the minimap, choose import
 
@@ -282,8 +282,8 @@ Runner movements
     Control runner random e/w/s movement. Can be updated while sim is running.
 
     Example: ws-s
-    First runner will move west on spawn, and next random movement (no food/crash direction) will be south.
-    Second runner will move south on spawn.
+    First runner will move west on spawn, and next random movement (no food/crash direction) 
+    will be south. Second runner will move south on spawn.
 
     
 Runner/healer spawns
@@ -322,8 +322,8 @@ Player healer syntax
     Tick is the earliest possible time a command happens and is optional. It reflects 
     when a "click" would happen in-game.
 
-    Example: h1,2:24 means after tick 24 player will start pathing as though they are using food on the 
-    first healer (healer 1) every tick, and two food will be used.
+    Example: h1,2:24 means after tick 24 player will start pathing as though they are using food on
+    the first healer (healer 1) every tick, and two food will be used.
 
     Trivial code syntax (see below) can also be entered here. Player healer will do its best to make 
     its own decisions (don't expect much).
@@ -377,6 +377,7 @@ Trivial code convert tool (on the right)
     subwrapper2.style.marginLeft = "49rem";
 
     let subwrapper2Split = document.createElement("br");
+    subwrapper2Split.classList.add("tmpbrsplit");
 
     let instructionsExist = document.querySelectorAll('.instructions').length > 0;
     if (canvasElement.style.display === "none") {
@@ -387,6 +388,7 @@ Trivial code convert tool (on the right)
         canvasElement.style.display = "none";
         if (instructionsExist) {
             document.querySelectorAll('.instructions').forEach(e => e.style.display = "inline-grid");
+            document.getElementsByClassName("tmpbrsplit")[0]?.remove();
         }
         else {
             canvasElement.parentNode.insertBefore(wrapper, canvasElement);
