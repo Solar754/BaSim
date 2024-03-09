@@ -136,18 +136,12 @@ input[disabled] {
     background-color: #88828286;
 }
 
-.submenu {
-    display: none;
-}
-
-#markerexport:hover div {
-    display: block;
-}
-
-#markeroptions:hover+#markerdropdown {
-    display: block;
-}
-
+#markerexport:hover div,
+#markeroptions:hover+#markerdropdown,
 #markerdropdown:hover {
     display: block;
+}
+
+.submenu {
+    display: none;
 }

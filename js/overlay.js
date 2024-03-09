@@ -46,7 +46,7 @@ var oMarkedTiles = new function () {
         return this.storageNameW1_9;
     };
     this.push = function (xTile, yTile) {
-        let tileExists = this.tiles.filter(e => (e.includes(`[${xTile},${yTile},`)));
+        let tileExists = this.tiles.filter(e => (e.includes(`[${xTile},${yTile}`)));
         if (tileExists.length > 0) {
             this.tiles = this.tiles.filter(e => e !== tileExists[0]);
         } else {
@@ -117,7 +117,7 @@ var oMarkedTiles = new function () {
                 this.currentColorHex = "#" + i.color.slice(3);
                 this.currentColorRGB = hexToRgb(this.currentColorHex);
 
-                let tileExists = this.tiles.filter(e => (e.includes(`[${importX},${importY},`)));
+                let tileExists = this.tiles.filter(e => (e.includes(`[${importX},${importY}`)));
                 if (tileExists.length > 0) {
                     this.tiles = this.tiles.filter(e => e !== tileExists[0]);
                 }
