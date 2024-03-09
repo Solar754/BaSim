@@ -24,6 +24,15 @@ function addColor(x, y, rrFunc, color) {
     rrFunc(x, y);
 }
 
+function hexToRgb(hex) {
+    hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+        , (m, r, g, b) => '#' + r + r + g + g + b + b)
+        .substring(1).match(/.{2}/g)
+        .map(x => parseInt(x, 16));
+    hex.push(255); //alpha
+    return hex;
+}
+
 var oMarkedTiles = new function () {
     this.tiles = [];
     this.currentColorRGB = [0, 0, 0, 255];
@@ -94,6 +103,34 @@ var oMarkedTiles = new function () {
         console.log(runeliteTiles);
         alert("Tiles copied to clipboard    -   " + runeliteTiles);
     };
+    this.import = function (importedTiles) {
+        try {
+            importedTiles = JSON.parse(importedTiles);
+            let curHex = this.currentColorHex;
+            let curRgb = this.currentColorRGB;
+            this.fetch();
+            let region = (m.mCurrentMap == mWAVE10) ? 7508 : 7509;
+            for (let i of importedTiles) {
+                if (i.regionId != region) continue;
+                let importX = i.regionX;
+                let importY = i.regionY - 8;
+                this.currentColorHex = "#" + i.color.slice(3);
+                this.currentColorRGB = hexToRgb(this.currentColorHex);
+
+                let tileExists = this.tiles.filter(e => (e.includes(`[${importX},${importY},`)));
+                if (tileExists.length > 0) {
+                    this.tiles = this.tiles.filter(e => e !== tileExists[0]);
+                }
+                this.push(importX, importY);
+            }
+            this.currentColorHex = curHex;
+            this.currentColorRGB = curRgb;
+        }
+        catch (err) {
+            alert("Import failed.");
+            console.log(err);
+        }
+    };
     this.clear = function () {
         this.tiles = [];
         localStorage.removeItem(this.getStorageName());
@@ -148,17 +185,18 @@ function oMarkerOptsOnClick(e) {
         oMarkedTiles.clear();
         simDraw();
     }
+    let markerImport = document.getElementById("markerimport");
+    markerImport.onclick = function (e) {
+        let importedTiles = e.target.previousElementSibling;
+        oMarkedTiles.import(importedTiles.value);
+        importedTiles.value = "";
+        simDraw();
+    }
 }
 
 function oUpdateMarkerColor(e) {
-    const hexToRgb = hex =>
-        hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
-            , (m, r, g, b) => '#' + r + r + g + g + b + b)
-            .substring(1).match(/.{2}/g)
-            .map(x => parseInt(x, 16));
     oMarkedTiles.currentColorHex = e.target.value;
     oMarkedTiles.currentColorRGB = hexToRgb(e.target.value);
-    oMarkedTiles.currentColorRGB.push(255);
 }
 
 function oDrawYellowClick(e) {
@@ -398,8 +436,8 @@ Trivial code convert tool (on the right)
             subwrapper2.appendChild(codeCalculator);
             subwrapper2.appendChild(subwrapper2Split);
             subwrapper2.appendChild(codeTextarea);
+            document.getElementById(HTML_CALCULATOR_INPUT).oninput = loTrivialCalculator;
         }
-        document.getElementById(HTML_CALCULATOR_INPUT).oninput = loTrivialCalculator;
     }
 }
 //}

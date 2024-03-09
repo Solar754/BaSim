@@ -124,6 +124,7 @@ input[disabled] {
 .dropdown-content>span {
     color: var(--text);
     background-color: var(--background);
+    min-height: 22px;
     padding: 3px 5px;
     margin: 5px 5px;
     border-radius: 5px;
