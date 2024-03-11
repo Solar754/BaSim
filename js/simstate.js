@@ -51,6 +51,14 @@ var stateHistory = new function () {
     };
 };
 
+function iterateStates() {
+    if (stateHistory.current() == stateHistory.latest()) {
+        clearInterval(sim.AutoplayTimerId);
+        return;
+    }
+    sim.StepButton.click()
+}
+
 // populate dummy instance with saved values
 Object.prototype.update = function (obj) {
     Object.keys(obj).forEach((key) => {

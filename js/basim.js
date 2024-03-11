@@ -26,6 +26,8 @@ const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 const HTML_TOGGLE_TEAM = "toggleteam";
 const HTML_ROLE_MARKER = "rolemarker";
+const HTML_THEME_BUTTON = "themebtn";
+const HTML_AUTOPLAY_BUTTON = "autoplay";
 
 window.onload = simInit;
 
@@ -116,8 +118,20 @@ function simInit() {
 	};
 
 	// dark mode theme
-	document.getElementById("themebtn").onclick = oFlipThemeOnClick;
+	document.getElementById(HTML_THEME_BUTTON).onclick = oFlipThemeOnClick;
 	if (localStorage.getItem("basimTheme") == "⚫") oFlipThemeOnClick();
+
+	document.getElementById(HTML_AUTOPLAY_BUTTON).onclick = function (e) {
+		if (!sim.IsRunning) {
+			sim.LoadState.click();
+		}
+		stateHistory.index = 0;
+		sim.StepBackwardButton.click();
+		sim.AutoplayTimerId = setInterval(iterateStates, 600);
+		for (let state of stateHistory.states) {
+			state.sim.AutoplayTimerId = sim.AutoplayTimerId;
+		}
+	}
 }
 function simUpdateRunnerTable() {
 	if (!sim.IsRunning) {
@@ -275,6 +289,7 @@ function simStepButtonOnClick() {
 	}
 }
 function simStepBackwardButtonOnClick() {
+	clearInterval(sim.AutoplayTimerId);
 	const state = stateHistory.backward();
 	if (!state) {
 		return;
@@ -615,6 +630,7 @@ function simDraw() {
 }
 var sim = {
 	TickTimerId: undefined,
+	AutoplayTimerId: undefined,
 	MovementsInput: undefined,
 	RunnerSpawns: undefined,
 	HealerSpawns: undefined,
