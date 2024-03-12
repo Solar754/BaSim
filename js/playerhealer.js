@@ -239,12 +239,12 @@ function phParseTiles() { // expected: hID,#:tick
     return tiles
 }
 function phFindBestAdjacentTile(x1, y1, targetX, targetY) {
-    // prioritize west > east > south > north movements
+    // prioritize west > east > south > north movements; lower x then lower y
     let validDirectionsFromTarget = [
         { "direction": "west", "tile": [targetX - 1, targetY], "check": mCanMoveEast },
         { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },
         { "direction": "south", "tile": [targetX, targetY - 1], "check": mCanMoveNorth },
-        { "direction": "north", "tile": [targetX, targetY + 1], "check": mCanMoveSouth },
+        { "direction": "north", "tile": [targetX, targetY + 1], "check": mCanMoveSouth }
     ]
     for (let direction of validDirectionsFromTarget) {
         if (direction.check(...direction["tile"]) && mCanMoveToTile(...direction["tile"])) {
@@ -256,9 +256,14 @@ function phFindBestAdjacentTile(x1, y1, targetX, targetY) {
         }
     }
     validDirectionsFromTarget = validDirectionsFromTarget.filter(i => i.IsValid);
-    let bestTile = validDirectionsFromTarget.reduce(function (prev, curr) {
-        return prev.Distance <= curr.Distance ? prev : curr;
+    let bestTile = validDirectionsFromTarget.sort((lh, rh) => {
+        if (lh.Distance == rh.Distance) {
+            if (lh.tile[0] == rh.tile[0])
+                return lh.tile[1] - rh.tile[1];
+            return lh.tile[0] - rh.tile[0];
+        }
+        return lh.Distance - rh.Distance;
     });
-    return bestTile["tile"];
+    return bestTile[0]["tile"];
 }
 //}

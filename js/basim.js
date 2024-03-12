@@ -471,9 +471,6 @@ function simParseCannonInput(eggs) {
 			}
 		} catch (err) { return null; }
 	}
-	cannonCmds = cannonCmds.sort((lh, rh) => {
-		return lh.tick > rh.tick;
-	});
 	return cannonCmds;
 }
 function simWindowOnKeyDown(e) { // food_drop

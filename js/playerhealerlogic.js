@@ -65,7 +65,7 @@ function loUpdateSpacingPriority(player) {
         }
 
         return tiles.sort((left, right) => {
-            return left.WaitUntil > right.WaitUntil
+            return left.WaitUntil - right.WaitUntil
         });
     }
 
