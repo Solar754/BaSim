@@ -103,19 +103,7 @@ function simInit() {
 	clearCmds.forEach(m => m.onclick = cmdClearPath);
 	let includeNumbers = document.getElementById("rolemarkernumbers");
 	includeNumbers.onclick = (e) => { oDrawAllRolePaths(); }
-
-	simSetRunning(false);
-
-	rInit(canvas, 64 * 12, 48 * 12);
-	rrInit(12);
-	mInit(mWAVE_1_TO_9, 64, 48);
-	ruInit(5);
-	simReset();
-	window.onkeydown = simWindowOnKeyDown;
-	canvas.onmousedown = simCanvasOnMouseDown;
-	canvas.oncontextmenu = function (e) {
-		e.preventDefault();
-	};
+	cmdUpdateTeamMarkersOnClick();
 
 	// dark mode theme
 	document.getElementById(HTML_THEME_BUTTON).onclick = oFlipThemeOnClick;
@@ -132,6 +120,19 @@ function simInit() {
 			state.sim.AutoplayTimerId = sim.AutoplayTimerId;
 		}
 	}
+
+	simSetRunning(false);
+
+	rInit(canvas, 64 * 12, 48 * 12);
+	rrInit(12);
+	mInit(mWAVE_1_TO_9, 64, 48);
+	ruInit(5);
+	simReset();
+	window.onkeydown = simWindowOnKeyDown;
+	canvas.onmousedown = simCanvasOnMouseDown;
+	canvas.oncontextmenu = function (e) {
+		e.preventDefault();
+	};
 }
 function simUpdateRunnerTable() {
 	if (!sim.IsRunning) {

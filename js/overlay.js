@@ -127,8 +127,8 @@ var oMarkedTiles = new function () {
             this.currentColorRGB = curRgb;
         }
         catch (err) {
-            alert("Import failed.");
             console.log(err);
+            alert("Import failed.");
         }
     };
     this.clear = function () {

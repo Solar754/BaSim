@@ -157,6 +157,35 @@ function cmdClearPath(e) {
     cmds.value = "";
     oDrawAllRolePaths();
 }
+function cmdUpdateTeamMarkersOnClick(e) {
+    let markersImport = document.getElementById("teamimport");
+    markersImport.onclick = function (e) {
+        let importedTiles = e.target.previousElementSibling;
+        try {
+            let teamMarkers = JSON.parse(importedTiles.value);
+            for (let role of cmdROLE_NAMES) {
+                document.getElementById(`${role}cmds`).value = teamMarkers[role];
+            }
+            oDrawAllRolePaths();
+        } catch (err) {
+            console.log(err);
+            alert("Import failed.");
+        }
+        importedTiles.value = "";
+    }
+
+    let markersClear = document.getElementById("teamexport");
+    markersClear.onclick = function (e) {
+        let teamMarkers = {};
+        for (let role of cmdROLE_NAMES) {
+            teamMarkers[role] = document.getElementById(`${role}cmds`).value;
+        }
+        teamMarkers = JSON.stringify(teamMarkers);
+        navigator.clipboard.writeText(teamMarkers);
+        console.log(teamMarkers);
+        alert("Markers copied to clipboard    -   " + teamMarkers);
+    }
+}
 function cmdUncheckAllRoles() {
     sim.AllRoleMarkers.forEach(m => m.checked = false);
 }
