@@ -168,3 +168,59 @@ function loadSaveState(state) {
 
     sim.MarkerMode = document.getElementById(HTML_TOGGLE_MARKER).checked;
 }
+
+function updateSettingsOnClick(e) {
+    let settingsImport = document.getElementById("settingsimport");
+    settingsImport.onclick = function (e) {
+        let allSettings = e.target.previousElementSibling;
+        try {
+            let parsedSettings = JSON.parse(allSettings.value);
+            sim.DefLevelSelect.value = parsedSettings.level;
+            sim.WaveSelect.value = parsedSettings.wave;
+            sim.MovementsInput.value = parsedSettings.runnerMovements;
+            sim.RunnerSpawns.value = parsedSettings.runnerSpawns;
+            sim.HealerSpawns.value = parsedSettings.healerSpawns;
+            sim.CannonQueue.value = parsedSettings.eggs;
+            sim.SpawnTeam.checked = parsedSettings.toggleTeam;
+            sim.ToggleHealers.checked = parsedSettings.toggleHealers;
+            sim.ToggleRender.checked = parsedSettings.toggleRender;
+            sim.IncludeRoleNumbers.checked = parsedSettings.toggleRoleNumbers;
+            sim.ToggleIgnoreHealer.checked = parsedSettings.toggleIgnoreHealer;
+            for (let role of cmdROLE_NAMES) {
+                document.getElementById(`${role}cmds`).value = parsedSettings.team[role];
+            }
+            simDefLevelSelectOnChange();
+            simWaveSelectOnChange();
+            simToggleTeamOnClick();
+            oDrawAllRolePaths();
+        } catch (err) {
+            console.log(err);
+            alert("Import failed.");
+        }
+        allSettings.value = "";
+    }
+    let settingsExport = document.getElementById("settingsexport");
+    settingsExport.onclick = function (e) {
+        let allSettings = {
+            "level": sim.DefLevelSelect.value,
+            "wave": sim.WaveSelect.value,
+            "runnerMovements": sim.MovementsInput.value,
+            "runnerSpawns": sim.RunnerSpawns.value,
+            "healerSpawns": sim.HealerSpawns.value,
+            "eggs": sim.CannonQueue.value,
+            "toggleTeam": sim.SpawnTeam.checked,
+            "toggleHealers": sim.ToggleHealers.checked,
+            "toggleRender": sim.ToggleRender.checked,
+            "toggleRoleNumbers": sim.IncludeRoleNumbers.checked,
+            "toggleIgnoreHealer": sim.ToggleIgnoreHealer.checked,
+            "team": {}
+        };
+        for (let role of cmdROLE_NAMES) {
+            allSettings.team[role] = document.getElementById(`${role}cmds`).value;
+        }
+        allSettings = JSON.stringify(allSettings);
+        navigator.clipboard.writeText(allSettings);
+        console.log(allSettings);
+        alert("Settings copied to clipboard    -   " + allSettings);
+    }
+}

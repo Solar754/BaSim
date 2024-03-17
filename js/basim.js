@@ -26,6 +26,8 @@ const HTML_RUNNER_TABLE = "runnertable";
 const HTML_HEALER_TABLE = "healertable";
 const HTML_TOGGLE_TEAM = "toggleteam";
 const HTML_ROLE_MARKER = "rolemarker";
+const HTML_TOGGLE_ROLE_MARKER_NUMBERS = "rolemarkernumbers";
+const HTML_TOGGLE_IGNORE_HEALER = "ignorehealer";
 const HTML_THEME_BUTTON = "themebtn";
 const HTML_AUTOPLAY_BUTTON = "autoplay";
 
@@ -101,9 +103,11 @@ function simInit() {
 	sim.AllRoleMarkers.forEach(m => m.onclick = simToggleOnlyOneRoleMarker);
 	let clearCmds = document.getElementsByName("clearcmds");
 	clearCmds.forEach(m => m.onclick = cmdClearPath);
-	let includeNumbers = document.getElementById("rolemarkernumbers");
-	includeNumbers.onclick = (e) => { oDrawAllRolePaths(); }
-	cmdUpdateTeamMarkersOnClick();
+	sim.IncludeRoleNumbers = document.getElementById(HTML_TOGGLE_ROLE_MARKER_NUMBERS);
+	sim.IncludeRoleNumbers.onclick = (e) => { oDrawAllRolePaths(); }
+	sim.ToggleIgnoreHealer = document.getElementById(HTML_TOGGLE_IGNORE_HEALER);
+
+	updateSettingsOnClick();
 
 	// dark mode theme
 	document.getElementById(HTML_THEME_BUTTON).onclick = oFlipThemeOnClick;
@@ -654,6 +658,8 @@ var sim = {
 	ToggleRender: undefined,
 	MarkerMode: false,
 	SpawnTeam: undefined,
-	AllRoleMarkers: undefined
+	AllRoleMarkers: undefined,
+	IncludeRoleNumbers: undefined,
+	ToggleIgnoreHealer: undefined,
 }
 //}
