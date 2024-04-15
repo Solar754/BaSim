@@ -249,12 +249,12 @@ heHealer.prototype.doMovement = function () {
     }
 }
 heHealer.prototype.applyPoisonDmg = function (food) {
-    if (this.isDying) {
+    if (this.isDying || (food && this.zombieState)) {
         return;
     }
 
     if (this.greenCounter >= 0 && !food) { // every 30 ticks
-        if (this.greenCounter % 30 == 0) {
+        if (this.greenCounter % 30 == 0 && !this.zombieState) {
             this.hp -= GREEN_EGG;
             this.psnHitsplat = true;
         }
@@ -262,7 +262,7 @@ heHealer.prototype.applyPoisonDmg = function (food) {
     }
 
     let startTimer = (ba.TickCounter - this.spawnTick >= 5);
-    if (food && !this.zombieState) {
+    if (food) {
         this.hp = Math.max(0, this.hp - baPSN_FOOD_DMG);
         this.naturalPsn = 4;
         this.psnTickCount = 0;

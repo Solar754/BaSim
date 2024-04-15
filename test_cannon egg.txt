@@ -14,23 +14,10 @@ misc healer
 ehr,2,15    // lured to cannon, expected: second shot 5t after (20t), first egg lands 6t after (21t)
 
 [HEALER B9] https://youtu.be/S8axgE7haiQ?t=439
-wave 9, healer spawn 11, toggle team + healer
-collector
-47,26
-40,25:56
 
-healer - 9(27)
-35,7
-35,7
-35,7
-35,7
-45,25
-h1,8
-h1,1:45
-45,33
+{"level":"5","wave":"9","runnerMovements":"","runnerSpawns":"","healerSpawns":"11","eggs":"ehb,1,65","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n35,7\n35,7\n35,7\n45,25\nh1,8\nh1,1:45\n45,33\nh1,1:94","col":"47,26\n40,25:56"}}
 
 lure healer to cannon, shoot at 38.4 (second death tick), expect regen at 73.2
-ehb,1,65	
 
 1 red faster death: ehb,1,64-ehr,1,116
 2 red overkill: ehb,1,64-ehr,1,116-1,116
