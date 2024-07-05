@@ -13,7 +13,6 @@ const RADIUS = 15;
 
 function cRunCannonQueue() {
     cUpdateZonePriority();
-    if (ba.CannonQueue.length == 0) return;
     for (let i = 0; i < ba.CannonQueue.length; i++) {
         let cmd = ba.CannonQueue[i];
         if (m.mCurrentMap == mWAVE10) { // always west

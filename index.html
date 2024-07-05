@@ -97,6 +97,14 @@
                         <br>
                         <textarea id="colcmds"></textarea>
                     </td>
+                    <td name="def" style="display:none;">
+                        Defender<br>
+                        <input type="checkbox" name="rolemarker" id="deftogglemarker">
+                        <label for="deftogglemarker">Marker</label>
+                        <button name="clearcmds" for="defcmds">Clear</button>
+                        <br>
+                        <textarea id="defcmds"></textarea>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="5" style="text-align:left;">
@@ -104,6 +112,8 @@
                         <label for="rolemarkernumbers">Numbered</label>
                         <input style="margin-left:1rem;" type="checkbox" id="ignorehealer">
                         <label for="ignorehealer">Ignore healer</label>
+                        <button style="margin-left:1rem;display:none;" id="defupdatemarkers">Update defender
+                            markers</button>
                     </td>
                 </tr>
             </table>
@@ -114,10 +124,10 @@
     </div>
     <div class="container">
         <div class="one">
-            <button id="themebtn">⚫</button>
+            <button id="themebtn" title="theme">⚫</button>
             <button id="savestate">(S)ave State</button>
             <button id="loadstate">(L)oad State</button>
-            <button id="autoplay">&#9658;</button><br>
+            <button id="autoplay" title="playback">&#9658;</button><br>
             <input type="text" style="width:90px;" placeholder="Import settings"></input>
             <button id="settingsimport" style="width:16px;padding:0px;text-align:center;">!</button>
             <button id="settingsexport" style="text-align:center;margin-top:.1rem;">Export settings</button><br>

@@ -28,6 +28,7 @@ const HTML_TOGGLE_TEAM = "toggleteam";
 const HTML_ROLE_MARKER = "rolemarker";
 const HTML_TOGGLE_ROLE_MARKER_NUMBERS = "rolemarkernumbers";
 const HTML_TOGGLE_IGNORE_HEALER = "ignorehealer";
+const HTML_UPDATE_DEF_MARKERS = "defupdatemarkers";
 const HTML_THEME_BUTTON = "themebtn";
 const HTML_AUTOPLAY_BUTTON = "autoplay";
 
@@ -106,6 +107,7 @@ function simInit() {
 	sim.IncludeRoleNumbers = document.getElementById(HTML_TOGGLE_ROLE_MARKER_NUMBERS);
 	sim.IncludeRoleNumbers.onclick = (e) => { oDrawAllRolePaths(); }
 	sim.ToggleIgnoreHealer = document.getElementById(HTML_TOGGLE_IGNORE_HEALER);
+	document.getElementById(HTML_UPDATE_DEF_MARKERS).onclick = updateMarkersFromStateHistory;
 
 	updateSettingsOnClick();
 
@@ -482,11 +484,14 @@ function simWindowOnKeyDown(e) { // food_drop
 	if (sim.IsRunning && pl.RepairCountdown === 0) {
 		if (e.key === "r") {
 			mAddItem(new fFood(pl.X, pl.Y, true, ++sim.CurrentFoodId));
+			pl.Actions.good++;
 		} else if (e.key === "w") {
 			mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
+			pl.Actions.bad++;
 		} else if (e.key === "e") {
 			pl.ShouldPickupFood = true;
 			plPathfind(pl, pl.X, pl.Y);
+			pl.Actions.pickup++;
 		} else if (e.key === "t") {
 			if (baIsNextToEastTrap(pl.X, pl.Y) && ba.EastTrapCharges < 2) {
 				plPathfind(pl, pl.X, pl.Y);
@@ -497,6 +502,7 @@ function simWindowOnKeyDown(e) { // food_drop
 				pl.RepairCountdown = 5;
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
 			}
+			pl.Actions.repair++;
 		}
 	}
 	if (sim.IsRunning && e.key === "s" && document.activeElement.id !== HTML_RUNNER_MOVEMENTS) {

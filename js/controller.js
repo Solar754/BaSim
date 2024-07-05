@@ -2,7 +2,7 @@
 * Create and manage team
 */
 //{ Team Controller - cmd
-const cmdROLE_NAMES = ["main", "second", "heal", "col"];
+const cmdROLE_NAMES = ["main", "second", "heal", "col", "def"];
 var cmd = {
     Team: [],
 };

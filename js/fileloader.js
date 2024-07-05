@@ -6,6 +6,7 @@ let files = [
     "map.js",
     "controller.js",
     "player.js",
+    "playerdefender.js",
     "playerhealer.js",
     "playerhealerlogic.js",
     "runner.js",

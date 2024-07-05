@@ -271,6 +271,7 @@ function oDrawAllRolePaths() {
         "second": SECOND_CLR.slice(0, 3).concat([opacity]),
         "heal": PLAYER_HEAL_CLR.slice(0, 3).concat([opacity]),
         "col": COLLECTOR_CLR.slice(0, 3).concat([opacity]),
+        "def": DEFENDER_CLR.slice(0, 3).concat([opacity]),
     }
     simDraw(); // clear canvas
     let includeNumbers = document.getElementById("rolemarkernumbers").checked;

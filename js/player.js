@@ -7,16 +7,21 @@ var pl = {
     PathQueueY: undefined,
     X: undefined,
     Y: undefined,
+    Movements: undefined,
+    CurrentMovementIdx: undefined,
     ShouldPickupFood: undefined,
     StandStillCounter: undefined,
     RepairCountdown: undefined,
     RenderDistance: undefined,
-    RenderArea: undefined
+    RenderArea: undefined,
+    Actions: undefined,
 }
 function plInit(x, y) {
     pl.X = x;
     pl.Y = y;
     pl.PathQueuePos = 0;
+    pl.CurrentMovementIdx = 0;
+    pl.Movements = plParseTiles();
     pl.PathQueueX = [];
     pl.PathQueueY = [];
     pl.ShortestDistances = [];
@@ -24,8 +29,15 @@ function plInit(x, y) {
     pl.ShouldPickupFood = false;
     pl.StandStillCounter = 0;
     pl.RepairCountdown = 0;
+    pl.Actions = {
+        "good": 0,
+        "bad": 0,
+        "repair": 0,
+        "pickup": 0
+    }
 }
 function plTick() {
+    plHandleMovements();
     ++pl.StandStillCounter;
     let prevX = pl.X;
     let prevY = pl.Y;
