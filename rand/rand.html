@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<title>Rand</title>
+<link rel="icon" type="image/x-icon" href="css/runner.ico">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/basim.js"></script>
+<script src="js/fileloader.js"></script>
+<div class="grid-container">
+    <div class="container">
+        <div class="one">
+            <div id="pointswrapper">
+                Penalty: <span id="pointscounter">0</span><br id="tmp-space"><br>
+            </div>
+            Lure distance: <select disabled id="deflevelselect">
+                <option value="4">4 tiles (Level 1)</option>
+                <option value="5" selected>5 tiles (Level 2-5)</option>
+                <option value="6">6 tiles</option>
+                <option value="7">7 tiles</option>
+                <option value="8">8 tiles</option>
+            </select><br>
+            Wave: <select disabled id="waveselect">
+                <option value="1">Wave 1</option>
+                <option value="2">Wave 2</option>
+                <option value="3">Wave 3</option>
+                <option value="4">Wave 4</option>
+                <option value="5">Wave 5</option>
+                <option value="6">Wave 6</option>
+                <option value="7">Wave 7</option>
+                <option value="8">Wave 8</option>
+                <option value="9">Wave 9</option>
+                <option value="10">Wave 10</option>
+            </select><br>
+            <div id="seedwrapper" style="display:none;">
+                Seed: <input id="runnermovements" type="text" /><br>
+            </div>
+            <div style="display:none;">
+                Runner spawns: <input id="runnerspawns" type="text" /><br>
+                Healer spawns: <input id="healerspawns" type="text" /><br>
+                Eggs: <input id="cannonshots" type="text" style="width:14rem;" /><br>
+                <input type="checkbox" id="toggleteam">
+                <label for="toggleteam">Team</label>
+                <input type="checkbox" id="togglehealers">
+                <label for="togglehealers">Healers</label>
+                <input type="checkbox" id="togglerender">
+                <label for="togglerender">Render</label>
+            </div>
+            <button id="killrunner">Kill</button> <input id="killrunnerinput" placeholder="id" style="width:20px">
+            <button id="retry">Retry</button>
+            <button id="reroll">Reroll</button><br>
+            <input type="checkbox" id="numbered" checked="true">
+            <label for="numbered">Numbered</label>
+            <input type="checkbox" id="unlock">
+            <label for="unlock">Unlock</label>
+            <input type="checkbox" id="togglemarker">
+            <label for="togglemarker">Marker</label>
+            <div class="dropdown">
+                <button id="markeroptions">Options</button>
+                <div id="markerdropdown" class="dropdown-content">
+                    <span id="markercolor">
+                        color <input class="colorpicker" id="markercolorpicker" type="color"></input>
+                    </span>
+                    <span id="markerclear">clear</span>
+                    <span>
+                        <input type="text" style="width:39px;" placeholder="import"></input>
+                        <button id="markerimport" style="width:15px;padding:0px;text-align:center;">!</button>
+                    </span>
+                    <span id="markerexport">
+                        export <small>&#9660;</small>
+                        <div class="submenu" label="export" id="exportsubmenu"></div>
+                    </span>
+                </div>
+            </div><br>
+            <div style="display:none;">
+                <button id="wavestart"></button>
+                <button id="wavepause" style="display: none;"></button>
+                <button id="wavestepback" style="display: none;">Step Backward</button>
+            </div>
+            <button id="generate">Generate</button>
+            <button id="nextwave">Next</button>
+            <button id="wavestep" style="display: none;">Step Forward</button>
+            Tick count: <span id="tickcount"></span> (<span id="secondscount"></span>s)<br>
+        </div>
+        <div class="two">
+            <table id="teammatetable" style="display: none;">
+                <tr>
+                    <td name="main">
+                        Main<br>
+                        <input type="checkbox" name="rolemarker" id="maintogglemarker">
+                        <label for="maintogglemarker">Marker</label>
+                        <button name="clearcmds" for="maincmds">Clear</button>
+                        <br>
+                        <textarea id="maincmds"></textarea>
+                    </td>
+                    <td name="second">
+                        Second<br>
+                        <input type="checkbox" name="rolemarker" id="secondtogglemarker">
+                        <label for="secondtogglemarker">Marker</label>
+                        <button name="clearcmds" for="secondcmds">Clear</button>
+                        <br>
+                        <textarea id="secondcmds"></textarea>
+                    </td>
+                    <td name="heal">
+                        Heal<br>
+                        <input type="checkbox" name="rolemarker" id="healtogglemarker">
+                        <label for="healtogglemarker">Marker</label>
+                        <button name="clearcmds" for="healcmds">Clear</button>
+                        <br>
+                        <textarea id="healcmds"></textarea>
+                    </td>
+                    <td name="col">
+                        Collector<br>
+                        <input type="checkbox" name="rolemarker" id="coltogglemarker">
+                        <label for="coltogglemarker">Marker</label>
+                        <button name="clearcmds" for="colcmds">Clear</button>
+                        <br>
+                        <textarea id="colcmds"></textarea>
+                    </td>
+                    <td name="def" style="display:none;">
+                        Defender<br>
+                        <input type="checkbox" name="rolemarker" id="deftogglemarker">
+                        <label for="deftogglemarker">Marker</label>
+                        <button name="clearcmds" for="defcmds">Clear</button>
+                        <br>
+                        <textarea id="defcmds"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align:left;">
+                        <input type="checkbox" id="rolemarkernumbers">
+                        <label for="rolemarkernumbers">Numbered</label>
+                        <input style="margin-left:1rem;" type="checkbox" id="ignorehealer">
+                        <label for="ignorehealer">Ignore healer</label>
+                        <button style="margin-left:1rem;display:none;" id="defupdatemarkers">Update defender
+                            markers</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <canvas id="basimcanvas"></canvas><br>
+    </div>
+    <div class="container">
+        <div class="one">
+            <button id="themebtn" title="theme">⚫</button>
+            <div style="display:none;">
+                <button id="savestate">(S)ave State</button>
+                <button id="loadstate">(L)oad State</button>
+                <button id="autoplay" title="playback">&#9658;</button><br>
+                <input type="text" style="width:90px;" placeholder="Import settings"></input>
+                <button id="settingsimport" style="width:16px;padding:0px;text-align:center;">!</button>
+                <button id="settingsexport" style="text-align:center;margin-top:.1rem;">Export settings</button><br>
+            </div>
+            <br>
+            <a href="#" onclick="oInstructions()">rules</a>
+            <br>
+            <b>space</b> starts or stops the wave.<br>
+            <b>left-click</b> moves the player.<br>
+            <b>right-click</b> places a collector.<br>
+            <b>r</b> drops a right food.<br>
+            <b>w</b> drops a wrong food.<br>
+            <b>e</b> picks up a food or log.<br>
+            <b>t</b> repairs trap.<br><br>
+            <b>Thanks to ...</b>
+            <ul>
+                <li>Henke (original sim)</li>
+                <li>Mclovin (states)</li>
+                <li>Raid (healer targeting)</li>
+                <li>B5 (render, egg mechanics)</li>
+                <li>Capeshit (render, egg mechanics)</li>
+                <li>Scorch (egg mechanics)</li>
+                <li>Fosters (step back)</li>
+                <li>Crowride (dark mode)</li>
+            </ul>
+        </div>
+        <div>
+            <table id="runnertable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Runner</th>
+                        <th>Tick</th>
+                        <th>State</th>
+                        <th>Health</th>
+                        <th>Position</th>
+                        <th>Destination</th>
+                        <th>Target</th>
+                        <th>Chat</th>
+                    </tr>
+                </thead>
+            </table><br>
+            <div style="display:none;">
+                <table id="healertable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Healer</th>
+                            <th>Current<br>Target</th>
+                            <th>Last<br>Target</th>
+                            <th>Spray<br>Timer</th>
+                            <th>Poisoned</th>
+                            <th>Health</th>
+                            <th>Position</th>
+                            <th>Destination</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+
+</html>

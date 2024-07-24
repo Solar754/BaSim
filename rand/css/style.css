@@ -1,0 +1,147 @@
+:root[data-theme="light"] {
+    color-scheme: light;
+    --text: black;
+    --background: white;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --text: rgba(255, 255, 255, 0.795);
+    --background: #191a1b;
+}
+
+body {
+    color: var(--text);
+    background: var(--background);
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto;
+    transition: 300ms ease-in-out;
+}
+
+textarea {
+    width: 85px;
+    height: 60px;
+    resize: none;
+}
+
+table,
+th,
+td {
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 2px 4px;
+}
+
+th:last-child {
+    width: 8em;
+}
+
+td {
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    margin: auto;
+}
+
+.one {
+    float: left;
+    padding-right: 1rem;
+}
+
+.one>ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.two {
+    margin-left: 23rem;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.egg {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.ripple {
+    width: 11px;
+    height: 11px;
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+    animation: "ripple-effect";
+    animation-delay: 0s;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+}
+
+@keyframes ripple-effect {}
+
+/* Tile marker options menu */
+input[disabled] {
+    pointer-events: none;
+}
+
+.colorpicker {
+    height: 22px;
+    width: 22px;
+    border: none;
+    background-color: transparent;
+    vertical-align: middle;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    color: var(--text);
+    background-color: var(--background);
+    border: 1px solid var(--text);
+    min-width: 86px;
+    overflow: auto;
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown-content>span {
+    color: var(--text);
+    background-color: var(--background);
+    min-height: 22px;
+    padding: 3px 5px;
+    margin: 5px 5px;
+    border-radius: 5px;
+    display: block;
+    cursor: default;
+}
+
+.dropdown span:hover {
+    background-color: #88828286;
+}
+
+#markerexport:hover div,
+#markeroptions:hover+#markerdropdown,
+#markerdropdown:hover {
+    display: block;
+}
+
+.submenu {
+    display: none;
+}
