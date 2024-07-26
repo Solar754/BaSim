@@ -493,20 +493,22 @@ function simWindowOnKeyDown(e) { // food_drop
 			mAddItem(new fFood(pl.X, pl.Y, true, ++sim.CurrentFoodId));
 			pl.Actions.good++;
 			num_chomp++;
+			foodCounterHTML.innerHTML = Number(foodCounterHTML.innerHTML) - 1;
 		} else if (e.key === "w") {
 			mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
 			pl.Actions.bad++;
 			num_blugh++;
+			foodCounterHTML.innerHTML = Number(foodCounterHTML.innerHTML) - 1;
 		} else if (e.key === "e") {
 			pl.ShouldPickupFood = true;
 			plPathfind(pl, pl.X, pl.Y);
 			pl.Actions.pickup++;
 		} else if (e.key === "t") {
-			if (baIsNextToEastTrap(pl.X, pl.Y) && ba.EastTrapCharges < 2) {
+			if (baIsNextToEastTrap(pl.X, pl.Y) && ba.EastTrapCharges < 3) {
 				plPathfind(pl, pl.X, pl.Y);
 				pl.RepairCountdown = 5;
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
-			} else if (baIsNextToWestTrap(pl.X, pl.Y) && ba.WestTrapCharges < 2) {
+			} else if (baIsNextToWestTrap(pl.X, pl.Y) && ba.WestTrapCharges < 3) {
 				plPathfind(pl, pl.X, pl.Y);
 				pl.RepairCountdown = 5;
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;

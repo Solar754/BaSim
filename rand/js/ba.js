@@ -125,8 +125,8 @@ function baInit(maxRunnersAlive, totalRunners, maxHealersAlive, totalHealers, ru
     ba.CurrentPlayerId = 1;
     ba.CurrentRunnerId = 1;
     ba.CurrentHealerId = 1;
-    ba.EastTrapCharges = 2;
-    ba.WestTrapCharges = 2;
+    ba.EastTrapCharges = 3;
+    ba.WestTrapCharges = 3;
     ba.CannonQueue = cannonQueue;
 
     pl.RenderDistance = 15;
@@ -251,13 +251,13 @@ function baDrawDetails() {
             rrFillItem(baWAVE10_SOUTH_LOG_X, baWAVE10_SOUTH_LOG_Y);
         }
     }
-    if (ba.EastTrapCharges > 1) {
+    if (ba.EastTrapCharges > 2) {
         rrFill(45, 26);
     } else {
         rrOutline(45, 26);
         if (ba.EastTrapCharges > 0) rrFillItem(45, 26);
     }
-    if (ba.WestTrapCharges > 1) {
+    if (ba.WestTrapCharges > 2) {
         rrFill(15, 25);
     } else {
         rrOutline(15, 25);
@@ -281,7 +281,7 @@ function baDrawEntities() {
         if (npc.psnHitsplat)
             addColor(npc.x, npc.y, rrFillItem, PSN_HIT_CLR);
         if (npc?.toggleRed)
-            addColor(npc.x, npc.y, rrFill, RED_EGG_CLR);
+            addColor(npc.x, npc.y, rrFill, RUNNER_RED_CLR);
         if (npc.blueCounter != -1)
             addColor(npc.x, npc.y, rrOutline, BLUE_EGG_CLR);
     }

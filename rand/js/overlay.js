@@ -8,6 +8,7 @@ const PLAYER_HEAL_CLR = [10, 240, 10, 220];
 const COLLECTOR_CLR = [240, 240, 10, 200];
 const DEFENDER_CLR = [10, 10, 240, 220];
 const RUNNER_CLR = [10, 10, 240, 127];
+const RUNNER_RED_CLR = [240, 10, 10, 127];
 const RUNNER_DEAD_CLR = [1, 1, 39, 150];
 const HEALER_CLR = [11, 199, 11, 150];
 const HEALER_DEAD_CLR = [1, 39, 1, 150];
@@ -314,17 +315,22 @@ function oInstructions() {
     Kill all the runners in as few moves as possibe from waves 1-10. The smaller the
     penalty the better. 
     
-    No reserves. Collector is available.
-
     Begin by clicking the 'Generate' button. When all runners are dead, the points will
     stop and the 'Next' button will be available.
 
-    Can Kill/Retry/Reroll 4 times.
-        Kill will remove a runner 2 ticks after the button is pressed for a +50 penalty.
-        Retry will restart the wave with the same seed.
-        Reroll will re-generate the seed.
+    Can Remove/Retry/Reroll 3 times.
+        Remove a runner by id 2 ticks after the button is pressed
+        Retry restarts the wave with the same seed
+        Reroll re-generates the seed
 
-    Unlock will allow wave change and access to the seed
+    Unlock will allow wave change and access to the seed.
+
+
+Notes
+    No reserves
+    Collector is available
+    Traps have 3 charges
+    States are inconsistent
     `
 
     let codeCalculator = document.createElement("input");

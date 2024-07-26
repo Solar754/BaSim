@@ -45,9 +45,9 @@ function plTick() {
     if (pl.RepairCountdown > 0) {
         if (--pl.RepairCountdown === 0) {
             if (baIsNextToEastTrap(pl.X, pl.Y)) {
-                ba.EastTrapCharges = 2;
+                ba.EastTrapCharges = 3;
             } else if (baIsNextToWestTrap(pl.X, pl.Y)) {
-                ba.WestTrapCharges = 2;
+                ba.WestTrapCharges = 3;
             }
         }
     } else {

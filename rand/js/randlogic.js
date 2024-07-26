@@ -1,6 +1,12 @@
 /*
 TODO
 - keep track of total pts in local storage
+- maybe remove blues and re-evaluate w8/9
+
+- penalty/lose conditions for food
+    - lose after 500+(?) penalty
+    - get an equation for food for each wave, when it hits 0 take a +25(?) penalty per food
+
 
 w1
     2 runners, normal rng
@@ -10,21 +16,23 @@ w3
     3 runners, bad rng (4/6 west 2/6 south)
 w4
     3 runners, normal rng
-    can go into states 2/3
+    only go between states 0 and 2
 w5
-    4 runners, good rng (no west, 2/6 east)
+    4 runners, good rng (5/6 s, 1/6 e)
+    only go between states 0 and 3
 w6
     3 runners, normal rng, offset
 w7
     4 runners, normal rng, 2 offset
 w8
-    5 runners, normal rng, offset, blue
+    5 runners, bad rng (3/6 w, 2/6 s, 1/6 e), blue
+    can go into states 2/3
 w9
-    5 runners, bad rng (3/6 west 2/6 south), blue
-    can go into states 2/3
+    5 runners, normal rng, 2 offset, blue
+    only go between states 0 and 2
 w10
-    4 runners, normal rng
-    can go into states 2/3
+    4 runners, bad rng (3/6 w, 2/6 s, 1/6 e), offset
+    only go between states 0 and 3
     reduced lure range
 */
 
@@ -33,12 +41,27 @@ const SEED_NUM_RUNNERS = 10;
 const SEED_NUM_RND = 500;
 
 var totalPoints = 0;
-var num_retries_remaining = 4;
+var num_retries_remaining = 3;
 var num_chomp = 0;
 var num_blugh = 0;
 var num_raa = 0;
 var num_kill = 0;
 
+var expected_num_food = (n) => {
+    switch (n) {
+        case 1:
+        case 2:
+            return 6;
+        case 3:
+            return 9;
+        case 4:
+            return 10;
+        case 5:
+            return 12;
+    }
+};
+
+let foodCounterHTML = document.getElementById("foodcounter");
 let unlockBtn = document.getElementById("unlock");
 let generateBtn = document.getElementById("generate");
 let nextBtn = document.getElementById("nextwave");
@@ -142,6 +165,8 @@ function generateScenario(e) {
         stepforwardBtn.click();
     }
 
+    foodCounterHTML.innerHTML = expected_num_food(ba.TotalRunners);
+
     generateBtn.setAttribute("disabled", true);
     if (num_retries_remaining > 0) {
         rerollBtn.removeAttribute("disabled");
@@ -166,12 +191,12 @@ function generateSeed() {
                     seed += "w";
             }
             else if (wave == "5") {
-                if (rnd >= 0 && rnd <= 1) // 2/6
+                if (rnd >= 0 && rnd <= 0) // 1/6
                     seed += "e";
-                else if (rnd >= 2) // 4/6
+                else if (rnd >= 1) // 5/6
                     seed += "s";
             }
-            else if (wave == "9") {
+            else if (wave == "8" || wave == "10") {
                 if (rnd >= 0 && rnd <= 1) // 2/6
                     seed += "s";
                 else if (rnd >= 2 && rnd <= 4) // 3/6
@@ -195,13 +220,25 @@ function generateSeed() {
 
 function iterState(state) {
     let wave = sim.WaveSelect.value;
-    if (wave == "4" || wave == "9" || wave == "10") {
+    if (wave == "4" || wave == "9") { // states 0/2
+        ++state;
+        if (state > 0) {
+            state = 2;
+        }
+    }
+    else if (wave == "5" || wave == "10") { // states 0/3
+        ++state;
+        if (state > 0) {
+            state = 3;
+        }
+    }
+    else if (wave == "8") { // states 0,1,2,3
         ++state;
         if (state > 3) {
             state = 1;
         }
     }
-    else { // never enter states 2/3
+    else { // states 0/1
         ++state;
         if (state > 1) {
             state = 1;
@@ -224,8 +261,14 @@ function offsetSpawns() {
             runner.toggleRed = true;
         }
     }
-    else if (wave == "8") {
-        if (ba.TickCounter == 26) {
+    else if (wave == "9") {
+        if (ba.TickCounter == 16 || ba.TickCounter == 36) {
+            let runner = baSpawnRunner();
+            runner.toggleRed = true;
+        }
+    }
+    else if (wave == "10") {
+        if (ba.TickCounter == 16) {
             let runner = baSpawnRunner();
             runner.toggleRed = true;
         }
@@ -236,6 +279,9 @@ function setupBlue() {
     let wave = sim.WaveSelect.value;
     if (wave == "8" || wave == "9") {
         sim.CannonQueue.value = "wrb,1," + MAX_TICKS;
+    }
+    else {
+        sim.CannonQueue.value = "";
     }
 }
 
@@ -260,6 +306,7 @@ function resetPoints() {
     num_raa = 0;
     num_kill = 0;
     pointsCounter.innerHTML = 0;
+    foodCounterHTML.innerHTML = expected_num_food(ba.TotalRunners);
     stateHistory.clear();
 }
 
@@ -294,8 +341,14 @@ function checkRoundStatus() {
         return;
     }
 
-    let points = (num_raa * 20) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 50) + updateMarkersFromStateHistory();
+    let points = (num_raa * 20) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 25) + updateMarkersFromStateHistory();
     points += Math.floor(ba.TickCounter * 0.3) - Math.floor(MAX_TICKS * 0.3) - 2;
+
+    let foodDebt = Number(foodCounterHTML.innerHTML);
+    if (foodDebt < 0) {
+        points += Math.abs(foodDebt) * 25;
+    }
+
     pointsCounter.innerHTML = points;
 }
 
