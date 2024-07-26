@@ -342,7 +342,7 @@ function checkRoundStatus() {
         return;
     }
 
-    let points = (num_raa * 100) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 25) + updateMarkersFromStateHistory();
+    let points = (num_raa * 100) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 125) + updateMarkersFromStateHistory();
     points += Math.floor(ba.TickCounter * 0.3) - Math.floor(MAX_TICKS * 0.3) - 2;
 
     let foodDebt = Number(foodCounterHTML.innerHTML);
