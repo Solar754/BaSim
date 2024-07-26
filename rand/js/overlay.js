@@ -247,6 +247,7 @@ function oDrawEggs() {
         for (let egg of p.eggQueue) {
             let cannon = (egg.cannon == "w") ? cWEST_CANNON_PX : cEAST_CANNON_PX;
             if (egg.stalled >= 0) {
+                /*
                 let eggImg = document.createElement("img");
                 eggImg.className = "egg";
                 eggImg.src = "css/" + EGG_MAP[egg.type].src;
@@ -254,6 +255,7 @@ function oDrawEggs() {
                 document.body.appendChild(eggImg);
                 eggImg.style.left = (cannon[0] + EGG_MAP[egg.type].x) + `px`;
                 eggImg.style.top = cannon[1] + `px`;
+                */
             }
             else if (egg.stalled == -1 && egg.type == "r") {
                 addColor(p.x, p.y, rrOutline, RED_EGG_CLR);
@@ -318,12 +320,19 @@ function oInstructions() {
     Begin by clicking the 'Generate' button. When all runners are dead, the points will
     stop and the 'Next' button will be available.
 
+    Once the food counter in the top left hits 0, additional food incurs a larger penalty.
+
     Can Remove/Retry/Reroll 3 times.
         Remove a runner by id 2 ticks after the button is pressed
         Retry restarts the wave with the same seed
         Reroll re-generates the seed
 
     Unlock will allow wave change and access to the seed.
+
+
+Lose conditions
+    2+ raas
+    Penalty > ${PENALTY_CAP}
 
 
 Notes

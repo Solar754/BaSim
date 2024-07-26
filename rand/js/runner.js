@@ -426,7 +426,7 @@ ruRunner.prototype.processEggQueue = function () {
                 this.foodTarget = null;
                 this.isDying = false;
                 this.despawnCountdown = -1;
-                this.blueCounter = 9;
+                this.blueCounter = BLUE_CD;
                 [this.destinationX, this.destinationY] = (egg.cannon == 'w') ? cWEST_CANNON : cEAST_CANNON;
                 this.eggQueue = [];
             }

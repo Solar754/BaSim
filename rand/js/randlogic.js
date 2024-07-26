@@ -1,17 +1,12 @@
 /*
 TODO
 - keep track of total pts in local storage
-- maybe remove blues and re-evaluate w8/9
-
-- penalty/lose conditions for food
-    - lose after 500+(?) penalty
-    - get an equation for food for each wave, when it hits 0 take a +25(?) penalty per food
-
 
 w1
     2 runners, normal rng
 w2 
     3 runners, normal rng
+    can go into states 2/3
 w3
     3 runners, bad rng (4/6 west 2/6 south)
 w4
@@ -26,7 +21,7 @@ w7
     4 runners, normal rng, 2 offset
 w8
     5 runners, bad rng (3/6 w, 2/6 s, 1/6 e), blue
-    can go into states 2/3
+    only go between states 0 and 2
 w9
     5 runners, normal rng, 2 offset, blue
     only go between states 0 and 2
@@ -37,8 +32,10 @@ w10
 */
 
 const MAX_TICKS = 64;
-const SEED_NUM_RUNNERS = 10;
+const SEED_NUM_RUNNERS = 6;
 const SEED_NUM_RND = 500;
+const PENALTY_CAP = 1000;
+const BLUE_CD = 16;
 
 var totalPoints = 0;
 var num_retries_remaining = 3;
@@ -220,7 +217,7 @@ function generateSeed() {
 
 function iterState(state) {
     let wave = sim.WaveSelect.value;
-    if (wave == "4" || wave == "9") { // states 0/2
+    if (wave == "4" || wave == "8" || wave == "9") { // states 0/2
         ++state;
         if (state > 0) {
             state = 2;
@@ -232,7 +229,7 @@ function iterState(state) {
             state = 3;
         }
     }
-    else if (wave == "8") { // states 0,1,2,3
+    else if (wave == "2") { // states 0,1,2,3
         ++state;
         if (state > 3) {
             state = 1;
@@ -315,6 +312,10 @@ function loseConditions() {
         alert("Too many raa's");
         location.reload();
     }
+    else if ((Number(pointsCounter.innerHTML) + totalPoints) > PENALTY_CAP) {
+        alert("Penalty exceeded " + PENALTY_CAP);
+        location.reload();
+    }
 }
 
 function printPoints() {
@@ -341,7 +342,7 @@ function checkRoundStatus() {
         return;
     }
 
-    let points = (num_raa * 20) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 25) + updateMarkersFromStateHistory();
+    let points = (num_raa * 100) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 25) + updateMarkersFromStateHistory();
     points += Math.floor(ba.TickCounter * 0.3) - Math.floor(MAX_TICKS * 0.3) - 2;
 
     let foodDebt = Number(foodCounterHTML.innerHTML);
@@ -358,6 +359,7 @@ function nextWave(e) {
     }
 
     printPoints();
+    foodCounterHTML.innerHTML = "?";
 
     sim.WaveSelect.value = parseInt(sim.WaveSelect.value) + 1;
     simWaveSelectOnChange();
