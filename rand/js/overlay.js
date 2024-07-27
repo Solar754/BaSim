@@ -314,8 +314,7 @@ function oInstructions() {
     instructionsElement.style.width = rr.CanvasWidth + "px";
     instructionsElement.style.height = rr.CanvasHeight + "px";
     instructionsElement.innerHTML = `Goal
-    Kill all the runners in as few moves as possibe from waves 1-10. The smaller the
-    penalty the better. 
+    Kill all the runners in as few moves as possible from waves 1-10. 
     
     Begin by clicking the 'Generate' button. When all runners are dead, the points will
     stop and the 'Next' button will be available.

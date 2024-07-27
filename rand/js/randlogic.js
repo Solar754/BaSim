@@ -342,7 +342,7 @@ function checkRoundStatus() {
         return;
     }
 
-    let points = (num_raa * 100) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 125) + updateMarkersFromStateHistory();
+    let points = (num_raa * 100) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 100) + updateMarkersFromStateHistory();
     points += Math.floor(ba.TickCounter * 0.3) - Math.floor(MAX_TICKS * 0.3) - 2;
 
     let foodDebt = Number(foodCounterHTML.innerHTML);
@@ -388,9 +388,9 @@ function finish() {
     oInstructions();
     let instructions = document.getElementById("rules-finish");
     instructions.innerHTML = `Completed gz
-    Total Penalty: ${totalPoints}
+    Total Points: ${Math.max(PENALTY_CAP - totalPoints, 0)}
 
-Wave Breakdown
+Penalty breakdown
     ${document.getElementById('points_w1').innerHTML}
     ${document.getElementById('points_w2').innerHTML}
     ${document.getElementById('points_w3').innerHTML}
