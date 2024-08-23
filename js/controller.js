@@ -138,7 +138,7 @@ function cmdParseTiles(role) { // expected: x,y:tick
             WaitUntil: parseInt(waitUntil),
         });
     }
-    return tiles
+    return tiles;
 }
 function cmdUpdateRolePath(role, xTile, yTile) {
     let textarea = document.getElementById(`${role}cmds`);
@@ -155,6 +155,10 @@ function cmdClearPath(e) {
     let id = e.target.getAttribute("for");
     let cmds = document.getElementById(id);
     cmds.value = "";
+    if (id.includes("def")) {
+        sim.RecordDefButton.removeAttribute("stoptick");
+        toggleDefRecordColor(cmds.value);
+    }
     oDrawAllRolePaths();
 }
 function cmdUncheckAllRoles() {

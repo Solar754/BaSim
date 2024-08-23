@@ -336,62 +336,62 @@ function simStartStopButtonOnClick() {
 		let wave = sim.WaveSelect.value;
 		switch (Number(wave)) {
 			case 1:
-				maxRunnersAlive = 2;
-				totalRunners = 2;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 2;
 				totalHealers = 2;
 				break;
 			case 2:
-				maxRunnersAlive = 3;
-				totalRunners = 3;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 3;
 				totalHealers = 3;
 				break;
 			case 3:
-				maxRunnersAlive = 3;
-				totalRunners = 3;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 2;
 				totalHealers = 3;
 				break;
 			case 4:
-				maxRunnersAlive = 3;
-				totalRunners = 3;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 3;
 				totalHealers = 4;
 				break;
 			case 5:
-				maxRunnersAlive = 4;
-				totalRunners = 4;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 4;
 				totalHealers = 5;
 				break;
 			case 6:
-				maxRunnersAlive = 3;
-				totalRunners = 3;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 4;
 				totalHealers = 6;
 				break;
 			case 7:
-				maxRunnersAlive = 4;
-				totalRunners = 4;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 4;
 				totalHealers = 7;
 				break;
 			case 8:
-				maxRunnersAlive = 5;
-				totalRunners = 5;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 5;
 				totalHealers = 7;
 				break;
 			case 9:
-				maxRunnersAlive = 5;
-				totalRunners = 5;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 6;
 				totalHealers = 8;
 				break;
 			case 10:
-				maxRunnersAlive = 4;
-				totalRunners = 4;
+				maxRunnersAlive = expected_num_runners();
+				totalRunners = expected_num_runners();
 				maxHealersAlive = 4;
 				totalHealers = 7;
 				break;
@@ -498,7 +498,7 @@ function simWindowOnKeyDown(e) { // food_drop
 			mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
 			pl.Actions.bad++;
 			num_blugh++;
-			foodCounterHTML.innerHTML = Number(foodCounterHTML.innerHTML) - 1;
+			//foodCounterHTML.innerHTML = Number(foodCounterHTML.innerHTML) - 1;
 		} else if (e.key === "e") {
 			pl.ShouldPickupFood = true;
 			plPathfind(pl, pl.X, pl.Y);

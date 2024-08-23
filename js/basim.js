@@ -107,7 +107,8 @@ function simInit() {
 	sim.IncludeRoleNumbers = document.getElementById(HTML_TOGGLE_ROLE_MARKER_NUMBERS);
 	sim.IncludeRoleNumbers.onclick = (e) => { oDrawAllRolePaths(); }
 	sim.ToggleIgnoreHealer = document.getElementById(HTML_TOGGLE_IGNORE_HEALER);
-	document.getElementById(HTML_UPDATE_DEF_MARKERS).onclick = updateMarkersFromStateHistory;
+	sim.RecordDefButton = document.getElementById(HTML_UPDATE_DEF_MARKERS);
+	sim.RecordDefButton.onclick = updateMarkersFromStateHistory;
 
 	updateSettingsOnClick();
 
@@ -400,7 +401,8 @@ function simStartStopButtonOnClick() {
 		}
 		console.log("Wave " + wave + " started!");
 		simTick();
-		sim.TickTimerId = setInterval(simTick, 600);
+		if (!sim.IsPaused)
+			sim.TickTimerId = setInterval(simTick, 600);
 	}
 	cmdUncheckAllRoles();
 }
@@ -622,6 +624,11 @@ function simTick() {
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
 	stateHistory.pushState(buildSaveState());
+	if (sim.RecordDefButton.getAttribute("stoptick") == ba.TickCounter) {
+		if (pl.Movements.length > 0 && sim.SpawnTeam.checked) {
+			sim.PauseResumeButton.click();
+		}
+	}
 }
 function simDraw() {
 	mDrawMap();
@@ -667,5 +674,6 @@ var sim = {
 	AllRoleMarkers: undefined,
 	IncludeRoleNumbers: undefined,
 	ToggleIgnoreHealer: undefined,
+	RecordDefButton: undefined,
 }
 //}

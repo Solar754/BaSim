@@ -321,7 +321,7 @@ function oInstructions() {
 
     Once the food counter in the top left hits 0, additional food incurs a larger penalty.
 
-    Can Remove/Retry/Reroll 3 times.
+    Can Remove/Retry/Reroll ${num_retries_remaining} times.
         Remove a runner by id 2 ticks after the button is pressed
         Retry restarts the wave with the same seed
         Reroll re-generates the seed

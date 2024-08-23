@@ -156,12 +156,10 @@ function baTick() {
     }
     // spawns
     let isDefaultCycle = (ba.TickCounter > 1 && ba.TickCounter % 10 === 1);
-    if (ba.RunnersAlive < ba.MaxRunnersAlive && ba.RunnersKilled + ba.RunnersAlive < ba.TotalRunners) {
-        if ((ba.Runnerspawns.length === 0 && isDefaultCycle) ||
-            (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerSpawnsIndex] === ba.TickCounter)) {
-            baSpawnRunner();
-        }
-        offsetSpawns();
+    if (shuffled_spawns.includes(ba.TickCounter)) {
+        let new_runner = baSpawnRunner();
+        if (ba.TickCounter % 10 !== 1) // is offset
+            new_runner.toggleRed = true;
     }
     if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
         if ((ba.HealerSpawns.length === 0 && isDefaultCycle) ||

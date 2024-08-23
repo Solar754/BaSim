@@ -335,8 +335,9 @@ Runner/healer spawns
 
 Egg syntax
     Input eggs to shoot using certain specifiers, in the format
-    <cannon=e|w><penance=r|h><egg=r|g|b>,num eggs,tick. An egg will appear next to
-    the appropriate hopper on the 'click' and disappear the tick the egg effect is applied.
+        <cannon=e|w><penance=r|h><egg=r|g|b>,num eggs,tick
+    An egg will appear next to the appropriate hopper on the 'click' and disappear the tick 
+    the egg effect is applied.
 
     Example: wrr,2,51 (West Runner Red, 2 eggs, tick 51)
     means the west cannon will try to target a runner and shoot 2 red eggs, as if the player clicked
@@ -348,7 +349,7 @@ Egg syntax
 
 
 General teammate syntax
-    Input tiles in x,y:tick format, or toggle marker to select tiles on canvas.
+    Input tiles in 'x,y:tick' format, or toggle marker to select tiles on canvas.
     Tiles added while sim is running get timestamped with current tick and processed.
     Tick is the earliest possible time a command happens and is optional. It reflects 
     when a "click" would happen in-game.
@@ -368,8 +369,14 @@ Player healer syntax
     its own decisions (don't expect much).
 
 
-Ignore healer toggle
+Ignore healer
     When toggled on, npc healers will not target player healer.
+
+
+Defender record actions
+    When pressed while the sim is running, all actions up to the current tick will be recorded and
+    replayed next time the sim is ran. If there are any actions recorded then the text will be green.
+    These actions can be imported/exported along with the other settings.
 
 
 Trivial code convert tool (on the right)

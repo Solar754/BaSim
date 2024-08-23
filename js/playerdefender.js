@@ -1,11 +1,21 @@
 /*
 * Parse and update defender/player inputs
 */
+function toggleDefRecordColor(hasTiles) {
+    if (hasTiles) {
+        sim.RecordDefButton.style.color = "green";
+    }
+    else {
+        sim.RecordDefButton.style.color = "";
+    }
+}
+
 // g#:tick / b#:tick -- good/bad food drop
 // t:tick / p:tick-- repair trap/pick up food
 function plParseTiles() {
     let tiles = []
     let vals = document.getElementById(`defcmds`).value;
+    toggleDefRecordColor(vals);
     vals = vals.split("\n");
     for (let input of vals) {
         if (!input) continue;
@@ -102,7 +112,7 @@ function plHandleMovements() {
     }
 }
 
-function updateMarkersFromStateHistory() {
+function updateMarkersFromStateHistory(e) {
     let textarea = document.getElementById("defcmds");
     let playerTile = "";
     let good_count = 0;
@@ -138,5 +148,9 @@ function updateMarkersFromStateHistory() {
             textarea.value += `${nextTile}:${tick}\n`;
         }
     }
+    if (e) {
+        e.target.setAttribute("stoptick", ba.TickCounter);
+    }
     textarea.scrollTop = textarea.scrollHeight;
+    toggleDefRecordColor(textarea.value);
 }

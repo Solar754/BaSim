@@ -1,44 +1,12 @@
-/*
-TODO
-- keep track of total pts in local storage
-
-w1
-    2 runners, normal rng
-w2 
-    3 runners, normal rng
-    can go into states 2/3
-w3
-    3 runners, bad rng (4/6 west 2/6 south)
-w4
-    3 runners, normal rng
-    only go between states 0 and 2
-w5
-    4 runners, good rng (5/6 s, 1/6 e)
-    only go between states 0 and 3
-w6
-    3 runners, normal rng, offset
-w7
-    4 runners, normal rng, 2 offset
-w8
-    5 runners, bad rng (3/6 w, 2/6 s, 1/6 e), blue
-    only go between states 0 and 2
-w9
-    5 runners, normal rng, 2 offset, blue
-    only go between states 0 and 2
-w10
-    4 runners, bad rng (3/6 w, 2/6 s, 1/6 e), offset
-    only go between states 0 and 3
-    reduced lure range
-*/
-
 const MAX_TICKS = 64;
 const SEED_NUM_RUNNERS = 6;
 const SEED_NUM_RND = 500;
 const PENALTY_CAP = 1000;
 const BLUE_CD = 16;
+const HISCORE_STORAGE = "basimHiscore";
 
 var totalPoints = 0;
-var num_retries_remaining = 3;
+var num_retries_remaining = 4;
 var num_chomp = 0;
 var num_blugh = 0;
 var num_raa = 0;
@@ -58,6 +26,32 @@ var expected_num_food = (n) => {
     }
 };
 
+var shuffled_spawns = [];
+var expected_num_runners = () => {
+    switch (Number(sim.WaveSelect.value)) {
+        case 1:
+            return 2;
+        case 2:
+            return 3;
+        case 3:
+            return 3;
+        case 4:
+            return 3;
+        case 5:
+            return 4;
+        case 6:
+            return 3;
+        case 7:
+            return 4;
+        case 8:
+            return 5;
+        case 9:
+            return 5;
+        case 10:
+            return 4;
+    }
+};
+
 let foodCounterHTML = document.getElementById("foodcounter");
 let unlockBtn = document.getElementById("unlock");
 let generateBtn = document.getElementById("generate");
@@ -67,12 +61,17 @@ let retryBtn = document.getElementById("retry");
 let killBtn = document.getElementById("killrunner");
 let pointswrapper = document.getElementById("pointswrapper");
 let pointsCounter = document.getElementById("pointscounter");
+let viewHiscore = document.getElementById("viewhiscore");
+let clearHiscore = document.getElementById("clearhiscore");
 
 function gameLogicEntry() {
     sim.WaveSelect.value = 1;
     sim.WaveSelect.setAttribute("disabled", true);
     simWaveSelectOnChange();
     oInstructions();
+
+    viewHiscore.onclick = viewHiscoreOnClick;
+    clearHiscore.onclick = clearHiscoreOnClick;
 
     unlockBtn.checked = false;
     unlockBtn.onchange = unlockOnChange;
@@ -152,6 +151,7 @@ function generateScenario(e) {
     setupBlue();
     setLureRange();
     generateSeed();
+    shuffled_spawns = shuffleRunnerSpawns();
 
     let startBtn = document.getElementById("wavestart");
     let pauseBtn = document.getElementById("wavepause");
@@ -244,32 +244,43 @@ function iterState(state) {
     return state;
 }
 
-function offsetSpawns() {
+function shuffleRunnerSpawns() {
+    let array = [11]; // list of spawn times
     let wave = sim.WaveSelect.value;
+    for (let i = 1; i < expected_num_runners(); i++) {
+        let nextSpawn = array[array.length - 1] + 10;
+        array.push(nextSpawn);
+    }
+
+    // coinflip delay last spawn
+    let delayLastSpawn = Math.floor(Math.random() * 2);
+    if (delayLastSpawn) {
+        array[array.length - 1] = array[array.length - 1] + 10;
+    }
+
+    // shuffle
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    // choose offset runners
     if (wave == "6") {
-        if (ba.TickCounter == 26) {
-            let runner = baSpawnRunner();
-            runner.toggleRed = true;
-        }
+        array[0] = array[0] - 5;
     }
     else if (wave == "7") {
-        if (ba.TickCounter == 16 || ba.TickCounter == 26) {
-            let runner = baSpawnRunner();
-            runner.toggleRed = true;
-        }
+        array[0] = array[0] - 5;
+        array[1] = array[1] - 5;
     }
     else if (wave == "9") {
-        if (ba.TickCounter == 16 || ba.TickCounter == 36) {
-            let runner = baSpawnRunner();
-            runner.toggleRed = true;
-        }
+        array[0] = array[0] - 5;
+        array[1] = array[1] - 5;
     }
     else if (wave == "10") {
-        if (ba.TickCounter == 16) {
-            let runner = baSpawnRunner();
-            runner.toggleRed = true;
-        }
+        array[0] = array[0] - 5;
     }
+
+    return array;
 }
 
 function setupBlue() {
@@ -342,7 +353,7 @@ function checkRoundStatus() {
         return;
     }
 
-    let points = (num_raa * 100) + (num_blugh * 4) + (num_chomp * 2) + (num_kill * 100) + updateMarkersFromStateHistory();
+    let points = (num_raa * 100) + (num_chomp * 2) + (num_kill * 100) + updateMarkersFromStateHistory();
     points += Math.floor(ba.TickCounter * 0.3) - Math.floor(MAX_TICKS * 0.3) - 2;
 
     let foodDebt = Number(foodCounterHTML.innerHTML);
@@ -385,10 +396,15 @@ function finish() {
     generateBtn.setAttribute("disabled", true);
     document.getElementById("wavestep").setAttribute("disabled", true);
 
+    let completionPoints = Math.max(PENALTY_CAP - totalPoints, 0);
+
+    let overallHiscore = localStorage.getItem(HISCORE_STORAGE);
+    if (overallHiscore) overallHiscore = JSON.parse(overallHiscore);
+
     oInstructions();
     let instructions = document.getElementById("rules-finish");
     instructions.innerHTML = `Completed gz
-    Total Points: ${Math.max(PENALTY_CAP - totalPoints, 0)}
+    Total points: ${completionPoints}
 
 Penalty breakdown
     ${document.getElementById('points_w1').innerHTML}
@@ -401,5 +417,32 @@ Penalty breakdown
     ${document.getElementById('points_w8').innerHTML}
     ${document.getElementById('points_w9').innerHTML}
     ${document.getElementById('points_w10').innerHTML}
+
+----------------------------------------------------------------
+Current hiscore information
+${(overallHiscore && overallHiscore.points >= completionPoints) ? overallHiscore.text : ""}
     `
+
+    let results = {
+        "points": completionPoints,
+        "text": instructions.innerHTML
+    }
+    results.text = results.text.split('Completed gz')[1];
+    results.text = results.text.split('----------------------------------------------------------------')[0];
+    if (!overallHiscore || results.points > overallHiscore.points) {
+        localStorage.setItem(HISCORE_STORAGE, JSON.stringify(results));
+        alert("gz new hiscore@@");
+    }
+}
+
+function viewHiscoreOnClick(e) {
+    let overallHiscore = localStorage.getItem(HISCORE_STORAGE);
+    if (!overallHiscore) return;
+    overallHiscore = JSON.parse(overallHiscore);
+    alert(overallHiscore.text)
+}
+
+function clearHiscoreOnClick(e) {
+    if (confirm("Are you sure you want to clear your stored hiscore?"))
+        localStorage.removeItem(HISCORE_STORAGE);
 }
