@@ -252,9 +252,9 @@ function shuffleRunnerSpawns() {
         array.push(nextSpawn);
     }
 
-    // coinflip delay last spawn
-    let delayLastSpawn = Math.floor(Math.random() * 2);
-    if (delayLastSpawn) {
+    // 25% delay last spawn
+    let delayLastSpawn = Math.floor(Math.random() * 4);
+    if (delayLastSpawn == 1) {
         array[array.length - 1] = array[array.length - 1] + 10;
     }
 
