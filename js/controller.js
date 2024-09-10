@@ -65,12 +65,12 @@ cmdTeammate.prototype.draw = function () {
 }
 function cmdInit() {
     if (m.mCurrentMap === mWAVE10) {
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE10_MAIN_SPAWN_X,
             baWAVE10_MAIN_SPAWN_Y,
             MAIN_CLR, "main"
         ));
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE10_2A_SPAWN_X,
             baWAVE10_2A_SPAWN_Y,
             SECOND_CLR, "second"
@@ -80,19 +80,19 @@ function cmdInit() {
             baWAVE10_PLAYER_HEALER_SPAWN_Y,
             PLAYER_HEAL_CLR, "heal"
         ));
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE10_COLLECTOR_SPAWN_X,
             baWAVE10_COLLECTOR_SPAWN_Y,
             COLLECTOR_CLR, "col"
         ));
     }
     else {
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE1_MAIN_SPAWN_X,
             baWAVE1_MAIN_SPAWN_Y,
             MAIN_CLR, "main"
         ));
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE1_2A_SPAWN_X,
             baWAVE1_2A_SPAWN_Y,
             SECOND_CLR, "second"
@@ -102,7 +102,7 @@ function cmdInit() {
             baWAVE1_PLAYER_HEALER_SPAWN_Y,
             PLAYER_HEAL_CLR, "heal"
         ));
-        cmd.Team.push(new cmdTeammate(
+        cmd.Team.push(new phPlayerHealer(
             baWAVE1_COLLECTOR_SPAWN_X,
             baWAVE1_COLLECTOR_SPAWN_Y,
             COLLECTOR_CLR, "col"
@@ -122,9 +122,10 @@ function cmdDrawTeam() {
     }
 }
 function cmdParseTiles(role) { // expected: x,y:tick
-    if (role === "heal") {
-        return phParseTiles();
-    }
+    //if (role === "heal") {
+    return phParseTiles(role);
+    //}
+    /*
     let tiles = []
     let vals = document.getElementById(`${role}cmds`).value;
     vals = vals.split("\n");
@@ -138,7 +139,7 @@ function cmdParseTiles(role) { // expected: x,y:tick
             WaitUntil: parseInt(waitUntil),
         });
     }
-    return tiles;
+    return tiles;*/
 }
 function cmdUpdateRolePath(role, xTile, yTile) {
     let textarea = document.getElementById(`${role}cmds`);

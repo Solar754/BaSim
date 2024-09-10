@@ -153,13 +153,10 @@ function generateScenario(e) {
     generateSeed();
     shuffled_spawns = shuffleRunnerSpawns();
 
-    let startBtn = document.getElementById("wavestart");
-    let pauseBtn = document.getElementById("wavepause");
-    let stepforwardBtn = document.getElementById("wavestep");
-    startBtn.click();
-    pauseBtn.click();
+    sim.StartStopButton.click();
+    sim.PauseResumeButton.click();
     for (let i = 0; i < MAX_TICKS - 1; i++) {
-        stepforwardBtn.click();
+        sim.StepButton.click();
     }
 
     foodCounterHTML.innerHTML = expected_num_food(ba.TotalRunners);

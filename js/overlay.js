@@ -334,7 +334,7 @@ Runner/healer spawns
 
 
 Egg syntax
-    Input eggs to shoot using certain specifiers, in the format
+    Input eggs to shoot using certain specifiers in the format:
         <cannon=e|w><penance=r|h><egg=r|g|b>,num eggs,tick
     An egg will appear next to the appropriate hopper on the 'click' and disappear the tick 
     the egg effect is applied.
@@ -360,7 +360,7 @@ General teammate syntax
 Player healer syntax
     In addition to general syntax, healers can be targeted with: 'hID,numFood:tick'.
     Tick is the earliest possible time a command happens and is optional. It reflects 
-    when a "click" would happen in-game.
+    when a "click" would happen in-game. Player healer syntax will work with any teammate.
 
     Example: h1,2:24 means after tick 24 player will start pathing as though they are using food on
     the first healer (healer 1) every tick, and two food will be used.
@@ -370,13 +370,14 @@ Player healer syntax
 
 
 Ignore healer
-    When toggled on, npc healers will not target player healer.
+    When toggled on, npc healers will not target player healer or any teammates with player healer 
+    syntax.
 
 
 Defender record actions
     When pressed while the sim is running, all actions up to the current tick will be recorded and
     replayed next time the sim is ran. If there are any actions recorded then the text will be green.
-    These actions can be imported/exported along with the other settings.
+    These actions will be imported/exported along with the other settings.
 
 
 Trivial code convert tool (on the right)

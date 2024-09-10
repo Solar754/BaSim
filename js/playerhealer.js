@@ -17,9 +17,10 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.AdjacentTrueTile = undefined;
     this.AdjacentDrawn = undefined;
     this.Role = role; // must be unique
+    this.hasHealerTargeting = false;
     this.runningComplex = false;
     this.Color = color;
-    this.Tiles = phParseTiles();
+    this.Tiles = phParseTiles(role);
     this.TileIdx = 0;
     this.PrevTile = {
         X: x,
@@ -201,9 +202,10 @@ phPlayerHealer.prototype.draw = function () {
         addColor(this.X, this.Y, rrOutline, BLACK_CLR);
     }
 }
-function phParseTiles() { // expected: hID,#:tick
+function phParseTiles(role) { // expected: hID,#:tick
     let tiles = []
-    let vals = document.getElementById(`healcmds`).value;
+    let currentTeammate = cmd.Team.filter(p => p.Role == role);
+    let vals = document.getElementById(role + `cmds`).value;
 
     if (isCode(vals)) {
         if (cmd.Team.filter(p => p.Role == "heal")[0])
@@ -227,6 +229,8 @@ function phParseTiles() { // expected: hID,#:tick
                 });
                 numFood--;
             }
+            if (currentTeammate.length > 0)
+                currentTeammate[0].hasHealerTargeting = true;
         }
         else {
             tiles.push({

@@ -350,7 +350,8 @@ function heCompilePlayerTargets() {
     if (sim.SpawnTeam.checked) {
         playerTargets = structuredClone(cmd.Team);
         if (sim.ToggleIgnoreHealer.checked) {
-            playerTargets = playerTargets.filter(m => m.Role !== "heal");
+            playerTargets = playerTargets.filter(p => p.Role !== "heal");
+            playerTargets = playerTargets.filter(p => !p.hasHealerTargeting);
         }
     }
     playerTargets.push({ X: pl.X, Y: pl.Y, Role: "player" });
