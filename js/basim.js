@@ -32,6 +32,8 @@ const HTML_UPDATE_DEF_MARKERS = "defupdatemarkers";
 const HTML_THEME_BUTTON = "themebtn";
 const HTML_AUTOPLAY_BUTTON = "autoplay";
 
+var cursorX, cursorY;
+
 window.onload = simInit;
 
 //{ Simulation - sim
@@ -137,6 +139,10 @@ function simInit() {
 	simReset();
 	window.onkeydown = simWindowOnKeyDown;
 	canvas.onmousedown = simCanvasOnMouseDown;
+	canvas.onmousemove = (e) => {
+		cursorX = e.clientX;
+		cursorY = e.clientY;
+	}
 	canvas.oncontextmenu = function (e) {
 		e.preventDefault();
 	};
@@ -490,7 +496,7 @@ function simWindowOnKeyDown(e) { // food_drop
 		} else if (e.key === "w") {
 			mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
 			pl.Actions.bad++;
-		} else if (e.key === "e") {
+		} else if (e.key === "e" && pl.TargetX == -1) {
 			pl.ShouldPickupFood = true;
 			plPathfind(pl, pl.X, pl.Y);
 			pl.Actions.pickup++;
@@ -505,6 +511,19 @@ function simWindowOnKeyDown(e) { // food_drop
 				if (pl.StandStillCounter === 0) ++pl.RepairCountdown;
 			}
 			pl.Actions.repair++;
+		} else if (e.key === "q") {
+			let canvasRect = rr.Canvas.getBoundingClientRect();
+			let xTile = Math.trunc((cursorX - canvasRect.left) / rrTileSize);
+			let yTile = Math.trunc((canvasRect.bottom - 1 - cursorY) / rrTileSize);
+			oDrawYellowClick({ "clientX": cursorX, "clientY": cursorY });
+			if (mCanMoveToTile(xTile, yTile)) {
+				pl.ShouldPickupFood = false;
+				pl.PathQueuePos = 0;
+				pl.PathQueueX = [];
+				pl.PathQueueY = [];
+				pl.TargetX = xTile;
+				pl.TargetY = yTile;
+			}
 		}
 	}
 	if (sim.IsRunning && e.key === "s" && document.activeElement.id !== HTML_RUNNER_MOVEMENTS) {
@@ -540,7 +559,7 @@ function simCanvasOnMouseDown(e) {
 	}
 	else if (e.button === 0 && pl.RepairCountdown === 0) {
 		pl.ShouldPickupFood = false;
-		plPathfind(pl, xTile, yTile);
+		if (pl.TargetX == -1) plPathfind(pl, xTile, yTile);
 		oDrawYellowClick(e);
 	} else if (e.button === 2 && !sim.SpawnTeam.checked) {
 		if (xTile === ba.CollectorX && yTile === ba.CollectorY) {

@@ -7,6 +7,8 @@ var pl = {
     PathQueueY: undefined,
     X: undefined,
     Y: undefined,
+    TargetX: undefined,
+    TargetY: undefined,
     Movements: undefined,
     CurrentMovementIdx: undefined,
     ShouldPickupFood: undefined,
@@ -19,6 +21,8 @@ var pl = {
 function plInit(x, y) {
     pl.X = x;
     pl.Y = y;
+    pl.TargetX = -1;
+    pl.TargetY = -1;
     pl.PathQueuePos = 0;
     pl.CurrentMovementIdx = 0;
     pl.Movements = plParseTiles();
@@ -74,6 +78,12 @@ function plTick() {
             }
         }
 
+    }
+    if (pl.TargetX != -1) {
+        pl.X = pl.TargetX;
+        pl.Y = pl.TargetY;
+        pl.TargetX = -1;
+        pl.TargetY = -1;
     }
     if (prevX !== pl.X || prevY !== pl.Y) {
         pl.StandStillCounter = 0;

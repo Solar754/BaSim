@@ -382,14 +382,14 @@ Defender record actions
 
 Trivial code convert tool (on the right)
     This tool takes a basic approach to convert code into player healer commands.
-    Copy-paste generated/modified code into the heal text box after toggling "Team".
+    Copy-paste generated/modified code into the heal text box after toggling 'Team'.
     At the moment it makes no attempt to path anywhere after running up post-stock.
     
     Syntax:
         r#/ -- number of times to stock and then run up east
         (#) -- number of seconds to wait until last food is placed (wont go to next healer until 
-                spacing is satisfied)
-        //  -- "call change", not very useful at the moment but can be used to space out rps in 
+               spacing is satisfied)
+        //  -- 'call change', not very useful at the moment but can be used to space out rps in 
                 a roundabout way
         x   -- spam down until dead
 

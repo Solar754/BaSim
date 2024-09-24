@@ -112,6 +112,9 @@ function plHandleMovements() {
     }
 }
 
+// TODO if both good/bad food is dropped same tick
+// the order is not preserved
+// also doesn't work with q skip
 function updateMarkersFromStateHistory(e) {
     let textarea = document.getElementById("defcmds");
     let playerTile = "";
