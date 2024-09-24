@@ -500,7 +500,7 @@ function simWindowOnKeyDown(e) { // food_drop
 			pl.ShouldPickupFood = true;
 			plPathfind(pl, pl.X, pl.Y);
 			pl.Actions.pickup++;
-		} else if (e.key === "t") {
+		} else if (e.key === "t" && pl.TargetX == -1) {
 			if (baIsNextToEastTrap(pl.X, pl.Y) && ba.EastTrapCharges < 2) {
 				plPathfind(pl, pl.X, pl.Y);
 				pl.RepairCountdown = 5;
