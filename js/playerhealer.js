@@ -47,10 +47,6 @@ phPlayerHealer.prototype.tick = function () {
             this.Y = this.PathQueueY[this.PathQueuePos];
         }
     }
-    /*
-    if (this.X !== this.PrevTile.X || this.Y !== this.PrevTile.Y) {
-        this.StandStillCounter = 0;
-    }*/
 }
 phPlayerHealer.prototype.useFood = function () {
     console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
