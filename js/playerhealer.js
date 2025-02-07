@@ -47,12 +47,10 @@ phPlayerHealer.prototype.tick = function () {
             this.Y = this.PathQueueY[this.PathQueuePos];
         }
     }
-    if (this.X == this.PrevTile.X && this.Y == this.PrevTile.Y) {
-        this.StandStillCounter++;
-    }
-    else {
+    /*
+    if (this.X !== this.PrevTile.X || this.Y !== this.PrevTile.Y) {
         this.StandStillCounter = 0;
-    }
+    }*/
 }
 phPlayerHealer.prototype.useFood = function () {
     console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
@@ -89,6 +87,7 @@ phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
         return;
     }
+    this.StandStillCounter++;
     this.skipDeadInQueue();
     if (this.CurrentDst?.healerId) {
         this.pathfindHealer();
@@ -150,16 +149,7 @@ phPlayerHealer.prototype.pathfindHealer = function () {
 }
 phPlayerHealer.prototype.isMovingAfterStationary = function () {
     let noMovePreviousTick = (this.X === this.PrevTile.X && this.Y === this.PrevTile.Y);
-    let noMoveCurrentTick = (this.X == this.CurrentDst.X && this.Y == this.CurrentDst.Y)
     let moveNextTick = (this.X !== this.CurrentDst.X || this.Y !== this.CurrentDst.Y);
-
-    if (noMovePreviousTick && noMoveCurrentTick && !moveNextTick) {
-        this.StandStillCounter++;
-    }
-    else {
-        this.StandStillCounter = 0;
-    }
-
     if (noMovePreviousTick && moveNextTick) {
         this.MovementCounter++;
     }

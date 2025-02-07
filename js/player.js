@@ -121,6 +121,9 @@ function plDrawRender(player) {
     }
 }
 function plPathfind(player, destX, destY) {
+    if (player.X !== destX || player.Y !== destY) // player healer
+        player.StandStillCounter = 0;
+
     for (let i = 0; i < m.mWidthTiles * m.mHeightTiles; ++i) {
         player.ShortestDistances[i] = 99999999;
         player.WayPoints[i] = 0;
