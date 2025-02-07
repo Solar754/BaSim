@@ -2,8 +2,16 @@
 2x = 7t
 3x = 8t
 
+[WORKING]
+trap healer on spawn: https://youtu.be/Mv39_j3O6Hs?t=144
+{"level":"5","wave":"1","runnerMovements":"s","runnerSpawns":"","healerSpawns":"21","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":true,"team":{"main":"","second":"","heal":"43,36\nh1,4:21","col":"47,26\n","def":""}}
 
-[WORKING IN SIM]
+use food at 12.0, applied 12.6
+player and healer both move 1 east at 13.2
+next food applied 13.8
+
+
+[WORKING]
 w4 hjenzen (everyone lost a tick): https://youtu.be/Tg5mzsgnpNE?t=124
 {"level":"5","wave":"4","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n43,29:6\nh1,2","col":"34,7\n44,27:5\n36,34:16","def":""}}
 
@@ -12,7 +20,7 @@ first poison is at 10.8, south of healer
 second poison should be at 12.0, east of healer and player moves 1 tile NW
 
 
-[WORKING IN SIM]
+[WORKING]
 3x with 6s lured to wall: https://youtu.be/y9urzSf_Noc
 {"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n45,25:8\nh1,3\nh2,1","col":"47,26","def":""}}
 
@@ -23,7 +31,7 @@ can put 3 on then use fourth on the 12s
 6/12 get natural psn at 15.0
 
 
-[WORKING IN SIM]
+[WORKING]
 w10 2x no lure: https://youtu.be/RyDCJLpdU_4?t=507
 {"level":"5","wave":"10","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n39,23:7\nh1,1\nh2,20","col":"","def":""}}
 
@@ -34,7 +42,7 @@ player stands still at 12.0, healer moves 1 south
 completely play out the scenario to make sure 12s is correct too
 
 
-[WORKING IN SIM]
+[WORKING]
 w6 split: https://youtu.be/2Km5k1HCCIU
 {"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n46,31:4\nh1,5","col":"47,26","def":""}}
 
@@ -42,19 +50,19 @@ First poison should land 9.6, no ticks should be lost
 Second healer should spawn after 5 food
 
 
-[WORKING IN SIM]
+[WORKING]
 {"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"21","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"42,33\n42,35:19\nh1,4","col":"","def":""}}
 
 first poison should be applied without delay, at 12.6, because player has been standing still for at least 1 tick
 
 
-[WORKING IN SIM]
+[WORKING]
 {"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"16,26","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"35,24\n39,21:16","second":"35,21\n35,24:18\n40,21:26","heal":"42,22\nh1,2:26\nh2,2\nh1,2","col":"","def":""}}
 
 2nd spawn should be poisoned without delay at 19.8
 
 
-[WORKING IN SIM]
+[WORKING]
 w7 no lure, need vid
 {"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n45,25:7\nh1,1\nh2,4","col":"","def":""}}
 

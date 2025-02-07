@@ -229,7 +229,7 @@ function phParseTiles(role) { // expected: hID,#:tick
     return tiles
 }
 function phFindBestAdjacentTile(x1, y1, targetX, targetY) {
-    // prioritize west > east > south > north movements; lower x then lower y
+    // player movement priority: west > east > south > north; smaller x then smaller y
     let validDirectionsFromTarget = [
         { "direction": "west", "tile": [targetX - 1, targetY], "check": mCanMoveEast },
         { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },
@@ -248,9 +248,15 @@ function phFindBestAdjacentTile(x1, y1, targetX, targetY) {
     validDirectionsFromTarget = validDirectionsFromTarget.filter(i => i.IsValid);
     let bestTile = validDirectionsFromTarget.sort((lh, rh) => {
         if (lh.Distance == rh.Distance) {
-            if (lh.tile[0] == rh.tile[0])
-                return lh.tile[1] - rh.tile[1];
-            return lh.tile[0] - rh.tile[0];
+            let result1x = Math.abs(lh.tile[0] - x1);
+            let result1y = Math.abs(lh.tile[1] - y1);
+
+            let result2x = Math.abs(rh.tile[0] - x1);
+            let result2y = Math.abs(rh.tile[1] - y1);
+
+            if (result1x == result2x)
+                return result2y - result1y;
+            return result2x - result1x;
         }
         return lh.Distance - rh.Distance;
     });
