@@ -44,6 +44,19 @@ const baWAVE1_COLLECTOR_SPAWN_Y = 8;
 const baWAVE10_COLLECTOR_SPAWN_X = 32;
 const baWAVE10_COLLECTOR_SPAWN_Y = 8;
 
+// W > E > S > N > SW > SE > NW > NE
+const plHealerMovementPriority = Object.freeze({
+    "": 0,
+    w:  1,
+    e:  2,
+    s:  3,
+    n:  4,
+    sw: 5,
+    se: 6,
+    nw: 7,
+    ne: 8,
+});
+
 const baPSN_FOOD_DMG = 4;
 const baHEALER_HEALTH = {
     "1": 27,

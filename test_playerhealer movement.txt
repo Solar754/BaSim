@@ -22,13 +22,14 @@ second poison should be at 12.0, east of healer and player moves 1 tile NW
 
 [WORKING]
 3x with 6s lured to wall: https://youtu.be/y9urzSf_Noc
-{"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n45,25:8\nh1,3\nh2,1","col":"47,26","def":""}}
+{"level":"5","wave":"1","runnerMovements":"","runnerSpawns":"","healerSpawns":"","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"","second":"","heal":"35,7\n45,25:8\nh1,3\nh2,1\nh1,1","col":"47,26","def":""}}
 
 player arrives 11.4
 food gets used at 12.0, the same tick the 12s spawns
 can put 3 on then use fourth on the 12s
 12s gets psned at 14.4
 6/12 get natural psn at 15.0
+6 psned at 15.6 from the west
 
 
 [WORKING]
@@ -75,6 +76,14 @@ click to move at 11.4
 move to first tile at 12.0 + healer spawns
 12.6 player moves adjacent to spawn + healer moves 1 tile adjacent to player (arrive delay)
 13.2 poison is applied
+
+
+[WORKING - solsa]
+arrive delay example
+{"level":"5","wave":"10","runnerMovements":"","runnerSpawns":"","healerSpawns":"11","eggs":"","toggleTeam":true,"toggleHealers":true,"toggleRender":false,"toggleRoleNumbers":false,"toggleIgnoreHealer":false,"team":{"main":"24,24\n21,24:11\n","second":"","heal":"24,23\n25,25:23\nh1,1","col":"","def":""}}
+
+psn applied 15.0
+player should not move from manually-pathed-to tile
 
 
 [WORKING - solsa]

@@ -18,7 +18,6 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.lastTarget; // either 'player' or 'runner'
     this.justSpawned = true; // special state when healer spawns where it is idle but instead of moving, stays still
     this.sprayTimer = 0; // used to time when a healer should be aggroing runners or players
-    this.StandStillCounter = 0;
     this.id = id;
 
     // psn stuff
@@ -74,7 +73,6 @@ heHealer.prototype.tick = function () {
 
     this.drawnX = this.x;
     this.drawnY = this.y;
-    this.StandStillCounter++;
     
     if (this.isDying) {
         return;
@@ -238,20 +236,16 @@ heHealer.prototype.doMovement = function () {
     if (this.destinationX > startX) {
         if (!baTileBlocksPenance(startX + 1, this.y) && mCanMoveEast(startX, this.y)) {
             ++this.x;
-            this.StandStillCounter = 0;
         }
     } else if (this.destinationX < startX && !baTileBlocksPenance(startX - 1, this.y) && mCanMoveWest(startX, this.y)) {
         --this.x;
-        this.StandStillCounter = 0;
     }
     if (this.destinationY > this.y) {
         if (!baTileBlocksPenance(startX, this.y + 1) && !baTileBlocksPenance(this.x, this.y + 1) && mCanMoveNorth(startX, this.y) && mCanMoveNorth(this.x, this.y)) {
             ++this.y;
-            this.StandStillCounter = 0;
         }
     } else if (this.destinationY < this.y && !baTileBlocksPenance(startX, this.y - 1) && !baTileBlocksPenance(this.x, this.y - 1) && mCanMoveSouth(startX, this.y) && mCanMoveSouth(this.x, this.y)) {
         --this.y;
-        this.StandStillCounter = 0;
     }
 }
 heHealer.prototype.applyPoisonDmg = function (food) {

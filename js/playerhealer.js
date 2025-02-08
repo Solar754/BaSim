@@ -47,36 +47,8 @@ phPlayerHealer.prototype.tick = function () {
             this.Y = this.PathQueueY[this.PathQueuePos];
         }
     }
-}
-phPlayerHealer.prototype.useFood = function () {
-    console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
-    for (let healer of ba.Healers) {
-        if (this.CurrentDst.healerId === healer.id && healer.hp) {
-            healer.applyPoisonDmg(true);
-            return;
-        }
-    }
-}
-phPlayerHealer.prototype.skipDeadInQueue = function () {
-    if (!this.CurrentDst.healerId) {
-        return;
-    }
-    let isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
-    let maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
-    if (isDead || maybeDead?.hp === 0) {
-        while (this.TileIdx < this.Tiles.length) {
-            let tmpWaitUntil = this.CurrentDst.WaitUntil;
-            this.CurrentDst = this.Tiles[this.TileIdx++];
-            if (this.CurrentDst.WaitUntil < tmpWaitUntil) {
-                this.CurrentDst.WaitUntil = tmpWaitUntil;
-            }
-
-            if (!this.CurrentDst.healerId) return;
-            isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
-            maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
-            if ((!isDead && !maybeDead) || maybeDead?.hp > 0) return;
-        }
-        this.CurrentDst = { X: this.X, Y: this.Y };
+    if (this.PrevTile.X !== this.X || this.PrevTile.Y !== this.Y) {
+        this.StandStillCounter = 0;
     }
 }
 phPlayerHealer.prototype.pathfind = function () {
@@ -103,6 +75,7 @@ phPlayerHealer.prototype.pathfindTile = function () {
         }
     }
     if (ba.TickCounter <= this.CurrentDst?.WaitUntil) {
+        this.StandStillCounter++;
         return;
     }
     plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
@@ -110,6 +83,8 @@ phPlayerHealer.prototype.pathfindTile = function () {
 phPlayerHealer.prototype.pathfindHealer = function () {
     // check if healer exists/update to current tile
     this.findTarget();
+    if (!this.TargetHealer?.drawnX && !this.TargetHealer?.drawnY)
+        return;
 
     // path to true tile
     if (this.AdjacentTrueTile && this.AdjacentDrawn?.X) {
@@ -164,14 +139,20 @@ phPlayerHealer.prototype.targetIsAdjacent = function () {
         || (this.X - 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // nw
     );
     let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 1 && !this.MovementCounter);
+
+    // FIXME -- ? what is this supposed to be
+    if (drawnIsIntercardinalAdj && trueTileIsAdj && this.StandStillCounter == 1) {
+        this.MovementCounter++;
+        return false;
+    }
     return drawnTileIsAdj || (trueTileIsAdj && drawnIsIntercardinalAdj) || playerIsStill;
 }
 phPlayerHealer.prototype.findTarget = function () {
     for (let healer of ba.Healers) {
         if (this.CurrentDst?.healerId === healer.id) {
             this.TargetHealer = healer;
-            let adjDrawn = phFindBestAdjacentTile(this.X, this.Y, healer.drawnX, healer.drawnY);
-            let adjTrue = phFindBestAdjacentTile(this.X, this.Y, healer.x, healer.y);
+            let adjDrawn = this.findBestAdjacentTile(healer.drawnX, healer.drawnY);
+            let adjTrue = this.findBestAdjacentTile(healer.x, healer.y);
             this.AdjacentDrawn = { X: adjDrawn[0], Y: adjDrawn[1] };
             this.AdjacentTrueTile = { X: adjTrue[0], Y: adjTrue[1] };
             return true;
@@ -181,6 +162,86 @@ phPlayerHealer.prototype.findTarget = function () {
     this.AdjacentDrawn = undefined;
     this.AdjacentTrueTile = undefined;
     return false;
+}
+phPlayerHealer.prototype.useFood = function () {
+    console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
+    for (let healer of ba.Healers) {
+        if (this.CurrentDst.healerId === healer.id && healer.hp) {
+            healer.applyPoisonDmg(true);
+            return;
+        }
+    }
+}
+phPlayerHealer.prototype.skipDeadInQueue = function () {
+    if (!this.CurrentDst.healerId) {
+        return;
+    }
+    let isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
+    let maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
+    if (isDead || maybeDead?.hp === 0) {
+        while (this.TileIdx < this.Tiles.length) {
+            let tmpWaitUntil = this.CurrentDst.WaitUntil;
+            this.CurrentDst = this.Tiles[this.TileIdx++];
+            if (this.CurrentDst.WaitUntil < tmpWaitUntil) {
+                this.CurrentDst.WaitUntil = tmpWaitUntil;
+            }
+
+            if (!this.CurrentDst.healerId) return;
+            isDead = (ba.HealersToRemove.indexOf(this.CurrentDst.healerId) != -1);
+            maybeDead = ba.Healers.filter(h => h.id == this.CurrentDst.healerId)[0];
+            if ((!isDead && !maybeDead) || maybeDead?.hp > 0) return;
+        }
+        this.CurrentDst = { X: this.X, Y: this.Y };
+    }
+}
+phPlayerHealer.prototype.findBestAdjacentTile = function(targetX, targetY) {
+    let validDirectionsFromTarget = [
+        { "direction": "west", "tile": [targetX - 1, targetY], "check": mCanMoveEast },
+        { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },
+        { "direction": "south", "tile": [targetX, targetY - 1], "check": mCanMoveNorth },
+        { "direction": "north", "tile": [targetX, targetY + 1], "check": mCanMoveSouth }
+    ];
+
+    let minDistance = Infinity;
+    for (let direction of validDirectionsFromTarget) {
+        if (direction.check(...direction["tile"]) && mCanMoveToTile(...direction["tile"])) {
+            direction.IsValid = true;
+            direction.Distance = tileDistance(this.X, this.Y, ...direction["tile"]);
+            if (direction?.Distance < minDistance)
+                minDistance = direction.Distance;
+        }
+        else {
+            direction.IsValid = false;
+        }
+    }
+    validDirectionsFromTarget = validDirectionsFromTarget.filter(i => i.IsValid && i?.Distance <= minDistance);
+
+    // test the tiles to determine priority
+    let tmpPlayer = structuredClone(this)
+    for (let validDirection of validDirectionsFromTarget) {
+        plPathfind(tmpPlayer, ...validDirection.tile);
+        let idx = tmpPlayer.PathQueuePos - 1;
+        validDirection.initialMovement = [tmpPlayer.PathQueueX[idx], tmpPlayer.PathQueueY[idx]];
+    }
+
+    for (let validDirection of validDirectionsFromTarget) {
+        let cardinalStr = "";
+        if (validDirection.initialMovement[1] < this.Y)
+            cardinalStr += "s";
+        else if (validDirection.initialMovement[1] > this.Y)
+            cardinalStr += "n";
+        if (validDirection.initialMovement[0] < this.X)
+            cardinalStr += "w";
+        else if (validDirection.initialMovement[0] > this.X)
+            cardinalStr += "e";
+        validDirection.weight = plHealerMovementPriority[cardinalStr];
+    }
+
+    // pick best
+    let bestTile = validDirectionsFromTarget.sort((lh, rh) => {
+        return lh.weight - rh.weight;
+    });
+    return bestTile[0]?.tile || [this.X, this.Y];
 }
 phPlayerHealer.prototype.draw = function () {
     if (this.X >= 0) {
@@ -227,39 +288,5 @@ function phParseTiles(role) { // expected: hID,#:tick
         }
     }
     return tiles
-}
-function phFindBestAdjacentTile(x1, y1, targetX, targetY) {
-    // player movement priority: west > east > south > north; smaller x then smaller y
-    let validDirectionsFromTarget = [
-        { "direction": "west", "tile": [targetX - 1, targetY], "check": mCanMoveEast },
-        { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },
-        { "direction": "south", "tile": [targetX, targetY - 1], "check": mCanMoveNorth },
-        { "direction": "north", "tile": [targetX, targetY + 1], "check": mCanMoveSouth }
-    ]
-    for (let direction of validDirectionsFromTarget) {
-        if (direction.check(...direction["tile"]) && mCanMoveToTile(...direction["tile"])) {
-            direction.IsValid = true;
-            direction.Distance = tileDistance(x1, y1, ...direction["tile"]);
-        }
-        else {
-            direction.IsValid = false;
-        }
-    }
-    validDirectionsFromTarget = validDirectionsFromTarget.filter(i => i.IsValid);
-    let bestTile = validDirectionsFromTarget.sort((lh, rh) => {
-        if (lh.Distance == rh.Distance) {
-            let result1x = Math.abs(lh.tile[0] - x1);
-            let result1y = Math.abs(lh.tile[1] - y1);
-
-            let result2x = Math.abs(rh.tile[0] - x1);
-            let result2y = Math.abs(rh.tile[1] - y1);
-
-            if (result1x == result2x)
-                return result2y - result1y;
-            return result2x - result1x;
-        }
-        return lh.Distance - rh.Distance;
-    });
-    return bestTile[0]["tile"];
 }
 //}
