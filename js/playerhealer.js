@@ -99,7 +99,7 @@ phPlayerHealer.prototype.pathfindHealer = function () {
         plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
     }
 
-    // uses a food same tick healer moves
+    // use a food same tick healer moves
     if (this.isMovingAfterStationary()) {
         if (this.MovementCounter == 1) {
             this.tick();
@@ -140,8 +140,10 @@ phPlayerHealer.prototype.targetIsAdjacent = function () {
     );
     let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 1 && !this.MovementCounter);
 
-    // FIXME -- ? what is this supposed to be
-    if (drawnIsIntercardinalAdj && trueTileIsAdj && this.StandStillCounter == 1) {
+    // hacky arrivedelay scenario
+    let movedPreviousTick = (this.StandStillCounter == 1);
+    if (drawnIsIntercardinalAdj && trueTileIsAdj && movedPreviousTick) {
+        this.ArriveDelay = true;
         this.MovementCounter++;
         return false;
     }
@@ -217,22 +219,19 @@ phPlayerHealer.prototype.findBestAdjacentTile = function(targetX, targetY) {
     validDirectionsFromTarget = validDirectionsFromTarget.filter(i => i.IsValid && i?.Distance <= minDistance);
 
     // test the tiles to determine priority
-    let tmpPlayer = structuredClone(this)
+    let tmpl = structuredClone(this)
     for (let validDirection of validDirectionsFromTarget) {
-        plPathfind(tmpPlayer, ...validDirection.tile);
-        let idx = tmpPlayer.PathQueuePos - 1;
-        validDirection.initialMovement = [tmpPlayer.PathQueueX[idx], tmpPlayer.PathQueueY[idx]];
-    }
+        plPathfind(tmpl, ...validDirection.tile);
+        let idx = tmpl.PathQueuePos - 1;
 
-    for (let validDirection of validDirectionsFromTarget) {
         let cardinalStr = "";
-        if (validDirection.initialMovement[1] < this.Y)
+        if (tmpl.PathQueueY[idx] < this.Y)
             cardinalStr += "s";
-        else if (validDirection.initialMovement[1] > this.Y)
+        else if (tmpl.PathQueueY[idx] > this.Y)
             cardinalStr += "n";
-        if (validDirection.initialMovement[0] < this.X)
+        if (tmpl.PathQueueX[idx] < this.X)
             cardinalStr += "w";
-        else if (validDirection.initialMovement[0] > this.X)
+        else if (tmpl.PathQueueX[idx] > this.X)
             cardinalStr += "e";
         validDirection.weight = plHealerMovementPriority[cardinalStr];
     }
