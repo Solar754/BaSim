@@ -112,9 +112,7 @@ function plHandleMovements() {
     }
 }
 
-// TODO if both good/bad food is dropped same tick
-// the order is not preserved... get food id
-// also doesn't work with q skip... need to add new command to list of inputs
+// TODO doesn't work with q skip, need to add new command to list of inputs
 function updateMarkersFromStateHistory(e) {
     let textarea = document.getElementById("defcmds");
     let playerTile = "";
@@ -132,7 +130,6 @@ function updateMarkersFromStateHistory(e) {
         for (let food of actions.food) {
             textarea.value += `${food.type},1:${tick - 1}\n`;
         }
-        state.pl.Actions = [];
         if (actions.repair != repair_count) {
             textarea.value += `t:${tick - 1}\n`;
             repair_count = actions.repair;
