@@ -492,10 +492,10 @@ function simWindowOnKeyDown(e) { // food_drop
 	if (sim.IsRunning && pl.RepairCountdown === 0) {
 		if (e.key === "r") {
 			mAddItem(new fFood(pl.X, pl.Y, true, ++sim.CurrentFoodId));
-			pl.Actions.good++;
+			pl.Actions.food.push({"type":"g", "id": sim.CurrentFoodId});
 		} else if (e.key === "w") {
 			mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
-			pl.Actions.bad++;
+			pl.Actions.food.push({"type":"b", "id": sim.CurrentFoodId});
 		} else if (e.key === "e" && pl.TargetX == -1) {
 			pl.ShouldPickupFood = true;
 			plPathfind(pl, pl.X, pl.Y);
@@ -643,6 +643,7 @@ function simTick() {
 	simUpdateRunnerTable();
 	simUpdateHealerTable();
 	stateHistory.pushState(buildSaveState());
+	pl.Actions.food = [];
 	if (sim.RecordDefButton.getAttribute("stoptick") == ba.TickCounter) {
 		if (pl.Movements.length > 0 && sim.SpawnTeam.checked) {
 			sim.PauseResumeButton.click();

@@ -34,8 +34,7 @@ function plInit(x, y) {
     pl.StandStillCounter = 0;
     pl.RepairCountdown = 0;
     pl.Actions = {
-        "good": 0,
-        "bad": 0,
+        "food": [],
         "repair": 0,
         "pickup": 0
     }

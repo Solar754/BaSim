@@ -205,7 +205,7 @@ function oDrawYellowClick(e) {
         yellowClick[0].remove();
     }
     yellowClick = document.createElement("div");
-    yellowClick.className = "yellow-click"
+    yellowClick.className = "yellow-click";
     yellowClick.style.left = `${e.clientX - 6}px`;
     yellowClick.style.top = `${e.clientY - 6}px`;
     document.body.appendChild(yellowClick);
