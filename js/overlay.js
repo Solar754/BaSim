@@ -200,26 +200,15 @@ function oUpdateMarkerColor(e) {
 }
 
 function oDrawYellowClick(e) {
-    const DURATION = 540; // ms
-    function clearGif(gif) {
-        gif.src = "";
-        document.body.removeChild(gif);
+    let yellowClick = document.getElementsByClassName("yellow-click");
+    if (yellowClick.length) {
+        yellowClick[0].remove();
     }
-    let collection = document.getElementsByClassName("ripple");
-    for (let ele of collection) {
-        clearGif(ele);
-    }
-    let yellowClick = document.createElement("img");
-    yellowClick.className = "ripple";
-    yellowClick.src = "css/yellow_click.gif";
-    document.body.appendChild(yellowClick);
+    yellowClick = document.createElement("div");
+    yellowClick.className = "yellow-click"
     yellowClick.style.left = `${e.clientX - 6}px`;
     yellowClick.style.top = `${e.clientY - 6}px`;
-    setTimeout(() => {
-        try {
-            clearGif(yellowClick);
-        } catch (err) { }
-    }, DURATION);
+    document.body.appendChild(yellowClick);
 }
 
 function oDrawEggs() {
@@ -248,7 +237,7 @@ function oDrawEggs() {
             if (egg.stalled >= 0) {
                 let eggImg = document.createElement("img");
                 eggImg.className = "egg";
-                eggImg.src = "css/" + EGG_MAP[egg.type].src;
+                eggImg.src = "static/" + EGG_MAP[egg.type].src;
                 eggImg.draggable = false;
                 document.body.appendChild(eggImg);
                 eggImg.style.left = (cannon[0] + EGG_MAP[egg.type].x) + `px`;
