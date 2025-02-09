@@ -136,6 +136,7 @@ function simInit() {
 	rrInit(12);
 	mInit(mWAVE_1_TO_9, 64, 48);
 	ruInit(5);
+	oEggsInit();
 	simReset();
 	window.onkeydown = simWindowOnKeyDown;
 	canvas.onmousedown = simCanvasOnMouseDown;

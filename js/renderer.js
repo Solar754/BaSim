@@ -38,13 +38,11 @@ function rPresent() {
     rr.ImageData.data.set(rr.Pixels8);
     rr.Context.putImageData(rr.ImageData, 0, 0);
     rr.CanvasTextQueue.forEach(text => rr.Context.fillText(...text));
-    rr.CanvasTextQueue = [];
     rr.CanvasEggQueue.forEach(egg => {
-        egg[0].onload = function() { 
-            rr.Context.drawImage(...egg);
-        };
+        rr.Context.drawImage(...egg);
     });
-    rr.CanvasEggQueue = [];
+    rr.CanvasTextQueue = [];
+    rr.CanvasEggQueue = []; 
 }
 function rDrawPixel(i) {
     let color = rr.Pixels32[i];
@@ -111,10 +109,10 @@ function rDrawText(x, y, size, text) {
     rr.Context.font = size + "px serif";
     rr.CanvasTextQueue.push([text, x, y]);
 }
-function rDrawImage(x, y, width, height, imgPath) {
+function rDrawEgg(x, y, width, height, imgPath) {
     var img = new Image;
     img.src = imgPath;
-    rr.CanvasEggQueue.push([img, x, y, width, height]);
+    return [img, x, y, width, height];
 }
 function rXYToI(x, y) {
     return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;

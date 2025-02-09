@@ -59,7 +59,7 @@ function rrText(x, y, text) {
     rDrawText(x * rrTileSize, rr.CanvasHeight - 1 - (y * rrTileSize), rrTileSize - 1, text);
 }
 function rrEgg(x, y, width, height, dX, dY, imgPath) {
-    rDrawImage(
+    return rDrawEgg(
         x * rrTileSize + dX - 1, 
         rr.CanvasHeight + dY - (y * rrTileSize) - rrTileSize, 
         rrTileSize * width, 

@@ -19,6 +19,30 @@ const PSN_HIT_CLR = [30, 142, 59, 220];
 const BLACK_CLR = [0, 0, 0, 255];
 const TRANSPARENT_CLR = [0, 0, 0, 0];
 
+var EGG_MAP = {
+    "r": {
+        "src": "static/red_egg.svg",
+        "dx": -10,
+        "dy": -8,
+        "w": undefined,
+        "e": undefined,
+    },
+    "g": {
+        "src": "static/green_egg.svg",
+        "dx": -4,
+        "dy": -8,
+        "w": undefined,
+        "e": undefined,
+    },
+    "b": {
+        "src": "static/blue_egg.svg",
+        "dx": 3,
+        "dy": -8,
+        "w": undefined,
+        "e": undefined,
+    }
+};
+
 function addColor(x, y, rrFunc, color) {
     rSetDrawColor(...color);
     rrFunc(x, y);
@@ -211,31 +235,25 @@ function oDrawYellowClick(e) {
     document.body.appendChild(yellowClick);
 }
 
+function oEggsInit() { // preload to avoid flickering
+    for (let egg of Object.values(EGG_MAP)) {
+        let ctxEggWest = rrEgg(...cWEST_CANNON, 1.2, 1.2, egg.dx, egg.dy, egg.src);
+        ctxEggWest[0].onload = () => {
+            egg.w = ctxEggWest;
+        };
+        let ctxEggEast = rrEgg(...cEAST_CANNON, 1.2, 1.2, egg.dx, egg.dy, egg.src);
+        ctxEggEast[0].onload = () => {
+            egg.e = ctxEggEast;
+        };
+    }
+}
+
 function oDrawEggs() {
-    const EGG_MAP = {
-        "r": {
-            "src": "static/red_egg.svg",
-            "dx": -10,
-            "dy": -8,
-        },
-        "g": {
-            "src": "static/green_egg.svg",
-            "dx": -4,
-            "dy": -8,
-        },
-        "b": {
-            "src": "static/blue_egg.svg",
-            "dx": 3,
-            "dy": -8,
-        }
-    };
     let penance = ba.Healers.concat(ba.Runners);
     for (let p of penance) {
         for (let egg of p.eggQueue) {
             if (egg.stalled >= 0) {
-                let eggDraw = EGG_MAP[egg.type];
-                let cannon = (egg.cannon == "w") ? cWEST_CANNON : cEAST_CANNON;
-                rrEgg(...cannon, 1.2, 1.2, eggDraw.dx, eggDraw.dy, eggDraw.src);
+                rr.CanvasEggQueue.push(EGG_MAP[egg.type][egg.cannon]);
             }
             else if (egg.stalled == -1 && egg.type == "r") {
                 addColor(p.x, p.y, rrOutline, RED_EGG_CLR);
