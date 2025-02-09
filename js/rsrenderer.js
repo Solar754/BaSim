@@ -58,6 +58,15 @@ function rrCone(x, y) {
 function rrText(x, y, text) {
     rDrawText(x * rrTileSize, rr.CanvasHeight - 1 - (y * rrTileSize), rrTileSize - 1, text);
 }
+function rrEgg(x, y, width, height, dX, dY, imgPath) {
+    rDrawImage(
+        x * rrTileSize + dX - 1, 
+        rr.CanvasHeight + dY - (y * rrTileSize) - rrTileSize, 
+        rrTileSize * width, 
+        rrTileSize * height, 
+        imgPath
+    );
+}
 function rrFillItem(x, y) {
     let padding = rrTileSize >>> 2;
     let size = rrTileSize - 2 * padding;

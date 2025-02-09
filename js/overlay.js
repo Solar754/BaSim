@@ -214,34 +214,28 @@ function oDrawYellowClick(e) {
 function oDrawEggs() {
     const EGG_MAP = {
         "r": {
-            "src": "red_egg.webp",
-            "x": 0
+            "src": "static/red_egg.svg",
+            "dx": -10,
+            "dy": -8,
         },
         "g": {
-            "src": "green_egg.webp",
-            "x": 6
+            "src": "static/green_egg.svg",
+            "dx": -4,
+            "dy": -8,
         },
         "b": {
-            "src": "blue_egg.webp",
-            "x": 12
+            "src": "static/blue_egg.svg",
+            "dx": 3,
+            "dy": -8,
         }
     };
     let penance = ba.Healers.concat(ba.Runners);
-    let allEggs = document.getElementsByClassName('egg');
-    while (allEggs.length > 0) {
-        allEggs[0].parentNode.removeChild(allEggs[0]);
-    }
     for (let p of penance) {
         for (let egg of p.eggQueue) {
-            let cannon = (egg.cannon == "w") ? cWEST_CANNON_PX : cEAST_CANNON_PX;
             if (egg.stalled >= 0) {
-                let eggImg = document.createElement("img");
-                eggImg.className = "egg";
-                eggImg.src = "static/" + EGG_MAP[egg.type].src;
-                eggImg.draggable = false;
-                document.body.appendChild(eggImg);
-                eggImg.style.left = (cannon[0] + EGG_MAP[egg.type].x) + `px`;
-                eggImg.style.top = cannon[1] + `px`;
+                let eggDraw = EGG_MAP[egg.type];
+                let cannon = (egg.cannon == "w") ? cWEST_CANNON : cEAST_CANNON;
+                rrEgg(...cannon, 1.2, 1.2, eggDraw.dx, eggDraw.dy, eggDraw.src);
             }
             else if (egg.stalled == -1 && egg.type == "r") {
                 addColor(p.x, p.y, rrOutline, RED_EGG_CLR);

@@ -4,9 +4,7 @@
 */
 //{ Cannon - c
 const cWEST_CANNON = [21, 26];
-const cWEST_CANNON_PX = [252, 442];
 const cEAST_CANNON = [40, 26];
-const cEAST_CANNON_PX = [480, 442];
 const RED_EGG = 3;
 const GREEN_EGG = 1;
 const RADIUS = 15;
