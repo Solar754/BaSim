@@ -106,6 +106,8 @@ phPlayerHealer.prototype.pathfindHealer = function () {
             this.ArriveDelay = true;
             return;
         }
+        else 
+            this.MovementCounter = 0;
     }
 
     if (this.targetIsAdjacent() && ba.TickCounter > this.CurrentDst?.WaitUntil) {
