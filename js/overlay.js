@@ -237,14 +237,8 @@ function oDrawYellowClick(e) {
 
 function oEggsInit() { // preload to avoid flickering
     for (let egg of Object.values(EGG_MAP)) {
-        let ctxEggWest = rrEgg(...cWEST_CANNON, 1.2, 1.2, egg.dx, egg.dy, egg.src);
-        ctxEggWest[0].onload = () => {
-            egg.w = ctxEggWest;
-        };
-        let ctxEggEast = rrEgg(...cEAST_CANNON, 1.2, 1.2, egg.dx, egg.dy, egg.src);
-        ctxEggEast[0].onload = () => {
-            egg.e = ctxEggEast;
-        };
+        egg.w = rrImage(...cWEST_CANNON, 1.2, 1.2, egg.dx, egg.dy, egg.src);
+        egg.e = rrImage(...cEAST_CANNON, 1.2, 1.2, egg.dx, egg.dy, egg.src);
     }
 }
 
@@ -253,7 +247,7 @@ function oDrawEggs() {
     for (let p of penance) {
         for (let egg of p.eggQueue) {
             if (egg.stalled >= 0) {
-                rr.CanvasEggQueue.push(EGG_MAP[egg.type][egg.cannon]);
+                rr.CanvasImgQueue.push(EGG_MAP[egg.type][egg.cannon]);
             }
             else if (egg.stalled == -1 && egg.type == "r") {
                 addColor(p.x, p.y, rrOutline, RED_EGG_CLR);

@@ -38,11 +38,9 @@ function rPresent() {
     rr.ImageData.data.set(rr.Pixels8);
     rr.Context.putImageData(rr.ImageData, 0, 0);
     rr.CanvasTextQueue.forEach(text => rr.Context.fillText(...text));
-    rr.CanvasEggQueue.forEach(egg => {
-        rr.Context.drawImage(...egg);
-    });
+    rr.CanvasImgQueue.forEach(img => { rr.Context.drawImage(...img); });
     rr.CanvasTextQueue = [];
-    rr.CanvasEggQueue = []; 
+    rr.CanvasImgQueue = []; 
 }
 function rDrawPixel(i) {
     let color = rr.Pixels32[i];
@@ -109,10 +107,12 @@ function rDrawText(x, y, size, text) {
     rr.Context.font = size + "px serif";
     rr.CanvasTextQueue.push([text, x, y]);
 }
-function rDrawEgg(x, y, width, height, imgPath) {
+function rLoadImage(x, y, width, height, imgPath) {
     var img = new Image;
     img.src = imgPath;
-    return [img, x, y, width, height];
+    return (img.onload = () => {
+        return [img, x, y, width, height];
+    })();
 }
 function rXYToI(x, y) {
     return rr.CanvasYFixOffset + x - y * rr.CanvasWidth;
@@ -123,7 +123,7 @@ var rr = {
     CanvasHeight: undefined,
     CanvasYFixOffset: undefined,
     CanvasTextQueue: [],
-    CanvasEggQueue: [],
+    CanvasImgQueue: [],
     Context: undefined,
     ImageData: undefined,
     Pixels: undefined,

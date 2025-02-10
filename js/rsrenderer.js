@@ -58,8 +58,8 @@ function rrCone(x, y) {
 function rrText(x, y, text) {
     rDrawText(x * rrTileSize, rr.CanvasHeight - 1 - (y * rrTileSize), rrTileSize - 1, text);
 }
-function rrEgg(x, y, width, height, dX, dY, imgPath) {
-    return rDrawEgg(
+function rrImage(x, y, width, height, dX, dY, imgPath) {
+    return rLoadImage(
         x * rrTileSize + dX - 1, 
         rr.CanvasHeight + dY - (y * rrTileSize) - rrTileSize, 
         rrTileSize * width, 
