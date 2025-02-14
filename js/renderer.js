@@ -38,7 +38,7 @@ function rPresent() {
     rr.ImageData.data.set(rr.Pixels8);
     rr.Context.putImageData(rr.ImageData, 0, 0);
     rr.CanvasTextQueue.forEach(text => rr.Context.fillText(...text));
-    rr.CanvasImgQueue.forEach(img => { rr.Context.drawImage(...img); });
+    rr.CanvasImgQueue.forEach(img => rr.Context.drawImage(...img));
     rr.CanvasTextQueue = [];
     rr.CanvasImgQueue = []; 
 }

@@ -1,6 +1,9 @@
 /*
 * Process player healer actions
 */
+
+const DEBUG = false;
+
 //{ PlayerHealer - ph
 function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.X = x;
@@ -11,34 +14,36 @@ function phPlayerHealer(x, y, color, role = cmdROLE_NAMES[0]) {
     this.ShortestDistances = [];
     this.WayPoints = [];
     this.ArriveDelay = false;
-    this.TargetHealer = undefined;
-    this.MovementCounter = 0;
-    this.StandStillCounter = 0;
-    this.AdjacentTrueTile = undefined;
-    this.AdjacentDrawn = undefined;
     this.Role = role; // must be unique
     this.hasHealerTargeting = false;
     this.runningComplex = false;
     this.Color = color;
     this.Tiles = phParseTiles(role);
     this.TileIdx = 0;
-    this.PrevTile = {
-        X: x,
-        Y: y,
-    };
     this.CurrentDst = {
-        X: x,
-        Y: y,
-        WaitUntil: 0
+        X: undefined,
+        Y: undefined,
+        healerId: undefined,
+        Healer: undefined,
+        WaitUntil: 0,
+    };
+    this.PrevTile = {
+        X: undefined,
+        Y: undefined,
     };
 }
+phPlayerHealer.prototype.peek = function () {
+    return this.Tiles[this.TileIdx];
+}
 phPlayerHealer.prototype.tick = function () {
-    this.PrevTile.X = this.X;
-    this.PrevTile.Y = this.Y;
-    if (this.ArriveDelay) {
+    this.PrevTile = {
+        X: this.X,
+        Y: this.Y
+    };
+
+    if (this.ArriveDelay)
         this.ArriveDelay = false;
-        return;
-    }
+
     if (this.PathQueuePos > 0) {
         this.X = this.PathQueueX[--this.PathQueuePos];
         this.Y = this.PathQueueY[this.PathQueuePos];
@@ -47,134 +52,169 @@ phPlayerHealer.prototype.tick = function () {
             this.Y = this.PathQueueY[this.PathQueuePos];
         }
     }
-    if (this.PrevTile.X !== this.X || this.PrevTile.Y !== this.Y) {
-        this.StandStillCounter = 0;
+
+    // sim quirk with manually pathing to tiles
+    if (this.arrived() && !this.CurrentDst.Healer) {
+        if (this.peek()?.healerId)
+            this.pathfind();
     }
 }
 phPlayerHealer.prototype.pathfind = function () {
     if (ba.TickCounter <= 1) {
+        this.CurrentDst = { X: this.X, Y: this.Y };
         return;
     }
-    this.StandStillCounter++;
+
+    if (this.tryFood() && this.CurrentDst.useFood) {
+        console.log("Healer", this.CurrentDst.Healer.id, "psned", tickToSecond(ba.TickCounter));
+        ba.Healers.filter(h => h.id == this.CurrentDst.Healer?.id)[0].applyPoisonDmg(true);
+        this.CurrentDst.useFood = false;
+        this.ArriveDelay = true;
+    }
+
     this.skipDeadInQueue();
-    if (this.CurrentDst?.healerId) {
-        this.pathfindHealer();
-    }
-    else {
-        this.pathfindTile();
-    }
-}
-phPlayerHealer.prototype.pathfindTile = function () {
-    let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
-    if (arrived && this.TileIdx < this.Tiles.length) {
+
+    if (this.arrived() && this.TileIdx < this.Tiles.length) {
+        // don't queue up next command until tick before
+        if (ba.TickCounter <= this.peek()?.WaitUntil-1)
+            return;
         this.CurrentDst = this.Tiles[this.TileIdx++];
         this.skipDeadInQueue();
+    }
+    else if (this.arrived() && this.TileIdx >= this.Tiles.length) 
+        return; // do nothing until more tile cmds given
 
-        if (this.CurrentDst?.healerId) {
-            return this.pathfindHealer();
-        }
-    }
-    if (ba.TickCounter <= this.CurrentDst?.WaitUntil) {
-        this.StandStillCounter++;
+    if (this.CurrentDst?.healerId)
+        this.findHealer();
+
+    if (ba.TickCounter <= this.CurrentDst?.WaitUntil)
         return;
-    }
+    else if (this.CurrentDst.Healer && !this.CurrentDst.Healer?.drawnX)
+        return; // hasn't been drawn
+    else if (this.ArriveDelay)
+        return;
     plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
 }
-phPlayerHealer.prototype.pathfindHealer = function () {
-    // check if healer exists/update to current tile
-    this.findTarget();
-    if (!this.TargetHealer?.drawnX && !this.TargetHealer?.drawnY)
-        return;
-
-    // path to true tile
-    if (this.AdjacentTrueTile && this.AdjacentDrawn?.X) {
-        this.CurrentDst.X = this.AdjacentTrueTile.X;
-        this.CurrentDst.Y = this.AdjacentTrueTile.Y;
-    }
-
-    if (this.CurrentDst.X && this.runningComplex) {
-        plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
-    }
-    else if (this.CurrentDst.X && ba.TickCounter > this.CurrentDst?.WaitUntil) {
-        plPathfind(this, this.CurrentDst.X, this.CurrentDst.Y);
-    }
-
-    // use a food same tick healer moves
-    if (this.isMovingAfterStationary()) {
-        if (this.MovementCounter == 1) {
-            this.tick();
-            this.ArriveDelay = true;
-            return;
-        }
-        else 
-            this.MovementCounter = 0;
-    }
-
-    if (this.targetIsAdjacent() && ba.TickCounter > this.CurrentDst?.WaitUntil) {
-        this.useFood();
-        this.ArriveDelay = true;
-
-        this.CurrentDst = this.Tiles[this.TileIdx] || { X: this.X, Y: this.Y };
-        if (this.TileIdx < this.Tiles.length) {
-            this.TileIdx++;
-        }
-    }
-}
-phPlayerHealer.prototype.isMovingAfterStationary = function () {
-    let noMovePreviousTick = (this.X === this.PrevTile.X && this.Y === this.PrevTile.Y);
-    let moveNextTick = (this.X !== this.CurrentDst.X || this.Y !== this.CurrentDst.Y);
-    if (noMovePreviousTick && moveNextTick) {
-        this.MovementCounter++;
-    }
-    else {
-        this.MovementCounter = 0;
-    }
-    return noMovePreviousTick && moveNextTick;
-}
-phPlayerHealer.prototype.targetIsAdjacent = function () {
-    let trueTileIsAdj = (this.X === this.AdjacentTrueTile?.X && this.Y === this.AdjacentTrueTile?.Y);
-    let drawnTileIsAdj = (this.X === this.AdjacentDrawn?.X && this.Y === this.AdjacentDrawn?.Y);
-    let drawnIsIntercardinalAdj = (
-        (this.X + 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // ne
-        || (this.X + 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // se
-        || (this.X - 1 === this.TargetHealer?.drawnX && this.Y - 1 === this.TargetHealer?.drawnY) // sw
-        || (this.X - 1 === this.TargetHealer?.drawnX && this.Y + 1 === this.TargetHealer?.drawnY) // nw
-    );
-    let playerIsStill = (trueTileIsAdj && this.StandStillCounter > 1 && !this.MovementCounter);
-
-    // hacky arrivedelay scenario
-    let movedPreviousTick = (this.StandStillCounter == 1);
-    if (drawnIsIntercardinalAdj && trueTileIsAdj && movedPreviousTick) {
-        this.ArriveDelay = true;
-        this.MovementCounter++;
-        return false;
-    }
-    return drawnTileIsAdj || (trueTileIsAdj && drawnIsIntercardinalAdj) || playerIsStill;
-}
-phPlayerHealer.prototype.findTarget = function () {
-    for (let healer of ba.Healers) {
-        if (this.CurrentDst?.healerId === healer.id) {
-            this.TargetHealer = healer;
-            let adjDrawn = this.findBestAdjacentTile(healer.drawnX, healer.drawnY);
-            let adjTrue = this.findBestAdjacentTile(healer.x, healer.y);
-            this.AdjacentDrawn = { X: adjDrawn[0], Y: adjDrawn[1] };
-            this.AdjacentTrueTile = { X: adjTrue[0], Y: adjTrue[1] };
-            return true;
-        }
-    }
-    this.TargetHealer = undefined;
-    this.AdjacentDrawn = undefined;
-    this.AdjacentTrueTile = undefined;
+phPlayerHealer.prototype.arrived = function () {
+    let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
+    if (arrived && this.CurrentDst?.useFood === undefined) 
+        return true;
+    else if (this.CurrentDst?.useFood === false)
+        return true;
     return false;
 }
-phPlayerHealer.prototype.useFood = function () {
-    console.log(tickToSecond(ba.TickCounter) + ": Used a food on healer " + this.CurrentDst.healerId);
-    for (let healer of ba.Healers) {
-        if (this.CurrentDst.healerId === healer.id && healer.hp) {
-            healer.applyPoisonDmg(true);
-            return;
-        }
+phPlayerHealer.prototype.findHealer = function () {
+    let targetHealer = ba.Healers.filter(h => h.id == this.CurrentDst?.healerId);
+    if (targetHealer.length > 0) {
+        this.CurrentDst.Healer = targetHealer[0];
+        [this.CurrentDst.X, this.CurrentDst.Y] = this.findBestAdjacentTile(
+            this.CurrentDst.Healer.x, this.CurrentDst.Healer.y
+        );
     }
+}
+phPlayerHealer.prototype.tryFood = function () {
+    if (!this.CurrentDst.Healer?.hp)
+        return false;
+
+    let healer = this.CurrentDst.Healer;
+
+    // player drawn tile
+    let drawn_drawnTileIsAdj = (
+        (this.PrevTile.X === healer.drawnX + 1 && this.PrevTile.Y === healer.drawnY) // e
+        || (this.PrevTile.X === healer.drawnX - 1 && this.PrevTile.Y === healer.drawnY) // w
+        || (this.PrevTile.X === healer.drawnX && this.PrevTile.Y === healer.drawnY + 1) // n
+        || (this.PrevTile.X === healer.drawnX && this.PrevTile.Y === healer.drawnY - 1) // s
+    );
+    let drawn_trueTileIsAdj = (
+        (this.PrevTile.X === healer.x + 1 && this.PrevTile.Y === healer.y) // e
+        || (this.PrevTile.X === healer.x - 1 && this.PrevTile.Y === healer.y) // w
+        || (this.PrevTile.X === healer.x && this.PrevTile.Y === healer.y + 1) // n
+        || (this.PrevTile.X === healer.x && this.PrevTile.Y === healer.y - 1) // s
+    );
+    let drawn_drawnTileIsIntercardinalAdj = (
+        (this.PrevTile.X + 1 === healer?.drawnX && this.PrevTile.Y + 1 === healer?.drawnY) // ne
+        || (this.PrevTile.X + 1 === healer?.drawnX && this.PrevTile.Y - 1 === healer?.drawnY) // se
+        || (this.PrevTile.X - 1 === healer?.drawnX && this.PrevTile.Y - 1 === healer?.drawnY) // sw
+        || (this.PrevTile.X - 1 === healer?.drawnX && this.PrevTile.Y + 1 === healer?.drawnY) // nw
+    );
+    let drawn_trueTileIsIntercardinalAdj = (
+        (this.PrevTile.X + 1 === healer?.x && this.PrevTile.Y + 1 === healer?.y) // ne
+        || (this.PrevTile.X + 1 === healer?.x && this.PrevTile.Y - 1 === healer?.y) // se
+        || (this.PrevTile.X - 1 === healer?.x && this.PrevTile.Y - 1 === healer?.y) // sw
+        || (this.PrevTile.X - 1 === healer?.x && this.PrevTile.Y + 1 === healer?.y) // nw
+    );
+
+    // player true tile
+    let true_drawnTileIsAdj = (
+        (this.X === healer.drawnX + 1 && this.Y === healer.drawnY) // e
+        || (this.X === healer.drawnX - 1 && this.Y === healer.drawnY) // w
+        || (this.X === healer.drawnX && this.Y === healer.drawnY + 1) // n
+        || (this.X === healer.drawnX && this.Y === healer.drawnY - 1) // s
+    );
+    let true_trueTileIsAdj = (
+        (this.X === healer.x + 1 && this.Y === healer.y) // e
+        || (this.X === healer.x - 1 && this.Y === healer.y) // w
+        || (this.X === healer.x && this.Y === healer.y + 1) // n
+        || (this.X === healer.x && this.Y === healer.y - 1) // s
+    );
+    let true_drawnTileIsIntercardinalAdj = (
+        (this.X + 1 === healer?.drawnX && this.Y + 1 === healer?.drawnY) // ne
+        || (this.X + 1 === healer?.drawnX && this.Y - 1 === healer?.drawnY) // se
+        || (this.X - 1 === healer?.drawnX && this.Y - 1 === healer?.drawnY) // sw
+        || (this.X - 1 === healer?.drawnX && this.Y + 1 === healer?.drawnY) // nw
+    );
+    let true_trueTileIsIntercardinalAdj = (
+        (this.X + 1 === healer?.x && this.Y + 1 === healer?.y) // ne
+        || (this.X + 1 === healer?.x && this.Y - 1 === healer?.y) // se
+        || (this.X - 1 === healer?.x && this.Y - 1 === healer?.y) // sw
+        || (this.X - 1 === healer?.x && this.Y + 1 === healer?.y) // nw
+    );
+
+    if (DEBUG)
+        console.log(`
+            drawn_drawnTileIsAdj\t${drawn_drawnTileIsAdj}\n
+            drawn_trueTileIsAdj\t${drawn_trueTileIsAdj}\n
+            drawn_drawnTileIsIntercardinalAdj\t${drawn_drawnTileIsIntercardinalAdj}\n
+            drawn_trueTileIsIntercardinalAdj\t${drawn_trueTileIsIntercardinalAdj}\n
+            true_drawnTileIsAdj\t${true_drawnTileIsAdj}\n
+            true_trueTileIsAdj\t${true_trueTileIsAdj}\n
+            true_drawnTileIsIntercardinalAdj\t${true_drawnTileIsIntercardinalAdj}\n
+            true_trueTileIsIntercardinalAdj\t${true_trueTileIsIntercardinalAdj}\n
+        `);
+
+    // exceptions?
+    if (
+        !drawn_trueTileIsAdj &&
+        !drawn_drawnTileIsIntercardinalAdj &&
+        !true_trueTileIsAdj	&&
+        !true_drawnTileIsIntercardinalAdj &&
+        drawn_drawnTileIsAdj &&
+        drawn_trueTileIsIntercardinalAdj &&
+        true_drawnTileIsAdj	&&
+        true_trueTileIsIntercardinalAdj
+    ) {
+            return false;
+    }
+    return (
+        true_drawnTileIsAdj
+        || (drawn_trueTileIsAdj && true_trueTileIsAdj)
+        || (
+            drawn_trueTileIsAdj && 
+            drawn_drawnTileIsIntercardinalAdj && 
+            true_trueTileIsAdj && 
+            true_drawnTileIsIntercardinalAdj
+        )
+        || (
+            !drawn_drawnTileIsAdj &&
+            !drawn_trueTileIsAdj &&
+            !drawn_drawnTileIsIntercardinalAdj &&
+            !drawn_trueTileIsIntercardinalAdj &&
+            !true_drawnTileIsAdj &&
+            !true_trueTileIsIntercardinalAdj &&
+            true_trueTileIsAdj &&
+            true_drawnTileIsIntercardinalAdj
+        )
+    );
 }
 phPlayerHealer.prototype.skipDeadInQueue = function () {
     if (!this.CurrentDst.healerId) {

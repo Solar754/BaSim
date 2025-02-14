@@ -363,6 +363,14 @@ Player healer syntax
     Trivial code syntax (see below) can also be entered here. Player healer will do its best to make 
     its own decisions (don't expect much).
 
+    There are a couple sim-specific movement quirks
+        1) When the player command is to poison a healer, player pathing will update every tick like
+           if using a food every tick in game
+
+        2) When pathing to a tile and then using a food, the default behavior is to try and use a food
+           in the same turn as when player reaches the tile, since typically people will want to use a
+           food before actually reaching their destination tile
+
 
 Ignore healer
     When toggled on, npc healers will not target player healer or any teammates with player healer 
