@@ -54,7 +54,7 @@ phPlayerHealer.prototype.tick = function () {
     }
 
     // sim quirk with manually pathing to tiles
-    if (this.arrived() && !this.CurrentDst.Healer) {
+    if (this.arrived() && !this.CurrentDst?.healerId) {
         if (this.peek()?.healerId)
             this.pathfind();
     }
@@ -117,58 +117,28 @@ phPlayerHealer.prototype.tryFood = function () {
         return false;
 
     let healer = this.CurrentDst.Healer;
-
+    function mapPerms(plX, plY, targetX, targetY) {
+        let tileIsAdj = (
+            (plX === targetX + 1 && plY === targetY) // e
+            || (plX === targetX - 1 && plY === targetY) // w
+            || (plX === targetX && plY === targetY + 1) // n
+            || (plX=== targetX && plY === targetY - 1) // s
+        );
+        let tileIsIntercardinalAdj = (
+            (plX + 1 === targetX && plY + 1 === targetY) // ne
+            || (plX+ 1 === targetX && plY - 1 === targetY) // se
+            || (plX - 1 === targetX && plY - 1 === targetY) // sw
+            || (plX - 1 === targetX && plY + 1 === targetY) // nw
+        );
+        return [tileIsAdj, tileIsIntercardinalAdj];
+    }
     // player drawn tile
-    let drawn_drawnTileIsAdj = (
-        (this.PrevTile.X === healer.drawnX + 1 && this.PrevTile.Y === healer.drawnY) // e
-        || (this.PrevTile.X === healer.drawnX - 1 && this.PrevTile.Y === healer.drawnY) // w
-        || (this.PrevTile.X === healer.drawnX && this.PrevTile.Y === healer.drawnY + 1) // n
-        || (this.PrevTile.X === healer.drawnX && this.PrevTile.Y === healer.drawnY - 1) // s
-    );
-    let drawn_trueTileIsAdj = (
-        (this.PrevTile.X === healer.x + 1 && this.PrevTile.Y === healer.y) // e
-        || (this.PrevTile.X === healer.x - 1 && this.PrevTile.Y === healer.y) // w
-        || (this.PrevTile.X === healer.x && this.PrevTile.Y === healer.y + 1) // n
-        || (this.PrevTile.X === healer.x && this.PrevTile.Y === healer.y - 1) // s
-    );
-    let drawn_drawnTileIsIntercardinalAdj = (
-        (this.PrevTile.X + 1 === healer?.drawnX && this.PrevTile.Y + 1 === healer?.drawnY) // ne
-        || (this.PrevTile.X + 1 === healer?.drawnX && this.PrevTile.Y - 1 === healer?.drawnY) // se
-        || (this.PrevTile.X - 1 === healer?.drawnX && this.PrevTile.Y - 1 === healer?.drawnY) // sw
-        || (this.PrevTile.X - 1 === healer?.drawnX && this.PrevTile.Y + 1 === healer?.drawnY) // nw
-    );
-    let drawn_trueTileIsIntercardinalAdj = (
-        (this.PrevTile.X + 1 === healer?.x && this.PrevTile.Y + 1 === healer?.y) // ne
-        || (this.PrevTile.X + 1 === healer?.x && this.PrevTile.Y - 1 === healer?.y) // se
-        || (this.PrevTile.X - 1 === healer?.x && this.PrevTile.Y - 1 === healer?.y) // sw
-        || (this.PrevTile.X - 1 === healer?.x && this.PrevTile.Y + 1 === healer?.y) // nw
-    );
+    [drawn_drawnTileIsAdj, drawn_drawnTileIsIntercardinalAdj] = mapPerms(this.PrevTile.X, this.PrevTile.Y, healer.drawnX, healer.drawnY);
+    [drawn_trueTileIsAdj, drawn_trueTileIsIntercardinalAdj] = mapPerms(this.PrevTile.X, this.PrevTile.Y, healer.x, healer.y);
 
     // player true tile
-    let true_drawnTileIsAdj = (
-        (this.X === healer.drawnX + 1 && this.Y === healer.drawnY) // e
-        || (this.X === healer.drawnX - 1 && this.Y === healer.drawnY) // w
-        || (this.X === healer.drawnX && this.Y === healer.drawnY + 1) // n
-        || (this.X === healer.drawnX && this.Y === healer.drawnY - 1) // s
-    );
-    let true_trueTileIsAdj = (
-        (this.X === healer.x + 1 && this.Y === healer.y) // e
-        || (this.X === healer.x - 1 && this.Y === healer.y) // w
-        || (this.X === healer.x && this.Y === healer.y + 1) // n
-        || (this.X === healer.x && this.Y === healer.y - 1) // s
-    );
-    let true_drawnTileIsIntercardinalAdj = (
-        (this.X + 1 === healer?.drawnX && this.Y + 1 === healer?.drawnY) // ne
-        || (this.X + 1 === healer?.drawnX && this.Y - 1 === healer?.drawnY) // se
-        || (this.X - 1 === healer?.drawnX && this.Y - 1 === healer?.drawnY) // sw
-        || (this.X - 1 === healer?.drawnX && this.Y + 1 === healer?.drawnY) // nw
-    );
-    let true_trueTileIsIntercardinalAdj = (
-        (this.X + 1 === healer?.x && this.Y + 1 === healer?.y) // ne
-        || (this.X + 1 === healer?.x && this.Y - 1 === healer?.y) // se
-        || (this.X - 1 === healer?.x && this.Y - 1 === healer?.y) // sw
-        || (this.X - 1 === healer?.x && this.Y + 1 === healer?.y) // nw
-    );
+    [true_drawnTileIsAdj, true_drawnTileIsIntercardinalAdj] = mapPerms(this.X, this.Y, healer.drawnX, healer.drawnY);
+    [true_trueTileIsAdj, true_trueTileIsIntercardinalAdj] = mapPerms(this.X, this.Y, healer.x, healer.y);
 
     if (DEBUG)
         console.log(`
