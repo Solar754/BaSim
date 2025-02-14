@@ -182,18 +182,31 @@ phPlayerHealer.prototype.tryFood = function () {
             true_trueTileIsIntercardinalAdj\t${true_trueTileIsIntercardinalAdj}\n
         `);
 
-    // exceptions?
+    // 'exceptions'
     if (
-        !drawn_trueTileIsAdj &&
-        !drawn_drawnTileIsIntercardinalAdj &&
-        !true_trueTileIsAdj	&&
-        !true_drawnTileIsIntercardinalAdj &&
-        drawn_drawnTileIsAdj &&
-        drawn_trueTileIsIntercardinalAdj &&
-        true_drawnTileIsAdj	&&
-        true_trueTileIsIntercardinalAdj
+        ( // trapping healer against wall on spawn
+            !drawn_trueTileIsAdj &&
+            !drawn_drawnTileIsIntercardinalAdj &&
+            !true_trueTileIsAdj	&&
+            !true_drawnTileIsIntercardinalAdj &&
+            drawn_drawnTileIsAdj &&
+            drawn_trueTileIsIntercardinalAdj &&
+            true_drawnTileIsAdj	&&
+            true_trueTileIsIntercardinalAdj
+        )
+        || ( // healer bouncing when food used
+            !drawn_trueTileIsAdj &&
+            !drawn_drawnTileIsIntercardinalAdj &&
+            !drawn_trueTileIsIntercardinalAdj &&
+            !true_trueTileIsAdj &&
+            !true_drawnTileIsIntercardinalAdj &&
+            !true_trueTileIsIntercardinalAdj &&
+            drawn_drawnTileIsAdj &&
+            true_drawnTileIsAdj
+
+        )
     ) {
-            return false;
+        return false;
     }
     return (
         true_drawnTileIsAdj

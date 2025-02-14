@@ -193,6 +193,7 @@ function updateSettingsOnClick(e) {
             simWaveSelectOnChange();
             simToggleTeamOnClick();
             oDrawAllRolePaths();
+            stateHistory.clear();
         } catch (err) {
             console.log(err);
             alert("Import failed.");
