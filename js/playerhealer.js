@@ -76,7 +76,7 @@ phPlayerHealer.prototype.pathfind = function () {
 
     if (this.arrived() && this.TileIdx < this.Tiles.length) {
         // don't queue up next command until tick before
-        if (ba.TickCounter <= this.peek()?.WaitUntil-1)
+        if (ba.TickCounter < this.peek()?.WaitUntil)
             return;
         this.CurrentDst = this.Tiles[this.TileIdx++];
         this.skipDeadInQueue();
@@ -173,7 +173,6 @@ phPlayerHealer.prototype.tryFood = function () {
             !true_trueTileIsIntercardinalAdj &&
             drawn_drawnTileIsAdj &&
             true_drawnTileIsAdj
-
         )
     ) {
         return false;
