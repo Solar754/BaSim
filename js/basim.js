@@ -285,7 +285,7 @@ function simPauseResumeButtonOnClick() {
 		if (sim.IsPaused) {
 			sim.TickTimerId = setInterval(simTick, 600);
 			simSetPause(false);
-			cmdUncheckAllRoles();
+			//cmdUncheckAllRoles();
 		} else {
 			clearInterval(sim.TickTimerId);
 			simSetPause(true);
@@ -411,7 +411,7 @@ function simStartStopButtonOnClick() {
 		if (!sim.IsPaused)
 			sim.TickTimerId = setInterval(simTick, 600);
 	}
-	cmdUncheckAllRoles();
+	//cmdUncheckAllRoles();
 }
 function simMovementsInputWatcher() {
 	ba.runnerMovements = simParseMovementsInput();
@@ -546,7 +546,7 @@ function simCanvasOnMouseDown(e) {
 	// add coordinate to textarea on click
 	for (let role of cmdROLE_NAMES) {
 		let id = `${role}togglemarker`;
-		if (document.getElementById(id).checked) {
+		if (document.getElementById(id).checked && sim.SpawnTeam.checked) {
 			cmdUpdateRolePath(role, xTile, yTile);
 			return;
 		}
@@ -600,7 +600,7 @@ function simToggleTeamOnClick(e) {
 	else {
 		document.getElementById("teammatetable").style.display = "none";
 	}
-	cmdUncheckAllRoles();
+	//cmdUncheckAllRoles();
 	mResetMap();
 	simReset(e);
 }
@@ -609,8 +609,8 @@ function simToggleOnlyOneRoleMarker(e) {
 	cmdUncheckAllRoles();
 	e.target.checked = originalVal;
 	if (e.target.checked) {
-		if (!sim.IsPaused)
-			sim.PauseResumeButton.click();
+		//if (!sim.IsPaused)
+		//	sim.PauseResumeButton.click();
 		oDrawAllRolePaths();
 	}
 	else {
