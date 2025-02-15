@@ -66,40 +66,40 @@
                     <td name="main">
                         Main<br>
                         <input type="checkbox" name="rolemarker" id="maintogglemarker">
-                        <label for="maintogglemarker">Marker</label>
-                        <button name="clearcmds" for="maincmds">Clear</button>
+                        <label for="maintogglemarker">Tile Selector</label>
+                        <button name="clearcmds" for="maincmds" title="Clear commands">&#x2716;</button>
                         <br>
                         <textarea id="maincmds"></textarea>
                     </td>
                     <td name="second">
                         Second<br>
                         <input type="checkbox" name="rolemarker" id="secondtogglemarker">
-                        <label for="secondtogglemarker">Marker</label>
-                        <button name="clearcmds" for="secondcmds">Clear</button>
+                        <label for="secondtogglemarker">Tile Selector</label>
+                        <button name="clearcmds" for="secondcmds" title="Clear commands">&#x2716;</button>
                         <br>
                         <textarea id="secondcmds"></textarea>
                     </td>
                     <td name="heal">
                         Heal<br>
                         <input type="checkbox" name="rolemarker" id="healtogglemarker">
-                        <label for="healtogglemarker">Marker</label>
-                        <button name="clearcmds" for="healcmds">Clear</button>
+                        <label for="healtogglemarker">Tile Selector</label>
+                        <button name="clearcmds" for="healcmds" title="Clear commands">&#x2716;</button>
                         <br>
                         <textarea id="healcmds"></textarea>
                     </td>
                     <td name="col">
                         Collector<br>
                         <input type="checkbox" name="rolemarker" id="coltogglemarker">
-                        <label for="coltogglemarker">Marker</label>
-                        <button name="clearcmds" for="colcmds">Clear</button>
+                        <label for="coltogglemarker">Tile Selector</label>
+                        <button name="clearcmds" for="colcmds" title="Clear commands">&#x2716;</button>
                         <br>
                         <textarea id="colcmds"></textarea>
                     </td>
                     <td name="def" hidden>
                         Defender<br>
                         <input type="checkbox" name="rolemarker" id="deftogglemarker">
-                        <label for="deftogglemarker">Marker</label>
-                        <button name="clearcmds" for="defcmds">Clear</button>
+                        <label for="deftogglemarker">Tile Selector</label>
+                        <button name="clearcmds" for="defcmds" title="Clear commands">&#x2716;</button>
                         <br>
                         <textarea id="defcmds"></textarea>
                     </td>
@@ -154,6 +154,20 @@
             </ul>
         </div>
         <div>
+            <table id="healertable" style="display: none;margin-bottom: 1rem;">
+                <thead>
+                    <tr>
+                        <th>Healer</th>
+                        <th>Current<br>Target</th>
+                        <th>Last<br>Target</th>
+                        <th>Spray<br>Timer</th>
+                        <th>Poisoned</th>
+                        <th>Health</th>
+                        <th>Position</th>
+                        <th>Destination</th>
+                    </tr>
+                </thead>
+            </table>
             <table id="runnertable" style="display: none;">
                 <thead>
                     <tr>
@@ -165,20 +179,6 @@
                         <th>Destination</th>
                         <th>Target</th>
                         <th>Chat</th>
-                    </tr>
-                </thead>
-            </table><br>
-            <table id="healertable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Healer</th>
-                        <th>Current<br>Target</th>
-                        <th>Last<br>Target</th>
-                        <th>Spray<br>Timer</th>
-                        <th>Poisoned</th>
-                        <th>Health</th>
-                        <th>Position</th>
-                        <th>Destination</th>
                     </tr>
                 </thead>
             </table>

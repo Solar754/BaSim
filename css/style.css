@@ -27,6 +27,21 @@ textarea {
     resize: none;
 }
 
+input[name="rolemarker"] {
+    margin-left: 1px;
+    margin-right: 2px;
+}
+
+button[for="maincmds"],
+button[for="secondcmds"],
+button[for="healcmds"],
+button[for="colcmds"] {
+    margin: 0 auto;
+    margin-left: 2px;
+    font-size: 8px;
+    padding: 0px 3px 0px 3px;
+}
+
 table,
 th,
 td {

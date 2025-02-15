@@ -191,7 +191,7 @@ function simUpdateRunnerTable() {
 	sim.RunnerTable.style.display = "table";
 }
 function simUpdateHealerTable() {
-	if (!sim.IsRunning) {
+	if (!sim.IsRunning || !sim.ToggleHealers.checked) {
 		sim.HealerTable.style.display = "none";
 		return;
 	}

@@ -294,6 +294,8 @@ function baDrawEntities() {
     for (let i = 0; i < ba.Healers.length; ++i) {
         let npc = ba.Healers[i];
         addColor(npc.x, npc.y, rrFill, HEALER_CLR);
+        if (document.getElementById("rolemarkernumbers").checked)
+            rrText(npc.x, npc.y, npc.id);
         if (npc.isPsned)
             addColor(npc.x, npc.y, rrFill, HEALER_PSND_CLR);
         if (npc.isDying)

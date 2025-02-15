@@ -279,6 +279,14 @@ function oDrawAllRolePaths() {
             }
         }
     }
+    // healers
+    if (includeNumbers) {
+        for (let i = 0; i < ba.Healers.length; ++i) {
+            let npc = ba.Healers[i];
+            if (document.getElementById("rolemarkernumbers").checked)
+                rrText(npc.x, npc.y, npc.id);
+        }
+    }
     rPresent();
 }
 
@@ -344,7 +352,7 @@ Egg syntax
 
 
 General teammate syntax
-    Input tiles in 'x,y:tick' format, or toggle marker to select tiles on canvas.
+    Input tiles in 'x,y:tick' format, or toggle tile selector to select tiles on canvas.
     Tiles added while sim is running get timestamped with current tick and processed.
     Tick is the earliest possible time a command happens and is optional. It reflects 
     when a "click" would happen in-game.
@@ -370,6 +378,10 @@ Player healer syntax
         2) When pathing to a tile and then using a food, the default behavior is to try and use a food
            in the same turn as when player reaches the tile, since typically people will want to use a
            food before actually reaching their destination tile
+
+
+Numbered
+    When toggled on, team tiles and healers will be numbered. Can be toggled while sim is running
 
 
 Ignore healer
