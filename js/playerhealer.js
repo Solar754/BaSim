@@ -43,13 +43,14 @@ phPlayerHealer.prototype.tick = function () {
 
     if (this.ArriveDelay)
         this.ArriveDelay = false;
-
-    if (this.PathQueuePos > 0) {
-        this.X = this.PathQueueX[--this.PathQueuePos];
-        this.Y = this.PathQueueY[this.PathQueuePos];
+    else {
         if (this.PathQueuePos > 0) {
             this.X = this.PathQueueX[--this.PathQueuePos];
             this.Y = this.PathQueueY[this.PathQueuePos];
+            if (this.PathQueuePos > 0) {
+                this.X = this.PathQueueX[--this.PathQueuePos];
+                this.Y = this.PathQueueY[this.PathQueuePos];
+            }
         }
     }
 
@@ -153,6 +154,8 @@ phPlayerHealer.prototype.tryFood = function () {
         `);
 
     // 'exceptions'
+    let healerDrawnTileIsNorth = (this.X == healer.drawnX && this.Y+1 == healer.drawnY);
+    let healerTrueTileIsNorth = (this.X == healer.x && this.Y+1 == healer.y);
     if (
         ( // trapping healer against wall on spawn
             !drawn_trueTileIsAdj &&
@@ -162,7 +165,8 @@ phPlayerHealer.prototype.tryFood = function () {
             drawn_drawnTileIsAdj &&
             drawn_trueTileIsIntercardinalAdj &&
             true_drawnTileIsAdj	&&
-            true_trueTileIsIntercardinalAdj
+            true_trueTileIsIntercardinalAdj &&
+            healerDrawnTileIsNorth
         )
         || ( // healer bouncing when food used
             !drawn_trueTileIsAdj &&
@@ -186,9 +190,7 @@ phPlayerHealer.prototype.tryFood = function () {
             true_trueTileIsAdj && 
             true_drawnTileIsIntercardinalAdj
         )
-        // FIXME this is only for the second TEST 1 scenario
-        // causes issues elsewhere
-        /*|| (
+        || (
             !drawn_drawnTileIsAdj &&
             !drawn_trueTileIsAdj &&
             !drawn_drawnTileIsIntercardinalAdj &&
@@ -196,8 +198,9 @@ phPlayerHealer.prototype.tryFood = function () {
             !true_drawnTileIsAdj &&
             !true_trueTileIsIntercardinalAdj &&
             true_trueTileIsAdj &&
-            true_drawnTileIsIntercardinalAdj
-        )*/
+            true_drawnTileIsIntercardinalAdj &&
+            healerTrueTileIsNorth
+        )
     );
 }
 phPlayerHealer.prototype.skipDeadInQueue = function () {

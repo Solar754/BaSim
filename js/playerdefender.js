@@ -73,11 +73,11 @@ function plHandleMovements() {
         switch (movement.cmd) {
             case "g":
                 mAddItem(new fFood(pl.X, pl.Y, true, ++sim.CurrentFoodId));
-                pl.Actions.food.push({"type":"g", "id": sim.CurrentFoodId});
+                pl.Actions.good++;
                 break;
             case "b":
                 mAddItem(new fFood(pl.X, pl.Y, false, ++sim.CurrentFoodId));
-                pl.Actions.food.push({"type":"b", "id": sim.CurrentFoodId});
+                pl.Actions.bad++;
                 break;
             case "t":
                 if (baIsNextToEastTrap(pl.X, pl.Y) && ba.EastTrapCharges < 2) {
@@ -126,9 +126,13 @@ function updateMarkersFromStateHistory(e) {
         let tick = parseInt(state.ba.TickCounter);
         let actions = state.pl.Actions;
 
-        actions.food = actions.food.sort((lh, rh) => { return lh.id - rh.id; });
-        for (let food of actions.food) {
-            textarea.value += `${food.type},1:${tick - 1}\n`;
+        if (actions.bad != bad_count) {
+            textarea.value += `b,${actions.bad - bad_count}:${tick - 1}\n`;
+            bad_count = actions.bad;
+        }
+        if (actions.good != good_count) {
+            textarea.value += `g,${actions.good - good_count}:${tick - 1}\n`;
+            good_count = actions.good;
         }
         if (actions.repair != repair_count) {
             textarea.value += `t:${tick - 1}\n`;
