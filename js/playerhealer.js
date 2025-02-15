@@ -186,7 +186,9 @@ phPlayerHealer.prototype.tryFood = function () {
             true_trueTileIsAdj && 
             true_drawnTileIsIntercardinalAdj
         )
-        || (
+        // FIXME this is only for the second TEST 1 scenario
+        // causes issues elsewhere
+        /*|| (
             !drawn_drawnTileIsAdj &&
             !drawn_trueTileIsAdj &&
             !drawn_drawnTileIsIntercardinalAdj &&
@@ -195,7 +197,7 @@ phPlayerHealer.prototype.tryFood = function () {
             !true_trueTileIsIntercardinalAdj &&
             true_trueTileIsAdj &&
             true_drawnTileIsIntercardinalAdj
-        )
+        )*/
     );
 }
 phPlayerHealer.prototype.skipDeadInQueue = function () {
