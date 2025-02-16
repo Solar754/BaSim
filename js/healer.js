@@ -20,7 +20,7 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.sprayTimer = 0; // used to time when a healer should be aggroing runners or players
     this.id = id;
 
-    // force who to target on spawn
+    // force to target specific role on spawn
     this.forcedTarget = ba.HealerSpawns[ba.HealerSpawnsIndex]?.target;
     switch (this.forcedTarget) {
         case "m":
@@ -33,7 +33,7 @@ function heHealer(x = -1, y = -1, id = -1) {
             this.forcedTarget = "heal";
             break;
         case "c":
-            this.forcedTarget = "col";
+            this.forcedTarget = "col"; // or 'collector'
             break;
         case "d":
             this.forcedTarget = "player";

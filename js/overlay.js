@@ -330,7 +330,7 @@ Runner movements
     
 Runner/healer spawns
     Specify when runner/healer should spawn. 
-    Healers can have a forced target on spawn as well. Valid target names are m/2/h/c/d.
+    Healers can have a forced target on spawn. Valid target names are m/2/h/c/d.
     Reserves will only come out if eligible and if time is specified.
 
     Example: 11,21,31
