@@ -21,26 +21,22 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.id = id;
 
     // force to target specific role on spawn
-    this.forcedTarget = ba.HealerSpawns[ba.HealerSpawnsIndex]?.target;
-    switch (this.forcedTarget) {
-        case "m":
-            this.forcedTarget = "main";
-            break;
-        case "2":
-            this.forcedTarget = "second";
-            break;
-        case "h":
-            this.forcedTarget = "heal";
-            break;
-        case "c":
-            this.forcedTarget = "col"; // or 'collector'
-            break;
-        case "d":
-            this.forcedTarget = "player";
-            break;
-        case undefined:
-            this.forcedTarget = undefined;
+    this.forcedTarget = "";
+    let forcedTargets = ba.HealerSpawns[ba.HealerSpawnsIndex]?.target || "";
+    if (forcedTargets.includes("m"))
+        this.forcedTarget += "main";
+    if (forcedTargets.includes("2"))
+        this.forcedTarget += "second";
+    if (forcedTargets.includes("h"))
+        this.forcedTarget += "heal";
+    if (forcedTargets.includes("c")) {
+        this.forcedTarget += "col";
+        this.forcedTarget += "collector";
     }
+    if (forcedTargets.includes("d"))
+        this.forcedTarget += "player";
+    if (this.forcedTarget === "")
+        this.forcedTarget = undefined;
 
     // psn stuff
     this.hp = baHEALER_HEALTH[sim.WaveSelect.value];
@@ -73,7 +69,7 @@ heHealer.prototype.foundPlayerTarget = function () {
     });
     if (possibleTargets.length > 0) {
         if (this.forcedTarget && this.justSpawned)
-            plTarget = possibleTargets.filter(t => t.Role.includes(this.forcedTarget))[0];
+            plTarget = possibleTargets.filter(t => this.forcedTarget.includes(t.Role))[0];
         else
             plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
     }

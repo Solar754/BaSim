@@ -326,7 +326,7 @@ function simStartStopButtonOnClick() {
 		}
 		if (runnerSpawns === null || healerSpawns === null) {
 			alert("Invalid spawn intervals. Example: 11,21,31\n"+
-			"Force healer targets with m/2/c/d. Example 11:m,21:c");
+			"Force healer targets with m/2/c/d. Example 11:mc,21:h");
 			return;
 		}
 		let cannonQueue = simParseCannonInput(sim.CannonQueue);
@@ -449,9 +449,6 @@ function simParseSpawnsInput(mobSpawns) {
 			target: strToStandard[1]?.toLowerCase() || undefined
 		}
 		if (!Number.isInteger(strToStandard.time) || !+strToStandard.time) {
-			return null;
-		}
-		if (strToStandard.target && !"m2hcd".includes(strToStandard.target)) {
 			return null;
 		}
 		spawns[i] = strToStandard;
