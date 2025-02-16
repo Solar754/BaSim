@@ -330,12 +330,17 @@ Runner movements
     
 Runner/healer spawns
     Specify when runner/healer should spawn. 
+    Healers can have a forced target on spawn as well. Valid target names are m/2/h/c/d.
     Reserves will only come out if eligible and if time is specified.
 
     Example: 11,21,31
     First spawn will be when tick counter = 11, then 21, then 31
 
+    Forced targets: 11:m,21:c
+    First healer will only accept main as a valid target. Second healer will only accept
+    collector as a valid target.
 
+    
 Egg syntax
     Input eggs to shoot using certain specifiers in the format:
         <cannon=e|w><penance=r|h><egg=r|g|b>,num eggs,tick

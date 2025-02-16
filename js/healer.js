@@ -20,6 +20,28 @@ function heHealer(x = -1, y = -1, id = -1) {
     this.sprayTimer = 0; // used to time when a healer should be aggroing runners or players
     this.id = id;
 
+    // force who to target on spawn
+    this.forcedTarget = ba.HealerSpawns[ba.HealerSpawnsIndex]?.target;
+    switch (this.forcedTarget) {
+        case "m":
+            this.forcedTarget = "main";
+            break;
+        case "2":
+            this.forcedTarget = "second";
+            break;
+        case "h":
+            this.forcedTarget = "heal";
+            break;
+        case "c":
+            this.forcedTarget = "col";
+            break;
+        case "d":
+            this.forcedTarget = "player";
+            break;
+        case undefined:
+            this.forcedTarget = undefined;
+    }
+
     // psn stuff
     this.hp = baHEALER_HEALTH[sim.WaveSelect.value];
     this.spawnTick = ba.TickCounter;
@@ -50,7 +72,10 @@ heHealer.prototype.foundPlayerTarget = function () {
         }
     });
     if (possibleTargets.length > 0) {
-        plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+        if (this.forcedTarget && this.justSpawned)
+            plTarget = possibleTargets.filter(t => t.Role.includes(this.forcedTarget))[0];
+        else
+            plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
     }
     this.playerTarget = plTarget;
     return plTarget;

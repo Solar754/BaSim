@@ -170,13 +170,13 @@ function baTick() {
     let isDefaultCycle = (ba.TickCounter > 1 && ba.TickCounter % 10 === 1);
     if (ba.RunnersAlive < ba.MaxRunnersAlive && ba.RunnersKilled + ba.RunnersAlive < ba.TotalRunners) {
         if ((ba.Runnerspawns.length === 0 && isDefaultCycle) ||
-            (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerSpawnsIndex] === ba.TickCounter)) {
+            (ba.Runnerspawns.length > 0 && ba.Runnerspawns[ba.RunnerSpawnsIndex]?.time === ba.TickCounter)) {
             baSpawnRunner();
         }
     }
     if (ba.HealersAlive < ba.MaxHealersAlive && ba.HealersKilled + ba.HealersAlive < ba.TotalHealers) {
         if ((ba.HealerSpawns.length === 0 && isDefaultCycle) ||
-            (ba.HealerSpawns.length > 0 && ba.HealerSpawns[ba.HealerSpawnsIndex] === ba.TickCounter)) {
+            (ba.HealerSpawns.length > 0 && ba.HealerSpawns[ba.HealerSpawnsIndex]?.time === ba.TickCounter)) {
             baSpawnHealer();
         }
     }

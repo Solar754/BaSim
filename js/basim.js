@@ -325,7 +325,8 @@ function simStartStopButtonOnClick() {
 			return;
 		}
 		if (runnerSpawns === null || healerSpawns === null) {
-			alert("Invalid spawn intervals. Example: 11,21,31");
+			alert("Invalid spawn intervals. Example: 11,21,31\n"+
+			"Force healer targets with m/2/c/d. Example 11:m,21:c");
 			return;
 		}
 		let cannonQueue = simParseCannonInput(sim.CannonQueue);
@@ -442,13 +443,20 @@ function simParseSpawnsInput(mobSpawns) {
 	}
 	spawns = [...new Set(spawns)].filter(Boolean);
 	for (let i = 0; i < spawns.length; ++i) {
-		let strToInt = parseFloat(spawns[i]);
-		if (!Number.isInteger(strToInt) || !+spawns[i]) {
+		let strToStandard = spawns[i].split(":");
+		strToStandard = {
+			time: parseFloat(strToStandard[0]),
+			target: strToStandard[1]?.toLowerCase() || undefined
+		}
+		if (!Number.isInteger(strToStandard.time) || !+strToStandard.time) {
 			return null;
 		}
-		spawns[i] = strToInt;
+		if (strToStandard.target && !"m2hcd".includes(strToStandard.target)) {
+			return null;
+		}
+		spawns[i] = strToStandard;
 	}
-	spawns = spawns.sort((a, b) => { return a - b; });
+	spawns = spawns.sort((a, b) => { return a.time - b.time; });
 	return spawns;
 }
 function simParseCannonInput(eggs) {
