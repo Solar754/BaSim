@@ -69,9 +69,8 @@ heHealer.prototype.foundPlayerTarget = function () {
     });
     if (possibleTargets.length > 0) {
         if (this.forcedTarget && this.justSpawned)
-            plTarget = possibleTargets.filter(t => this.forcedTarget.includes(t.Role))[0];
-        else
-            plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+            possibleTargets = possibleTargets.filter(t => this.forcedTarget.includes(t.Role));
+        plTarget = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
     }
     this.playerTarget = plTarget;
     return plTarget;
