@@ -78,6 +78,9 @@ heHealer.prototype.foundPlayerTarget = function () {
 heHealer.prototype.tick = function () {
     this.psnHitsplat = false;
     if (this.blueCounter >= 0) {
+        if (this.blueCounter == 0) {
+            this.applyPoisonDmg(false);
+        }
         --this.blueCounter;
         return;
     }
