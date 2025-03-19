@@ -84,6 +84,9 @@ heHealer.prototype.tick = function () {
         --this.blueCounter;
         return;
     }
+    else if (this.zombieState) {
+        this.doMovement();
+    }
 
     if (++this.regenTimer % 100 == 0) {
         this.hp = Math.min(this.hp + 1, baHEALER_HEALTH[sim.WaveSelect.value]);
@@ -100,8 +103,7 @@ heHealer.prototype.tick = function () {
     if (this.isDying) {
         return;
     }
-    else if (this.zombieState) {
-        this.doMovement();
+    else if (this.blueCounter >= 0 || this.zombieState) {
         return;
     }
 
