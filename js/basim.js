@@ -542,6 +542,20 @@ function simWindowOnKeyDown(e) { // food_drop
 		simStartStopButtonOnClick();
 		e.preventDefault();
 	}
+	// Toggle pause/resume with 'g' key
+	else if (e.key === "g" && sim.IsRunning) {
+		simPauseResumeButtonOnClick();
+		e.preventDefault();
+	}
+	// Add hotkeys for step forward/backward
+	else if (e.key === "f" && sim.IsRunning && sim.IsPaused) {
+		simStepButtonOnClick();
+		e.preventDefault();
+	}
+	else if (e.key === "d" && sim.IsRunning) {
+		simStepBackwardButtonOnClick();
+		e.preventDefault();
+	}
 }
 function simCanvasOnMouseDown(e) {
 	var canvasRect = rr.Canvas.getBoundingClientRect();
