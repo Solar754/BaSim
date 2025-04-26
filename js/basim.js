@@ -495,6 +495,12 @@ function simParseCannonInput(eggs) {
 	return cannonCmds;
 }
 function simWindowOnKeyDown(e) { // food_drop
+	// Skip hotkey processing if user is typing in an input field
+	if (document.activeElement.tagName === "INPUT" || 
+		document.activeElement.tagName === "TEXTAREA") {
+		return;
+	}
+	
 	if (sim.IsRunning && pl.RepairCountdown === 0) {
 		if (e.key === "r") {
 			mAddItem(new fFood(pl.X, pl.Y, true, ++sim.CurrentFoodId));
