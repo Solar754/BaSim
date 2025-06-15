@@ -82,7 +82,7 @@ phPlayerHealer.prototype.pathfind = function () {
         this.CurrentDst = this.Tiles[this.TileIdx++];
         this.skipDeadInQueue();
     }
-    else if (this.arrived() && this.TileIdx >= this.Tiles.length) 
+    else if (this.arrived() && this.TileIdx >= this.Tiles.length)
         return; // do nothing until more tile cmds given
 
     if (this.CurrentDst?.healerId)
@@ -98,7 +98,7 @@ phPlayerHealer.prototype.pathfind = function () {
 }
 phPlayerHealer.prototype.arrived = function () {
     let arrived = (this.CurrentDst?.X === this.X && this.CurrentDst?.Y === this.Y);
-    if (arrived && this.CurrentDst?.useFood === undefined) 
+    if (arrived && this.CurrentDst?.useFood === undefined)
         return true;
     else if (this.CurrentDst?.useFood === false)
         return true;
@@ -123,11 +123,11 @@ phPlayerHealer.prototype.tryFood = function () {
             (plX === targetX + 1 && plY === targetY) // e
             || (plX === targetX - 1 && plY === targetY) // w
             || (plX === targetX && plY === targetY + 1) // n
-            || (plX=== targetX && plY === targetY - 1) // s
+            || (plX === targetX && plY === targetY - 1) // s
         );
         let tileIsIntercardinalAdj = (
             (plX + 1 === targetX && plY + 1 === targetY) // ne
-            || (plX+ 1 === targetX && plY - 1 === targetY) // se
+            || (plX + 1 === targetX && plY - 1 === targetY) // se
             || (plX - 1 === targetX && plY - 1 === targetY) // sw
             || (plX - 1 === targetX && plY + 1 === targetY) // nw
         );
@@ -141,6 +141,9 @@ phPlayerHealer.prototype.tryFood = function () {
     [true_drawnTileIsAdj, true_drawnTileIsIntercardinalAdj] = mapPerms(this.X, this.Y, healer.drawnX, healer.drawnY);
     [true_trueTileIsAdj, true_trueTileIsIntercardinalAdj] = mapPerms(this.X, this.Y, healer.x, healer.y);
 
+    let healerDrawnTileIsNorth = (this.X == healer.drawnX && this.Y + 1 == healer.drawnY);
+    let healerTrueTileIsNorth = (this.X == healer.x && this.Y + 1 == healer.y);
+
     if (DEBUG)
         console.log(`
             drawn_drawnTileIsAdj\t${drawn_drawnTileIsAdj}\n
@@ -151,20 +154,20 @@ phPlayerHealer.prototype.tryFood = function () {
             true_trueTileIsAdj\t${true_trueTileIsAdj}\n
             true_drawnTileIsIntercardinalAdj\t${true_drawnTileIsIntercardinalAdj}\n
             true_trueTileIsIntercardinalAdj\t${true_trueTileIsIntercardinalAdj}\n
+            healerDrawnTileIsNorth\t${healerDrawnTileIsNorth}\n
+            healerTrueTileIsNorth\t${healerTrueTileIsNorth}\n
         `);
 
     // 'exceptions'
-    let healerDrawnTileIsNorth = (this.X == healer.drawnX && this.Y+1 == healer.drawnY);
-    let healerTrueTileIsNorth = (this.X == healer.x && this.Y+1 == healer.y);
     if (
         ( // trapping healer against wall on spawn
             !drawn_trueTileIsAdj &&
             !drawn_drawnTileIsIntercardinalAdj &&
-            !true_trueTileIsAdj	&&
+            !true_trueTileIsAdj &&
             !true_drawnTileIsIntercardinalAdj &&
             drawn_drawnTileIsAdj &&
             drawn_trueTileIsIntercardinalAdj &&
-            true_drawnTileIsAdj	&&
+            true_drawnTileIsAdj &&
             true_trueTileIsIntercardinalAdj &&
             healerDrawnTileIsNorth
         )
@@ -185,9 +188,9 @@ phPlayerHealer.prototype.tryFood = function () {
         true_drawnTileIsAdj
         || (drawn_trueTileIsAdj && true_trueTileIsAdj)
         || (
-            drawn_trueTileIsAdj && 
-            drawn_drawnTileIsIntercardinalAdj && 
-            true_trueTileIsAdj && 
+            drawn_trueTileIsAdj &&
+            drawn_drawnTileIsIntercardinalAdj &&
+            true_trueTileIsAdj &&
             true_drawnTileIsIntercardinalAdj
         )
         || (
@@ -225,7 +228,7 @@ phPlayerHealer.prototype.skipDeadInQueue = function () {
         this.CurrentDst = { X: this.X, Y: this.Y };
     }
 }
-phPlayerHealer.prototype.findBestAdjacentTile = function(targetX, targetY) {
+phPlayerHealer.prototype.findBestAdjacentTile = function (targetX, targetY) {
     let validDirectionsFromTarget = [
         { "direction": "west", "tile": [targetX - 1, targetY], "check": mCanMoveEast },
         { "direction": "east", "tile": [targetX + 1, targetY], "check": mCanMoveWest },

@@ -325,8 +325,8 @@ function simStartStopButtonOnClick() {
 			return;
 		}
 		if (runnerSpawns === null || healerSpawns === null) {
-			alert("Invalid spawn intervals. Example: 11,21,31\n"+
-			"Force healer targets with m/2/c/d. Example 11:mc,21:h");
+			alert("Invalid spawn intervals. Example: 11,21,31\n" +
+				"Force healer targets with m/2/c/d. Example 11:mc,21:h");
 			return;
 		}
 		let cannonQueue = simParseCannonInput(sim.CannonQueue);
@@ -495,7 +495,7 @@ function simParseCannonInput(eggs) {
 	return cannonCmds;
 }
 function simWindowOnKeyDown(e) { // food_drop
-	if (document.activeElement.tagName === "INPUT" || 
+	if (document.activeElement.tagName === "INPUT" ||
 		document.activeElement.tagName === "TEXTAREA") {
 		return;
 	}
@@ -537,7 +537,7 @@ function simWindowOnKeyDown(e) { // food_drop
 			}
 		}
 	}
-	if (sim.IsRunning && e.key === "s" && document.activeElement.id !== HTML_RUNNER_MOVEMENTS) {
+	if (sim.IsRunning && e.key === "s") {
 		simSaveStateOnClick();
 	}
 	else if (e.key === "l") {
@@ -553,7 +553,9 @@ function simWindowOnKeyDown(e) { // food_drop
 		e.preventDefault();
 	}
 	// Add hotkeys for step forward/backward
-	else if (e.key === "f" && sim.IsRunning && sim.IsPaused) {
+	else if (e.key === "f" && sim.IsRunning) {
+		if (!sim.IsPaused)
+			simPauseResumeButtonOnClick();
 		simStepButtonOnClick();
 		e.preventDefault();
 	}
